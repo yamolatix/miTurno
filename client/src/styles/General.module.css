@@ -4,7 +4,7 @@
   flex-direction: column;
 }
 
-@media (min-width: 992px) {
+@media (min-width: 768px) {
   .mainContainer {
     flex-direction: row;
   }
@@ -20,7 +20,7 @@
 justify-content: center;
 }
 
-@media (min-width: 992px) {
+@media (min-width: 768px) {
   .logoContainer {
     height: auto;
     flex-grow: 4;
@@ -38,13 +38,14 @@ justify-content: center;
 .contentContainer > div {
   background-color: #67eeaa;
   width: min(600px, 80%);
-  height: 600px;
-  border: 1px solid grey;
+/*   height: 600px;
+ */  border: 1px solid grey;
   border-radius: 20px;
   margin: 20px auto;
+  padding: 10px 20px 15px;
 }
 
-@media (min-width: 992px) {
+@media (min-width: 768px) {
   .contentContainer > div {
     margin: 60px auto;
   }
@@ -52,4 +53,13 @@ justify-content: center;
 
 .logo {
   align-self: center;
+}
+
+h2 {
+  text-align: center;
+}
+
+.boton {
+  display: flex;
+  justify-content: center;
 }

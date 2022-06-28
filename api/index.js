@@ -14,6 +14,7 @@ app.use(cors());
 //capturar body
 app.use(bodyparser.urlencoded({extended:false}))
 app.use(bodyparser.json())
+app.use(express.json())
 
 //conexion a base de datos
 mongoose
