@@ -1,0 +1,19 @@
+.mainContainer {
+  height: calc(100vh - 62px);
+  display: flex;
+}
+
+.sideContainer {
+  background-color: #3c3f50;
+  width: 400px;
+}
+
+.contentContainer {
+  background-color: white;
+  width: calc(100vw - 400px);
+
+}
+
+.table {
+  width: 80%;
+}

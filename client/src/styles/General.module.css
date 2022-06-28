@@ -4,7 +4,7 @@
   flex-direction: column;
 }
 
-@media (min-width: 992px) {
+@media (min-width: 768px) {
   .mainContainer {
     flex-direction: row;
   }
@@ -17,10 +17,10 @@
   flex-shrink: 0;
   flex-basis: 0;
   display: flex;
-justify-content: center;
+  justify-content: center;
 }
 
-@media (min-width: 992px) {
+@media (min-width: 768px) {
   .logoContainer {
     height: auto;
     flex-grow: 4;
@@ -42,14 +42,38 @@ justify-content: center;
   border: 1px solid grey;
   border-radius: 20px;
   margin: 20px auto;
+  padding: 10px 20px 15px;
 }
 
-@media (min-width: 992px) {
+@media (min-width: 768px) {
   .contentContainer > div {
     margin: 60px auto;
   }
 }
 
-.logo {
+.largeLogo {
   align-self: center;
+  display: none;
+}
+
+.smallLogo {
+  align-self: center;
+}
+
+@media (min-width: 768px) {
+  .smallLogo {
+    display: none;
+  }
+  .largeLogo {
+    display: block;
+  }
+}
+
+h2 {
+  text-align: center;
+}
+
+.boton {
+  display: flex;
+  justify-content: center;
 }
