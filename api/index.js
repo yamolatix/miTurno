@@ -2,9 +2,12 @@ const express = require("express")
 const mongoose = require("mongoose")
 const bodyparser = require("body-parser")
 const morgan = require("morgan")
-const routes = require("./routes")
+const routes = require("./routes/index")
 const cors = require("cors")
 const authRoutes = require('./routes/auth')
+const validaToken = require('./routes/validate-token')
+const admin = require('./routes/admin')
+
 
 //para que funcione el .env
 require("dotenv").config();
@@ -22,14 +25,6 @@ app.use(cors());
 app.use(bodyparser.urlencoded({extended:false}))
 app.use(bodyparser.json())
 app.use(express.json())
-// //conexion a base de datos mongoDB local
-// mongoose
-// .connect("mongodb://localhost/turnon", {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-// })
-// .then(() => console.log("database is connected"))
-// .catch((err) => console.log(err));
 
 //conexion a base de datos mongo_Atlas
 mongoose
@@ -43,6 +38,8 @@ mongoose
 //import routes
 app.use("/api/user", authRoutes)
 app.use("/api", routes)
+app.use("/api/admin",validaToken, admin )
+
 
 //route middlewares
 app.use(morgan("tiny"));
