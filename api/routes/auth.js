@@ -72,6 +72,9 @@ router.post('/register', async(req, res) => {
             error: null,
             data: userDB
         })
+
+    // await User.create(user);
+    // res.send("User Created)");
     }catch(error) {
         res.status(400).json(error)
     }
@@ -79,4 +82,3 @@ router.post('/register', async(req, res) => {
 });
 
 module.exports = router;
-

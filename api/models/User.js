@@ -5,8 +5,7 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true,
         min: 3,
-        max:255,
-
+        max: 255,
     },
     lname: {
         type: String,
@@ -23,12 +22,13 @@ const userSchema = mongoose.Schema({
     email: {
         type: String,
         required: true,
+        unique: true, //Ver este atributo.
         min: 6,
         max: 255,
-   },
+    },
     password: {
         type: String,
-        required: true, 
+        required: true,
         min: 4,
         max: 255,
    },
@@ -53,8 +53,8 @@ const userSchema = mongoose.Schema({
         required: false,
         min:8,
         max: 12,
-   }
-   
+   }  
+
 })
 
 module.exports = mongoose.model('User', userSchema)
