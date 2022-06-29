@@ -11,9 +11,11 @@
 .contentContainer {
   background-color: white;
   width: calc(100vw - 400px);
-
+  display: flex;
+  justify-content: center;
 }
 
-.table {
-  width: 80%;
+.tableContainer {
+  width: 90%;
+  margin-top: 40px;
 }
