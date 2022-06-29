@@ -19,7 +19,11 @@ const uri = process.env.MONGODB_CONNECTION_STRING;
 const app = express ()
 
 //permiso cors
-app.use(cors());
+var corsOptions = {
+  origin: '*', // reemplazar con dominio
+  optionSuccessStatus:200
+}
+app.use(cors(corsOptions));
 
 //capturar body
 app.use(bodyparser.urlencoded({extended:false}))
@@ -34,6 +38,17 @@ mongoose
 })
 .then(() => console.log("MongoDB_atlas is connected"))
 .catch((err) => console.log("ERROR Not connected: ", err));
+
+/* db conectada local
+mongoose
+  .connect("mongodb://localhost/turnon", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+   
+  })
+  .then(() => console.log("database is connected"))
+  .catch((err) => console.log(err));
+*/
 
 //import routes
 app.use("/api/user", authRoutes)
