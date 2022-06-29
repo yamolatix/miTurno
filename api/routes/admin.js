@@ -8,6 +8,13 @@ router.get('/', (req,res) => {
             user: req.user
         }
     })
+
+
+    router.get("/showUsers", async(req,res) => {
+        
+    })
+
+
 })
 
 module.exports = router;

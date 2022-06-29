@@ -12,7 +12,7 @@ const admin = require('./routes/admin')
 //para que funcione el .env
 require("dotenv").config();
 
-const PORT = 3001;
+const PORT = process.env.PORT;
 const uri = process.env.MONGODB_CONNECTION_STRING;
 
 //const cookieParser = require("cookie-parser")
@@ -22,6 +22,7 @@ const app = express ()
 var corsOptions = {
   origin: '*', // reemplazar con dominio
   optionSuccessStatus:200
+
 }
 app.use(cors(corsOptions));
 

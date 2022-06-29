@@ -19,34 +19,37 @@ const schemaLogin = Joi.object({
   password: Joi.string().min(4).max(1024).required(),
 });
 
-router.post("/login", async (req, res) => {
-  //validaciones de usuario (ingreso)
-  const { error } = schemaLogin.validate(req.body);
-  if (error) return res.status(400).json({ error: error.details[0].message });
 
-  const user = await User.findOne({ email: req.body.email });
-  if (!user)
-    return res
-      .status(400)
-      .json({ error: true, mensaje: "email no registrado" });
+router.post('/login', async(req, res) => {
+    //validaciones de usuario (ingreso)
+    const { error } = schemaLogin.validate(req.body);
+    if (error) return res.status(400).json({ error: error.details[0].message })
 
-  const passValida = await bcrypt.compare(req.body.password, user.password);
-  if (!passValida)
-    return res.status(400).json({ error: true, mensaje: "contraseña erronea" });
+    const user = await User.findOne({ email: req.body.email })
+    if(!user) return res.status(400).json({ error: true, mensaje: 'email no registrado' })
 
-  //crear token
-  const token = jwt.sign(
-    {
-      user: user.email,
-      id: user._id,
-    },
-    process.env.TOKEN_SECRET
-  );
+    const passValida = await bcrypt.compare(req.body.password, user.password)
+    if(!passValida) return res.status(400).json({ error: true, mensaje: 'contraseña erronea'})
 
-  res.header("auth-token", token).json({
-    error: null,
-    data: { token },
-  });
+    //crear token
+    const token = jwt.sign({
+        id: user._id,
+        fname: user.fname,
+        lname: user.lname,
+        email: user.email,
+        dni: user.dni,
+        admin: user.admin,
+        operator: user.operator
+                      
+    }, process.env.TOKEN_SECRET)
+
+    res.header('auth-token', token).json({
+        error: null,
+        data: {token}
+    })
+
+
+
 });
 
 router.post("/register", async (req, res) => {
@@ -82,11 +85,12 @@ router.post("/register", async (req, res) => {
       data: userDB,
     });
 
-    // await User.create(user);
-    // res.send("User Created)");
-  } catch (error) {
-    res.status(400).json(error);
-  }
+  
+    }catch(error) {
+        res.status(400).json(error)
+    }
+   
+
 });
 
 
