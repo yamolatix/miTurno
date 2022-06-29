@@ -28,13 +28,17 @@ router.post('/login', async(req, res) => {
     if(!user) return res.status(400).json({ error: true, mensaje: 'email no registrado' })
 
     const passValida = await bcrypt.compare(req.body.password, user.password)
-    if(!passValida) return res.status(400).json({ error:true, mensaje: 'contraseña erronea'})
+    if(!passValida) return res.status(400).json({ error: true, mensaje: 'contraseña erronea'})
 
     //crear token
     const token = jwt.sign({
-        user: user.email,      
         id: user._id,
-        
+        fname: user.fname,
+        lname: user.lname,
+        email: user.email,      
+        admin: user.admin,
+        operator: user.operator
+               
        
     }, process.env.TOKEN_SECRET)
 
@@ -73,8 +77,7 @@ router.post('/register', async(req, res) => {
             data: userDB
         })
 
-    // await User.create(user);
-    // res.send("User Created)");
+   
     }catch(error) {
         res.status(400).json(error)
     }

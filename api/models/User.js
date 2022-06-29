@@ -1,59 +1,64 @@
 const mongoose = require('mongoose')
 
 const userSchema = mongoose.Schema({
-    fname: {
+    fname:{
         type: String,
         required: true,
         min: 3,
         max: 255,
     },
-    lname: {
+    lname:{
         type: String,
         required: true,
         min: 2,
         max:255,
 
     },
-    dni: {
+    dni:{
         type: Number,
         required: true,
                
     },
-    email: {
+    email:{
         type: String,
         required: true,
         unique: true, //Ver este atributo.
         min: 6,
         max: 255,
     },
-    password: {
+    password:{
         type: String,
         required: true,
         min: 4,
         max: 255,
-   },
+    },
    admin:{
         type: Boolean,
         required: false,
         default: false,
-   },
+    },
    operator:{
         type: Boolean,
         required: false,
         default: false,
-   },
-   phone: {
+    },
+   phone:{
         type: String,
         required: false,
         min: 7,
         max: 255,
-   },
+    },
    birthdate:{
         type: String,
         required: false,
         min:8,
         max: 12,
-   }  
+    },
+   date:{
+        type: Date,
+        default: Date.now
+    }, 
+   
 
 })
 
