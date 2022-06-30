@@ -5,12 +5,14 @@
 
 .sideContainer {
   background-color: #3c3f50;
-  width: 400px;
+  width: 350px;
+  color: white;
+  padding: 40px 40px;
 }
 
 .contentContainer {
   background-color: white;
-  width: calc(100vw - 400px);
+  width: calc(100vw - 350px);
   display: flex;
   justify-content: center;
 }
@@ -18,4 +20,15 @@
 .tableContainer {
   width: 90%;
   margin-top: 40px;
+}
+
+.userDetails > ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sideButton {
+  margin-top: 20px;
+  margin-right: 10px;
 }
