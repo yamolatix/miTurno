@@ -2,6 +2,7 @@ const { Router } = require("express");
 const router = Router();
 const User = require("../models/User");
 const mongoose = require("mongoose");
+const paginatedResults = require("../utils/pagination")
 const operation = require("../utils/functions")
 
 //change data of user  ==> ESTÁ EN EL ARCHIVO FUNCTIONS DE LA CARPETA UTILS
@@ -9,19 +10,34 @@ const operation = require("../utils/functions")
 //   return mongoose.Types.ObjectId(id);
 // }; //this function change id string into a ObjectId
 
-router.put("/me/:id", (req, res) => {
-  const { id } = req.params;
-  const { address, phone, birthdate } = req.body;
-  User.updateOne(
-    { _id: parseId(id) },
-    { address, phone, birthdate },
-    (err, docs) => {
-      res.send({
-        items: docs,
-      });
+
+/*router.get("/admin/showUsers", paginatedResults(User,3), (req, res) => {
+  User.find({}, (err) => {
+    if (err) {
+      res.json({ error: "Error" });
+    } else {
+      res.json(res.paginatedResults);
     }
-  );
-});
+  });
+});*/
+
+// ruta para el admin donde pueda agregar sucursales
+router.post("/admin/:adminId/branchoffice", async (req, res) => {
+  //Si el admin es true: aperturar la collection de branchoffice
+  //si no hay nada, no hay branchoffice
+  //si hay mostrar, todas las sucursales que haya
+
+  User.aggregate([
+    {
+      $lookup: {
+        from: "BranchOffice",
+        localField: "sucu", 
+        foreignField: "location", 
+        as: "sucursales"
+      }
+    }])
+
+})
 
 //show all users - ADMIN
 router.get("/admin/:adminId/showUsers", async (req, res) => {
@@ -75,5 +91,6 @@ router.put("/admin/:adminId/role/:id", async (req, res) => {
     res.status(404).json(error);
   }
 });
+
 
 module.exports = router;

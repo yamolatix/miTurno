@@ -38,7 +38,7 @@ mongoose
     useUnifiedTopology: true,
    
   })
-  .then(() => console.log("database is connected"))
+  .then(() => console.log("database is connected to mongodb_atlas"))
   .catch((err) => console.log(err));
 
 /* db conectada local
