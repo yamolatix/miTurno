@@ -41,8 +41,7 @@
 /*   height: 600px;
  */  border: 1px solid grey;
   border-radius: 20px;
-  margin: 20px auto;
-  padding: 10px 20px 15px;
+  padding: 20px 20px 15px;
 }
 
 @media (min-width: 768px) {
@@ -74,6 +73,26 @@ h2 {
 }
 
 .boton {
+  margin-top: 20px;
   display: flex;
   justify-content: center;
+}
+
+.link {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.unregistred {
+  text-align: center;
+  margin-top: 60px;
+}
+
+.p {
+  margin: 0;
+}
+
+.formField {
+  margin-top: 12px;
 }

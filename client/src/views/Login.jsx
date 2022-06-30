@@ -1,47 +1,94 @@
+import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import { useNavigate, Link } from 'react-router-dom';
+//import useInput from '../hooks/useInput';
+import { useDispatch } from 'react-redux';
+import { userLogin } from '../features/user';
+import style from "../styles/General.module.css";
+
 
 function Login() {
   
+  const navigate = useNavigate();
+
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+
+  const dispatch = useDispatch()
+
+  // const [showPassword, setShowPassword] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch(userLogin({
+      email,
+      password,
+    }))
+      .then(() => navigate("/users"))
+  }
   
   return (
     
-    
-    <Form>
-      <Form.Group className="mb-3" controlId="formFirstName">
-        <Form.Label>Nombre/s</Form.Label>
-        <Form.Control placeholder="Ingrese su/s nombre/s" />
-      </Form.Group>
+    <div className={style.mainContainer}>
+      <div className={style.logoContainer}>
+        <img
+          className={style.largeLogo}
+          src={require("../images/1.png")}
+          alt="miTurno"
+        />
+        <img
+          className={style.smallLogo}
+          src={require("../images/2.png")}
+          alt="miTurno"
+        />
+      </div>
+      <div className={style.contentContainer}>
+        <div>
+        <h2>Login</h2>
 
-      <Form.Group className="mb-3" controlId="formLastName">
-        <Form.Label>Apellido/s</Form.Label>
-        <Form.Control placeholder="Ingrese su/s apellido/s" />
-      </Form.Group>
+      <Form onSubmit={handleSubmit}>
+        <Form.Group className="mb-3" controlId="formEmail">
+          <Form.Label>Email</Form.Label>
+          <Form.Control
+            placeholder="Ingrese su email"
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            required
+          />
+        </Form.Group>
 
-      <Form.Group className="mb-3" controlId="formIdNum">
-        <Form.Label>N° documento</Form.Label>
-        <Form.Control placeholder="N° documento sin puntos. Ej: 34345345" />
-      </Form.Group>
+        <Form.Group className="mb-3" controlId="formPassword">
+          <Form.Label>Contraseña</Form.Label>
+          <Form.Control
+            placeholder="Ingrese su contraseña"
+            type="password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            required
+          />
+        </Form.Group>
+        
+        <div className={style.boton}>
+          <Button variant="secondary" type="submit">
+            Ingresar
+          </Button>
+        </div>
 
-      <Form.Group className="mb-3" controlId="formEmail">
-        <Form.Label>Email</Form.Label>
-        <Form.Control placeholder="Ingrese su email" />
-      </Form.Group>
+        <Link className={style.link} to="/assist_password" >Olvidé mi contraseña</Link>
 
-      <Form.Group className="mb-3" controlId="formPassword">
-        <Form.Label>Contraseña</Form.Label>
-        <Form.Control placeholder="Entre 8 y 20 caracteres. Al menos 1 numero y 1 mayúscula" />
-      </Form.Group>
-
-      <Form.Group className="mb-3" controlId="formRepeatPassword">
-        <Form.Label>Repetir contraseña</Form.Label>
-        <Form.Control placeholder="Repetir contraseña" />
-      </Form.Group>
-
-      <Button variant="primary" type="submit">
-        Registrarme
-      </Button>
-    </Form>
+        <div className={style.unregistred}>
+          <p className={style.p}>Aún no tengo una cuenta</p>
+          <Link to="/register">Registrarme</Link>
+          {/* <Button variant="secondary" onClick={() => navigate("/register")}>
+            Registrarme
+          </Button>  */}
+        </div>
+      </Form>
+        </div>
+      </div>
+    </div>
   );
 }
 

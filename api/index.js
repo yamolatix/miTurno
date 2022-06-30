@@ -28,12 +28,13 @@ app.use(express.json())
 
 //conexion a base de datos mongo_Atlas
 mongoose
-.connect(uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log("MongoDB_atlas is connected"))
-.catch((err) => console.log("ERROR Not connected: ", err));
+  .connect("mongodb://localhost/turnon", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+   
+  })
+  .then(() => console.log("database is connected"))
+  .catch((err) => console.log(err));
 
 //import routes
 app.use("/api/user", authRoutes)
