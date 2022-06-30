@@ -33,7 +33,7 @@ app.use(express.json())
 
 //conexion a base de datos mongo_Atlas
 mongoose
-  .connect("mongodb://localhost/turnon", {
+  .connect(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
    
@@ -55,7 +55,7 @@ mongoose
 //import routes
 app.use("/api/user", authRoutes)
 app.use("/api", routes)
-app.use("/api/admin",validaToken, admin )
+// app.use("/api/admin",validaToken, admin )
 
 
 //route middlewares
