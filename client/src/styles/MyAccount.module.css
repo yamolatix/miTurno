@@ -1,0 +1,13 @@
+.mainContainer {
+  height: calc(100vh - 62px);
+  display: flex;
+  background-color: #3c3f50;
+}
+
+.contentContainer {
+  background-color: white;
+  width: 100%;
+  margin: 40px 60px;
+  display: flex;
+  justify-content: center;
+}
