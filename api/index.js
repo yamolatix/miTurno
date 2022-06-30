@@ -33,12 +33,12 @@ app.use(express.json())
 
 //conexion a base de datos mongo_Atlas
 mongoose
-  .connect("mongodb://localhost/turnon", {
+  .connect(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
    
   })
-  .then(() => console.log("database is connected"))
+  .then(() => console.log("database is connected to mongodb_atlas"))
   .catch((err) => console.log(err));
 
 /* db conectada local
