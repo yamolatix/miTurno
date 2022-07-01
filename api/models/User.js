@@ -36,6 +36,11 @@ const userSchema = mongoose.Schema({
     required: false,
     default: false,
   },
+  branchOffice: [{
+    required: false,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "BranchOffice"
+  }],
   operator: {
     type: Boolean,
     required: false,

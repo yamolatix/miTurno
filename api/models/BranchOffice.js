@@ -19,7 +19,10 @@ const branchOfficeSchema = new Schema(
       lowercase: true,
       required: [true, "Address is required"],
     },
-    phone: { type: Number, required: [true, "Phone is required"] },
+    phone: {
+      type: Number,
+      required: [true, "Phone is required"]
+    },
     email: {
       type: String,
       lowercase: true,
@@ -28,11 +31,26 @@ const branchOfficeSchema = new Schema(
       maxlength: 100,
       match: [/.+\@.+\..+/, "Fill a valid email address"],
     },
-    startTime: { type: Number, required: [true, "Start time is required"] },
-    endTime: { type: Number, required: [true, "End time is required"] },
-    days: { type: Number, required: [true, "Day is required"] },
-    simultAppointment: { type: Number, default: 0 },
-    price: { type: Schema.Types.Decimal128, default: 0, get: getPrice },
+    startTime: {
+      type: Number,
+      required: [true, "Start time is required"]
+    },
+    endTime: {
+      type: Number,
+      required: [true, "End time is required"]
+    },
+    days: {
+      type: Number,
+      required: [true, "Day is required"]
+    },
+    simultAppointment: {
+      type: Number,
+      default: 0
+    },
+    price: {
+      type: Schema.Types.Decimal128,
+      default: 0, get: getPrice
+    },
     id: false,
   },
   { timestamps: true },

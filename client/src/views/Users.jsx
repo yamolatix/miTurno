@@ -1,74 +1,112 @@
 import React from "react";
+import { useState, useEffect } from "react";
+import Badge from "react-bootstrap/Badge";
+import axios from "axios";
 import CustomNavbar from "../commons/CustomNavbar";
+import UserDetails from "../commons/UserDetails";
 import BootstrapTable from "react-bootstrap-table-next";
 import filterFactory, {
-  selectFilter,
   textFilter,
+  selectFilter,
 } from "react-bootstrap-table2-filter";
-import cellEditFactory, { Type } from "react-bootstrap-table2-editor";
 import paginationFactory from "react-bootstrap-table2-paginator";
 
 import style from "../styles/Users.module.css";
 
 const Users = () => {
-  const users = [
-    {
-      id: "0001",
-      lname: "Spinetta",
-      fname: "Luis Alberto",
-      dni: "12351665",
-      role: "CL",
-      delete: (
-        <i
-          className="bi bi-trash3"
-          role="button"
-          onClick={() => console.log("TRASH", users[0].id)}
-        ></i>
-      ),
-    },
-    {
-      id: "0002",
-      lname: "Sosa",
-      fname: "Mercedes",
-      dni: "8001635",
-      role: "OP",
-      delete: (
-        <i
-          className="bi bi-trash3"
-          role="button"
-          onClick={() => console.log("TRASH")}
-        ></i>
-      ),
-    },
-    {
-      id: "0003",
-      lname: "Prodan",
-      fname: "Luca",
-      dni: "10655599",
-      role: "AD",
-      delete: (
-        <i
-          className="bi bi-trash3"
-          role="button"
-          onClick={() => console.log("TRASH")}
-        ></i>
-      ),
-    },
-    {
-      id: "0004",
-      lname: "Calamaro",
-      fname: "Andrés",
-      dni: "15253339",
-      role: "CL",
-      delete: (
-        <i
-          className="bi bi-trash3"
-          role="button"
-          onClick={() => console.log("TRASH")}
-        ></i>
-      ),
-    },
-  ];
+  const [usersRaw, setUsersRaw] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [load, setLoad] = useState(true);
+  const [selectedUser, setSelectedUser] = useState({});
+
+  useEffect(() => {
+    loadUsers();
+  }, [load]);
+
+  const loadUsers = () => {
+    axios
+      .get("http://localhost:3001/api/users/showUsers")
+      .then((res) => {
+        console.log(res.data.data);
+        setUsersRaw(res.data.data);
+        const usersConstructor = res.data.data.map((user, i) => {
+          return {
+            _id: user._id,
+            id: user._id.slice(-4),
+            lname: user.lname,
+            fname: user.fname,
+            dni: user.dni,
+            role: user.admin ? "AD" : user.operator ? "OP" : "CL",
+            actions: user.admin ? (
+              <></>
+            ) : (
+              <>
+                <Badge
+                  bg="secondary"
+                  role="button"
+                  data-bs-toggle="tooltip"
+                  title="Cambiar rol"
+                  onClick={() =>
+                    handleRoleChange(user._id, user.admin, user.operator)
+                  }
+                >
+                  <i className="bi bi-toggles"></i>
+                </Badge>
+                &nbsp;&nbsp;
+                <Badge
+                  bg="secondary"
+                  role="button"
+                  data-bs-toggle="tooltip"
+                  title="Eliminar"
+                  onClick={() => handleDelete(user._id)}
+                >
+                  <i className="bi bi-trash3"></i>
+                </Badge>
+              </>
+            ),
+          };
+        });
+        console.log(usersConstructor);
+        setUsers(usersConstructor);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleRoleChange = (id, isAdmin, isOperator) => {
+    console.log(id, isAdmin, isOperator);
+    if (isAdmin) console.log("No se puede cambiar rol de un administrador");
+    else
+      axios
+        .put(`http://localhost:3001/api/users/me/${id}`, {
+          operator: !isOperator,
+        })
+        .then((res) => {
+          console.log(res);
+          setLoad(!load);
+          console.log(selectedUser._id, selectedUser.operator);
+        })
+        .catch((err) => console.log(err));
+  };
+
+  const handleDelete = (id) => {
+    axios
+      .delete(`http://localhost:3001/api/users/delete/${id}`)
+      .then((res) => {
+        console.log(res);
+        setSelectedUser({});
+        setLoad(!load);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleUserSelection = (id) => {
+    const user = usersRaw.filter((user) => user._id === id)[0];
+    console.log("Clicked on user with ID: ", user);
+    setSelectedUser(user);
+  };
+
+  // Table setups
+
   const selectOptions = {
     CL: "CL",
     OP: "OP",
@@ -151,14 +189,12 @@ const Users = () => {
         return null;
       },
       filter: textFilter(),
-      editable: false,
     },
     {
       dataField: "fname",
       text: "Nombre",
       headerAlign: "center",
       filter: textFilter(),
-      editable: false,
     },
     {
       dataField: "dni",
@@ -169,7 +205,6 @@ const Users = () => {
       headerAlign: "center",
       align: "center",
       filter: textFilter(),
-      editable: false,
     },
     {
       dataField: "role",
@@ -183,31 +218,16 @@ const Users = () => {
       filter: selectFilter({
         options: selectOptions,
       }),
-      editable: (content, row, rowIndex, columnIndex) => content !== "AD",
-      editor: {
-        type: Type.SELECT,
-        options: [
-          {
-            value: "CL",
-            label: "CL",
-          },
-          {
-            value: "OP",
-            label: "OP",
-          },
-        ],
-      },
     },
     {
-      dataField: "delete",
-      text: "Eliminar",
+      dataField: "actions",
+      text: "Acciones",
       headerStyle: (column, colIndex) => {
         return { width: "6em" };
       },
       headerAlign: "center",
       align: "center",
       sort: false,
-      editable: false,
     },
   ];
   const defaultSorted = [
@@ -218,7 +238,7 @@ const Users = () => {
   ];
   const rowEvents = {
     onClick: (e, row, rowIndex) => {
-      console.log(`Clicked on user with ID: ${row.id}`);
+      handleUserSelection(row._id);
     },
   };
 
@@ -226,7 +246,13 @@ const Users = () => {
     <>
       <CustomNavbar />
       <div className={style.mainContainer}>
-        <div className={style.sideContainer}></div>
+        <div className={style.sideContainer}>
+          <UserDetails
+            user={selectedUser}
+            handleDelete={handleDelete}
+            handleRoleChange={handleRoleChange}
+          />
+        </div>
         <div className={style.contentContainer}>
           <div className={style.tableContainer}>
             <BootstrapTable
@@ -236,15 +262,8 @@ const Users = () => {
               defaultSorted={defaultSorted}
               filter={filterFactory()}
               filterPosition="top"
-              cellEdit={cellEditFactory({
-                mode: "dbclick",
-                blurToSave: true,
-                beforeSaveCell: (oldValue, newValue, row, column) => {
-                  console.log("POP UP: CONFIRMA CAMBIO?");
-                },
-              })}
               pagination={paginationFactory()}
-              rowEvents={ rowEvents }
+              rowEvents={rowEvents}
               striped
               hover
               condensed
