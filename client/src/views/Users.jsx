@@ -5,7 +5,10 @@ import axios from "axios";
 import CustomNavbar from "../commons/CustomNavbar";
 import UserDetails from "../commons/UserDetails";
 import BootstrapTable from "react-bootstrap-table-next";
-import filterFactory, { textFilter } from "react-bootstrap-table2-filter";
+import filterFactory, {
+  textFilter,
+  selectFilter,
+} from "react-bootstrap-table2-filter";
 import paginationFactory from "react-bootstrap-table2-paginator";
 
 import style from "../styles/Users.module.css";
@@ -104,6 +107,11 @@ const Users = () => {
 
   // Table setups
 
+  const selectOptions = {
+    CL: "CL",
+    OP: "OP",
+    AD: "AD",
+  };
   const columns = [
     {
       dataField: "id",
@@ -206,6 +214,10 @@ const Users = () => {
       },
       headerAlign: "center",
       align: "center",
+      formatter: (cell) => selectOptions[cell],
+      filter: selectFilter({
+        options: selectOptions,
+      }),
     },
     {
       dataField: "actions",
@@ -235,7 +247,11 @@ const Users = () => {
       <CustomNavbar />
       <div className={style.mainContainer}>
         <div className={style.sideContainer}>
-          <UserDetails user={selectedUser} />
+          <UserDetails
+            user={selectedUser}
+            handleDelete={handleDelete}
+            handleRoleChange={handleRoleChange}
+          />
         </div>
         <div className={style.contentContainer}>
           <div className={style.tableContainer}>

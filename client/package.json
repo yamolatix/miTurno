@@ -9,7 +9,6 @@
     "bootstrap-icons": "^1.8.3",
     "cors": "^2.8.5",
     "formik": "^2.2.9",
-    "hoist-non-react-statics": "^3.3.2",
     "react": "^18.2.0",
     "react-bootstrap": "^2.4.0",
     "react-bootstrap-table-next": "^4.0.3",
@@ -46,5 +45,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "overrides": {
+    "@types/eslint": "8.4.3"
+  },
+  "resolutions": {
+    "@types/eslint": "8.4.3"
   }
 }

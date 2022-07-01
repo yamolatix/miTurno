@@ -2,12 +2,15 @@ import React from "react";
 import Container from "react-bootstrap/Container";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
+import { useNavigate } from "react-router-dom";
 
 import style from "../styles/CustomNavbar.module.css";
 
 const CustomNavbar = () => {
+  const navigate = useNavigate();
+
   const handleLogout = () => {
-    console.log("HACEMOS LOGOUT");
+    navigate("/");
   };
 
   return (
