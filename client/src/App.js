@@ -14,10 +14,10 @@ function App() {
   return (
     <div className={style.App}>
       <Routes>
+        <Route path="/" element={<Login />}/>
         <Route path="/register" element={<Register />} />
         <Route path="/layout" element={<General />} />
         <Route path="/users" element={<Users />} />
-
         <Route path="/login" element={<Login />}/>
         <Route path="/assist_password" element={<AssistPassword />}/>
         <Route path="/restore_password" element={<RestorePassword />}/>

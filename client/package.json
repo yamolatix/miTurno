@@ -10,6 +10,7 @@
     "cors": "^2.8.5",
     "formik": "^2.2.9",
     "hoist-non-react-statics": "^3.3.2",
+    "nodemailer": "^6.7.6",
     "react": "^18.2.0",
     "react-bootstrap": "^2.4.0",
     "react-bootstrap-table-next": "^4.0.3",
