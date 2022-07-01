@@ -23,6 +23,10 @@ function Register() {
 
   const dispatch = useDispatch()
 
+  const user = localStorage.getItem('user')
+    ? JSON.parse(localStorage.getItem('user'))
+    : {}
+
   // const [showPassword, setShowPassword] = useState(false);
 
   const handleRegister = (values) => {
@@ -33,6 +37,10 @@ function Register() {
       email: values.email,
       password: values.password,
     }))
+    .then(() => user.data 
+                ? navigate('/login')
+                : null
+                )
   }
 
   const validate = Yup.object({
