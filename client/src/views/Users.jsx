@@ -25,7 +25,7 @@ const Users = () => {
 
   const loadUsers = () => {
     axios
-      .get("http://localhost:3001/api/users/showUsers")
+      .get(`http://localhost:3001/api/users/showUsers`)
       .then((res) => {
         console.log(res.data.data);
         setUsersRaw(res.data.data);

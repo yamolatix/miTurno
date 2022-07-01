@@ -2,21 +2,20 @@ const { Router } = require("express");
 const router = Router();
 const User = require("../models/User");
 const mongoose = require("mongoose");
-const paginatedResults = require("../utils/pagination")
-const operation = require("../utils/functions")
+const paginatedResults = require("../utils/pagination");
+const operation = require("../utils/functions");
 
 //change data of user  ==> ESTÁ EN EL ARCHIVO FUNCTIONS DE LA CARPETA UTILS
 // export default function parseId (id) {
 //   return mongoose.Types.ObjectId(id);
 // }; //this function change id string into a ObjectId
 
-
 router.put("/me/:id", (req, res) => {
   const { id } = req.params;
-  const { address, phone, birthdate } = req.body;
+  const { operator, address, phone, birthdate } = req.body;
   User.updateOne(
     { _id: parseId(id) },
-    { address, phone, birthdate },
+    { operator, address, phone, birthdate },
     (err, docs) => {
       res.send({
         items: docs,
@@ -46,29 +45,40 @@ router.post("/admin/:adminId/branchoffice", async (req, res) => {
     {
       $lookup: {
         from: "BranchOffice",
-        localField: "sucu", 
-        foreignField: "location", 
-        as: "sucursales"
-      }
-    }])
-
-})
+        localField: "sucu",
+        foreignField: "location",
+        as: "sucursales",
+      },
+    },
+  ]);
+});
 
 //show all users - ADMIN - SIN PAGINACIÓN
-router.get("/admin/:adminId/showUsers", async (req, res) => {
-  const { adminId } = req.params;
-  const userAdmin = await User.findOne({ _id: operation.parseId(adminId) });
-  if (userAdmin.admin === true) {
-    User.find({}, (err, result) => {
-      if (err) {
-        res.json({ error: "Error" });
-      } else {
-        res.json({ data: result });
-      }
-    });
-  } else {
-    res.sendStatus(404);
-  }
+// router.get("/admin/:adminId/showUsers", async (req, res) => {
+//   const { adminId } = req.params;
+//   const userAdmin = await User.findOne({ _id: operation.parseId(adminId) });
+//   if (userAdmin.admin === true) {
+//     User.find({}, (err, result) => {
+//       if (err) {
+//         res.json({ error: "Error" });
+//       } else {
+//         res.json({ data: result });
+//       }
+//     });
+//   } else {
+//     res.sendStatus(404);
+//   }
+// });
+
+//show all users - TODOS LOS ROLES - SIN PAGINACIÓN
+router.get("/showUsers", async (req, res) => {
+  User.find({}, (err, result) => {
+    if (err) {
+      res.json({ error: "Error" });
+    } else {
+      res.json({ data: result });
+    }
+  });
 });
 
 //delete users - ADMIN
@@ -106,6 +116,5 @@ router.put("/admin/:adminId/role/:id", async (req, res) => {
     res.status(404).json(error);
   }
 });
-
 
 module.exports = router;
