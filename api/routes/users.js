@@ -11,6 +11,21 @@ const operation = require("../utils/functions")
 // }; //this function change id string into a ObjectId
 
 
+router.put("/me/:id", (req, res) => {
+  const { id } = req.params;
+  const { address, phone, birthdate } = req.body;
+  User.updateOne(
+    { _id: parseId(id) },
+    { address, phone, birthdate },
+    (err, docs) => {
+      res.send({
+        items: docs,
+      });
+    }
+  );
+});
+
+//ADMINISTRADOR
 /*router.get("/admin/showUsers", paginatedResults(User,3), (req, res) => {
   User.find({}, (err) => {
     if (err) {
@@ -39,7 +54,7 @@ router.post("/admin/:adminId/branchoffice", async (req, res) => {
 
 })
 
-//show all users - ADMIN
+//show all users - ADMIN - SIN PAGINACIÓN
 router.get("/admin/:adminId/showUsers", async (req, res) => {
   const { adminId } = req.params;
   const userAdmin = await User.findOne({ _id: operation.parseId(adminId) });
@@ -73,7 +88,7 @@ router.delete("/admin/:adminId/delete/:id", async (req, res) => {
   }
 });
 
-//change role to operator
+//change role to operator - ADMIN
 router.put("/admin/:adminId/role/:id", async (req, res) => {
   const { adminId } = req.params;
   const userAdmin = await User.findOne({ _id: operation.parseId(adminId) });
