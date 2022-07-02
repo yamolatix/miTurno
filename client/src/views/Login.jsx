@@ -4,7 +4,7 @@ import Form from 'react-bootstrap/Form';
 import { useNavigate, Link } from 'react-router-dom';
 //import useInput from '../hooks/useInput';
 import { useDispatch } from 'react-redux';
-import { userLogin } from '../features/user';
+import { userLogin, userLogout } from '../features/user';
 import style from "../styles/General.module.css";
 
 
@@ -14,18 +14,23 @@ function Login() {
 
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const [showPassword, setShowPassword] = useState(false);
 
   const dispatch = useDispatch()
 
-  // const [showPassword, setShowPassword] = useState(false);
+  if (localStorage.getItem("user")) localStorage.removeItem('user')
 
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(userLogin({
       email,
       password,
-    }))
-      .then(() => navigate("/users"))
+    })
+    ).then(() => (
+      localStorage.getItem("user") 
+      ? navigate("/users") 
+      : alert('Problema en el login')
+      ));
   }
   
   return (
@@ -81,9 +86,6 @@ function Login() {
         <div className={style.unregistred}>
           <p className={style.p}>Aún no tengo una cuenta</p>
           <Link to="/register">Registrarme</Link>
-          {/* <Button variant="secondary" onClick={() => navigate("/register")}>
-            Registrarme
-          </Button>  */}
         </div>
       </Form>
         </div>
