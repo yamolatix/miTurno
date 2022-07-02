@@ -1,6 +1,6 @@
 //import { useState } from 'react';
 import Button from "react-bootstrap/Button";
-//import Form from 'react-bootstrap/Form';
+//import Alert from 'react-bootstrap/Alert';
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { useNavigate, Link } from "react-router-dom";
@@ -21,6 +21,12 @@ function Register() {
 
   const dispatch = useDispatch();
 
+  if (localStorage.getItem("registered")) localStorage.removeItem("registered")
+/* 
+  const user = localStorage.getItem('user')
+    ? JSON.parse(localStorage.getItem('user'))
+    : {} */
+
   // const [showPassword, setShowPassword] = useState(false);
 
   // const user = localStorage.getItem("user")
@@ -28,6 +34,7 @@ function Register() {
   //   : {};
 
   const handleRegister = (values) => {
+
     dispatch(
       userRegister({
         fname: values.fname,
@@ -36,15 +43,24 @@ function Register() {
         email: values.email,
         password: values.password,
       })
-    ).then(() => (localStorage.getItem("registered") ? navigate("/login") : null));
+    ).then(() => {
+      const registered = JSON.parse(localStorage.getItem("registered")).data.fname || null;
+      console.log('ESTO ES el FNAME de REGISTERED', registered)
+      alert(registered
+      ? 'Hola ' + registered + ', te has registrado exitosamente!'
+      : 'Problema en el registro')
+    })
+      .then(() => navigate("/login"));
   };
 
   const validate = Yup.object({
     fname: Yup.string()
       .min(3, "El nombre debe tener al menos 3 caracteres")
+      .matches(/^[aA-zZ\s]+$/, "Sólo se permiten letras en este campo")
       .required("Se requiere un nombre"),
     lname: Yup.string()
       .min(2, "El nombre debe tener al menos 2 caracteres")
+      .matches(/^[aA-zZ\s]+$/, "Sólo se permiten letras en este campo")
       .required("Se requiere un apellido"),
     dni: Yup.number()
       .min(1000000, "El formato de número de DNI es incorrecto")

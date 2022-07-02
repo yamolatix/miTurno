@@ -31,7 +31,7 @@ app.use(bodyparser.urlencoded({extended:false}))
 app.use(bodyparser.json())
 app.use(express.json())
 
-//conexion a base de datos mongo_Atlas
+//conexion a base de datos mongo_Atlas 
 mongoose
   .connect(uri, {
     useNewUrlParser: true,

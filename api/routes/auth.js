@@ -6,12 +6,15 @@ const Joi = require("@hapi/joi");
 const { default: mongoose } = require("mongoose");
 require("dotenv").config();
 
+/* const { getTemplate, sendEmail } = require('../config/mail.config');
+const { getToken, getTokenData } = require('../config/jwt.config'); */
+
 const schemaRegister = Joi.object({
   fname: Joi.string().min(3).max(255).required(),
-  lname: Joi.string().min(3).max(255).required(),
+  lname: Joi.string().min(2).max(255).required(),
   dni: Joi.number().integer().required(),
   email: Joi.string().min(6).max(255).required().email(),
-  password: Joi.string().min(4).max(1024).required(),
+  password: Joi.string().min(8).max(1024).required(),
 });
 
 const schemaLogin = Joi.object({
@@ -19,10 +22,10 @@ const schemaLogin = Joi.object({
   password: Joi.string().min(4).max(1024).required(),
 });
 
-router.post("/login", async (req, res) => {
-  //validaciones de usuario (ingreso)
-  const { error } = schemaLogin.validate(req.body);
-  if (error) return res.status(400).json({ error: error.details[0].message });
+router.post('/login', async(req, res) => {
+    //validaciones de usuario (ingreso)
+    const { error } = schemaLogin.validate(req.body);
+    if (error) return res.status(400).json({ error: error.details[0].message })
 
   const user = await User.findOne({ email: req.body.email });
   if (!user)
@@ -84,9 +87,35 @@ router.post("/register", async (req, res) => {
     password: password,
   });
 
+  // Generar token
+  //const token = getToken(req.body.email);
+
+  // obtener data del token
+
+  /* const getTokenData = (token) => {
+    let data = null;
+    jwt.verify(token, 'TOKEN_SECRET', (err, decoded) => {
+        if(err) {
+            console.log('Error al obtener data del token');
+        } else {
+            data = decoded;
+        }
+    });
+    return data
+  } */
+
+  // Obtener un template
+  //const template = getTemplate(user.fname, token);
+
   try {
     const userDB = await user.save();
+    //console.log('MAIL DE DESTINO ', user.email)
+    //console.log('MAIL DE DESTINO ', template)
+      // Enviar el email
+    //await sendEmail(user.email, 'Aviso: registro exitoso', template);
     res.json({
+      success: true,
+      msg: 'Registrado correctamente',
       error: null,
       data: userDB,
     });
