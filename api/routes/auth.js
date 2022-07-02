@@ -22,44 +22,10 @@ const schemaLogin = Joi.object({
   password: Joi.string().min(4).max(1024).required(),
 });
 
-router.post("/login", async (req, res) => {
-  //validaciones de usuario (ingreso)
-  const { error } = schemaLogin.validate(req.body);
-  if (error) return res.status(400).json({ error: error.details[0].message });
-
-<<<<<<< HEAD
 router.post('/login', async(req, res) => {
     //validaciones de usuario (ingreso)
-    const { error } = schemaLogin.validate(req.body);
+  const { error } = schemaLogin.validate(req.body);
     if (error) return res.status(400).json({ error: error.details[0].message })
-
-    const user = await User.findOne({ email: req.body.email })
-    if(!user) return res.status(400).json({ error: true, mensaje: 'email no registrado' })
-
-    const passValida = await bcrypt.compare(req.body.password, user.password)
-    if(!passValida) return res.status(400).json({ error: true, mensaje: 'contraseña erronea'})
-
-    //crear token
-    const token = jwt.sign({
-        id: user._id,
-        fname: user.fname,
-        lname: user.lname,
-        email: user.email,
-        dni: user.dni,
-        admin: user.admin,
-        operator: user.operator
-                      
-    }, process.env.TOKEN_SECRET)
-
-    res.header('auth-token', token).json({
-        error: null,
-        data: {token},
-        admin: user.admin,
-        operator: user.operator,
-        fname: user.fname
-    })
-});
-=======
   const user = await User.findOne({ email: req.body.email });
   if (!user)
     return res
@@ -88,7 +54,7 @@ router.post('/login', async(req, res) => {
     error: null,
     data: { token },
   });
->>>>>>> 2a176d9c4ee414125aebdeab7945d3ce367c7a24
+});
 
 router.post("/register", async (req, res) => {
   //validaciones de usuarios (registro)

@@ -5,12 +5,7 @@ export const userRegister = createAsyncThunk("USER_REGISTER", (data) => {
     console.log(data)
     return axios.post("http://localhost:3001/api/user/register", data) // chequear ruta
         .then(user => {
-<<<<<<< HEAD
-            localStorage.setItem('registred', JSON.stringify(user.data))
-=======
             localStorage.setItem('registered', JSON.stringify(user.data))
->>>>>>> 2a176d9c4ee414125aebdeab7945d3ce367c7a24
-            console.log('USER DATA ES', user.data)
             return user.data
         })
         .catch(err => console.log(err))
@@ -21,7 +16,6 @@ export const userLogin = createAsyncThunk("USER_LOGIN", (data) => {
     return axios.post("http://localhost:3001/api/user/login", data)
         .then(user => {
             localStorage.setItem('user', JSON.stringify(user.data))
-            console.log('ACA ESTA EL TOKEN ', user.data.data.token)
             return user.data
         });
 });
