@@ -52,7 +52,6 @@ router.post("/login", async (req, res) => {
     error: null,
     data: { token },
   });
-});
 
 router.post("/register", async (req, res) => {
   //validaciones de usuarios (registro)

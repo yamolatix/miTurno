@@ -3,12 +3,11 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 export const userRegister = createAsyncThunk("USER_REGISTER", (data) => {
-    //const navigate = useNavigate();
     console.log(data)
     return axios.post("http://localhost:3001/api/user/register", data) // chequear ruta
         .then(user => {
+            localStorage.setItem('registered', JSON.stringify(user.data))
             console.log('USER DATA ES', user.data)
-            //navigate("/login")
             return user.data
         })
         .catch(err => console.log(err))
