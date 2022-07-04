@@ -54,32 +54,32 @@ router.post("/admin/:adminId/branchoffice", async (req, res) => {
 });
 
 //show all users - ADMIN - SIN PAGINACIÓN
-// router.get("/admin/:adminId/showUsers", async (req, res) => {
-//   const { adminId } = req.params;
-//   const userAdmin = await User.findOne({ _id: operation.parseId(adminId) });
-//   if (userAdmin.admin === true) {
-//     User.find({}, (err, result) => {
-//       if (err) {
-//         res.json({ error: "Error" });
-//       } else {
-//         res.json({ data: result });
-//       }
-//     });
-//   } else {
-//     res.sendStatus(404);
-//   }
-// });
-
-//show all users - TODOS LOS ROLES - SIN PAGINACIÓN
-router.get("/showUsers", async (req, res) => {
-  User.find({}, (err, result) => {
-    if (err) {
-      res.json({ error: "Error" });
-    } else {
-      res.json({ data: result });
-    }
-  });
+router.get("/admin/:adminId/showUsers", async (req, res) => {
+  const { adminId } = req.params;
+  const userAdmin = await User.findOne({ _id: operation.parseId(adminId) });
+  if (userAdmin.admin === true) {
+    User.find({}, (err, result) => {
+      if (err) {
+        res.json({ error: "Error" });
+      } else {
+        res.json({ data: result });
+      }
+    });
+  } else {
+    res.sendStatus(404);
+  }
 });
+
+// //show all users - TODOS LOS ROLES - SIN PAGINACIÓN
+// router.get("/showUsers", async (req, res) => {
+//   User.find({}, (err, result) => {
+//     if (err) {
+//       res.json({ error: "Error" });
+//     } else {
+//       res.json({ data: result });
+//     }
+//   });
+// });
 
 //delete users - ADMIN
 router.delete("/admin/:adminId/delete/:id", async (req, res) => {

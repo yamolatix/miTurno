@@ -12,7 +12,7 @@
     "react": "^18.2.0",
     "react-bootstrap": "^2.4.0",
     "react-bootstrap-table-next": "^4.0.3",
-    "npm i react-bootstrap-table2-editor": "^1.4.0",
+    "react-bootstrap-table2-editor": "^1.4.0",
     "react-bootstrap-table2-filter": "^1.3.3",
     "react-bootstrap-table2-paginator": "^2.1.2",
     "react-dom": "^18.2.0",
@@ -45,12 +45,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "overrides": {
-    "@types/eslint": "8.4.3"
-  },
-  "resolutions": {
-    "@types/eslint": "8.4.3"
   }
 }
-  
