@@ -17,6 +17,7 @@ const userSchema = mongoose.Schema({
   dni: {
     type: Number,
     required: true,
+    unique: true,
   },
   email: {
     type: String,
@@ -36,11 +37,13 @@ const userSchema = mongoose.Schema({
     required: false,
     default: false,
   },
-  branchOffice: [{
-    required: false,
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "BranchOffice"
-  }],
+  branchOffice: [
+    {
+      required: false,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "BranchOffice",
+    },
+  ],
   operator: {
     type: Boolean,
     required: false,
@@ -67,4 +70,3 @@ const userSchema = mongoose.Schema({
 });
 
 module.exports = mongoose.model("User", userSchema);
-
