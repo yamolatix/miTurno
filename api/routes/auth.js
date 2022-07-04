@@ -22,10 +22,10 @@ const schemaLogin = Joi.object({
   password: Joi.string().min(4).max(1024).required(),
 });
 
-router.post('/login', async(req, res) => {
-    //validaciones de usuario (ingreso)
-    const { error } = schemaLogin.validate(req.body);
-    if (error) return res.status(400).json({ error: error.details[0].message })
+router.post("/login", async (req, res) => {
+  //validaciones de usuario (ingreso)
+  const { error } = schemaLogin.validate(req.body);
+  if (error) return res.status(400).json({ error: error.details[0].message });
 
   const user = await User.findOne({ email: req.body.email });
   if (!user)
@@ -55,7 +55,7 @@ router.post('/login', async(req, res) => {
     error: null,
     data: { token },
   });
-
+});
 router.post("/register", async (req, res) => {
   //validaciones de usuarios (registro)
   const { error } = schemaRegister.validate(req.body);
@@ -67,6 +67,7 @@ router.post("/register", async (req, res) => {
   if (existeEmail) {
     return res
       .status(400)
+
       .json({ error: true, mensaje: "email ya registrado" });
   }
 
@@ -111,11 +112,11 @@ router.post("/register", async (req, res) => {
     const userDB = await user.save();
     //console.log('MAIL DE DESTINO ', user.email)
     //console.log('MAIL DE DESTINO ', template)
-      // Enviar el email
+    // Enviar el email
     //await sendEmail(user.email, 'Aviso: registro exitoso', template);
     res.json({
       success: true,
-      msg: 'Registrado correctamente',
+      msg: "Registrado correctamente",
       error: null,
       data: userDB,
     });
