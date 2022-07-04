@@ -6,9 +6,9 @@ const paginatedResults = require("../utils/pagination");
 const operation = require("../utils/functions");
 
 //change data of user  ==> ESTÁ EN EL ARCHIVO FUNCTIONS DE LA CARPETA UTILS
-// export default function parseId (id) {
-//   return mongoose.Types.ObjectId(id);
-// }; //this function change id string into a ObjectId
+export default function parseId (id) {
+  return mongoose.Types.ObjectId(id);
+}; //this function change id string into a ObjectId
 
 router.put("/me/:id", (req, res) => {
   const { id } = req.params;
