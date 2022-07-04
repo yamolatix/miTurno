@@ -70,3 +70,13 @@ const userSchema = mongoose.Schema({
 });
 
 module.exports = mongoose.model("User", userSchema);
+
+/*
+User.find({ operator: true }, function (err, result) {
+  if (error) throw error;
+  console.log(result);
+})
+*/
+
+// https://www.youtube.com/watch?v=N3ny7bvS_IM&t=1s&ab_channel=codigofacilito
+// https://www.youtube.com/watch?v=ii2qM91Ing0&ab_channel=krpajay

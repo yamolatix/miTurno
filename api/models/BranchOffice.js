@@ -23,6 +23,10 @@ const branchOfficeSchema = new Schema(
       type: Number,
       required: [true, "Phone is required"],
     },
+    operator: [{
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    }],
     email: {
       type: String,
       lowercase: true,
