@@ -5,14 +5,16 @@ const userSchema = mongoose.Schema({
   fname: {
     type: String,
     required: true,
-    min: 3,
-    max: 255,
+    lowercase: true,
+    minlength: 3,
+    maxlength: 255,
   },
   lname: {
     type: String,
     required: true,
-    min: 2,
-    max: 255,
+    lowercase: true,
+    minlength: 2,
+    maxlength: 255,
   },
   dni: {
     type: Number,
@@ -22,15 +24,16 @@ const userSchema = mongoose.Schema({
   email: {
     type: String,
     required: true,
+    lowercase: true,
     unique: true, //Ver este atributo.
-    min: 6,
-    max: 255,
+    minlength: 6,
+    maxlength: 255,
   },
   password: {
     type: String,
     required: true,
-    min: 4,
-    max: 255,
+    minlength: 4,
+    maxlength: 25,
   },
   admin: {
     type: Boolean,
@@ -52,24 +55,33 @@ const userSchema = mongoose.Schema({
   phone: {
     type: String,
     required: false,
-    min: 7,
-    max: 255,
+    lowercase: true,
+    minlength: 7,
+    maxlength: 25,
   },
   birthdate: {
     type: String,
     required: false,
-    min: 8,
-    max: 12,
+    minlength: 8,
+    maxlength: 12,
   },
   address: {
     type: String,
     require: false,
-    min: 8,
-    max: 255,
-  },
-});
+    lowercase: true,
+    minlength: 8,
+    maxlength: 255,
+  }
+}, { timestamps: true });
 
 module.exports = mongoose.model("User", userSchema);
+
+
+
+var today = new Date();
+var dd = String(today.getDate()).padStart(2, '0');
+var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+var yyyy = today.getFullYear();
 
 /*
 User.find({ operator: true }, function (err, result) {

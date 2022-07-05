@@ -36,15 +36,18 @@ const branchOfficeSchema = new Schema(
       match: [/.+\@.+\..+/, "Fill a valid email address"],
     },
     startTime: {
-      type: Number,
-      required: [true, "Start time is required"],
+      type: String,
+      minlength: 4,
+      default: "0900"
     },
     endTime: {
-      type: Number,
-      required: [true, "End time is required"],
+      type: String,
+      minlength: 4,
+      default: "1800"
     },
-    days: {
-      type: Number,
+    daysOff: {
+      type: Array,
+      default: [0,6],
       required: [true, "Day is required"],
     },
     simultAppointment: {
