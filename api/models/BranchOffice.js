@@ -5,7 +5,7 @@ function getPrice(value) {
     return parseFloat(value.toString());
   }
   return value;
-}
+};
 
 const branchOfficeSchema = new Schema(
   {
@@ -47,8 +47,7 @@ const branchOfficeSchema = new Schema(
     },
     daysOff: {
       type: Array,
-      default: [0,6],
-      required: [true, "Day is required"],
+      default: [0,6]
     },
     simultAppointment: {
       type: Number,

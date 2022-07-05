@@ -25,7 +25,7 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
     lowercase: true,
-    unique: true, //Ver este atributo.
+    unique: true,
     minlength: 6,
     maxlength: 255,
   },

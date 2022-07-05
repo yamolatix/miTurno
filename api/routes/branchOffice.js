@@ -2,7 +2,7 @@ const { Router } = require("express");
 const router = Router();
 const BranchOffice = require("../models/BranchOffice");
 const User = require("../models/User");
-const operation = require("../utils/functions");
+const parseId = require("../utils/functions");
 
 //Crear una nueva sucursal
 router.post("/admin/:adminId/add", async (req, res) => {
@@ -28,7 +28,7 @@ router.post("/admin/:adminId/add", async (req, res) => {
   });
   const { adminId } = req.params;
   try {
-    const userAdmin = await User.findOne({ _id: operation.parseId(adminId) });
+    const userAdmin = await User.findOne({ _id: parseId(adminId) });
     if (userAdmin.admin === true) {
       const saveBranchOffice = await newBranchOffice.save();
       res.json({ error: null, data: saveBranchOffice });
@@ -45,7 +45,7 @@ router.post("/admin/:adminId/add", async (req, res) => {
 // Muestra todas las sucursales.
 router.get("/admin/:adminId/showBranch", async (req, res) => {
   const { adminId } = req.params;
-  const userAdmin = await User.findOne({ _id: operation.parseId(adminId) });
+  const userAdmin = await User.findOne({ _id: parseId(adminId) });
   if (userAdmin.admin === true) {
     BranchOffice.find({}, (err, result) => {
       if (err) {
@@ -73,11 +73,11 @@ router.put("/admin/:adminId/:id", async (req, res) => {
     simultAppointment,
     price,
   } = req.body;
-  const userAdmin = await User.findOne({ _id: operation.parseId(adminId) });
+  const userAdmin = await User.findOne({ _id: parseId(adminId) });
   try {
     if (userAdmin.admin === true) {
       BranchOffice.updateOne(
-        { _id: operation.parseId(id) },
+        { _id: parseId(id) },
         {
           address,
           phone,
@@ -110,11 +110,11 @@ router.put("/admin/:adminId/:id", async (req, res) => {
 });
 
 router.get("/operators", (req, res) => {
-  User.find({ operator: true }, (err, data) => {
+  User.find({ operator: true }, (err, result) => {
     if (err) {
       res.json({ error: "Error" });
     } else {
-      res.json(data);
+      res.json({data: result});
     }
   })
 })
