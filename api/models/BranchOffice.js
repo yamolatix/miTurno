@@ -1,4 +1,4 @@
-const { Schema, model } = require("mongoose");
+const { Schema, model, default: mongoose } = require("mongoose");
 
 function getPrice(value) {
   if (typeof value !== "undefined") {
@@ -21,8 +21,12 @@ const branchOfficeSchema = new Schema(
     },
     phone: {
       type: Number,
-      required: [true, "Phone is required"]
+      required: [true, "Phone is required"],
     },
+    operator: [{
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    }],
     email: {
       type: String,
       lowercase: true,
@@ -32,24 +36,32 @@ const branchOfficeSchema = new Schema(
       match: [/.+\@.+\..+/, "Fill a valid email address"],
     },
     startTime: {
-      type: Number,
-      required: [true, "Start time is required"]
+      type: String,
+      minlength: 4,
+      default: "0900"
     },
     endTime: {
-      type: Number,
-      required: [true, "End time is required"]
+      type: String,
+      minlength: 4,
+      default: "1800"
     },
-    days: {
-      type: Number,
-      required: [true, "Day is required"]
+    daysOff: {
+      type: Array,
+      default: [0,6],
+      required: [true, "Day is required"],
     },
     simultAppointment: {
       type: Number,
-      default: 0
+      default: 0,
+    },
+    operator: {
+      type: mongoose.Types.ObjectId,
+      ref: "operator"
     },
     price: {
       type: Schema.Types.Decimal128,
-      default: 0, get: getPrice
+      default: 0,
+      get: getPrice,
     },
     id: false,
   },
@@ -61,4 +73,4 @@ const branchOfficeSchema = new Schema(
 //ver como vamos a manejar los días
 //turnos simultáneos -> ver como se solicitan
 
-module.exports = model("BranchOffice", branchOfficeSchema)
+module.exports = model("BranchOffice", branchOfficeSchema);

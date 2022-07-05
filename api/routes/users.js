@@ -5,16 +5,11 @@ const mongoose = require("mongoose");
 const paginatedResults = require("../utils/pagination");
 const operation = require("../utils/functions");
 
-//change data of user  ==> ESTÁ EN EL ARCHIVO FUNCTIONS DE LA CARPETA UTILS
-// export default function parseId (id) {
-//   return mongoose.Types.ObjectId(id);
-// }; //this function change id string into a ObjectId
-
 router.put("/me/:id", (req, res) => {
   const { id } = req.params;
   const { operator, address, phone, birthdate } = req.body;
   User.updateOne(
-    { _id: parseId(id) },
+    { _id: operation(id) },
     { operator, address, phone, birthdate },
     (err, docs) => {
       res.send({
@@ -56,7 +51,7 @@ router.post("/admin/:adminId/branchoffice", async (req, res) => {
 //show all users - ADMIN - SIN PAGINACIÓN
 router.get("/admin/:adminId/showUsers", async (req, res) => {
   const { adminId } = req.params;
-  const userAdmin = await User.findOne({ _id: operation.parseId(adminId) });
+  const userAdmin = await User.findOne({ _id: operation(adminId) });
   if (userAdmin.admin === true) {
     User.find({}, (err, result) => {
       if (err) {
@@ -84,11 +79,11 @@ router.get("/admin/:adminId/showUsers", async (req, res) => {
 //delete users - ADMIN
 router.delete("/admin/:adminId/delete/:id", async (req, res) => {
   const { adminId } = req.params;
-  const userAdmin = await User.findOne({ _id: operation.parseId(adminId) });
+  const userAdmin = await User.findOne({ _id: operation(adminId) });
   const { id } = req.params;
   try {
     if (userAdmin.admin === true && adminId !== id) {
-      await User.deleteOne({ _id: operation.parseId(id) });
+      await User.deleteOne({ _id: operation(id) });
       res.sendStatus(204);
     } else if (adminId === id) {
       res.send("You can't remove the permission yourself").status(404);
@@ -101,11 +96,11 @@ router.delete("/admin/:adminId/delete/:id", async (req, res) => {
 //change role to operator - ADMIN
 router.put("/admin/:adminId/role/:id", async (req, res) => {
   const { adminId } = req.params;
-  const userAdmin = await User.findOne({ _id: operation.parseId(adminId) });
+  const userAdmin = await User.findOne({ _id: operation(adminId) });
   const { id } = req.params;
   try {
     if (userAdmin.admin == true && adminId !== id) {
-      await User.findOneAndUpdate({ _id: operation.parseId(id) }, [
+      await User.findOneAndUpdate({ _id: operation(id) }, [
         { $set: { operator: { $eq: [false, "$operator"] } } },
       ]);
       res.sendStatus(204);

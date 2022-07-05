@@ -4,6 +4,7 @@ const BranchOffice = require("../models/BranchOffice");
 const User = require("../models/User");
 const operation = require("../utils/functions");
 
+//Crear una nueva sucursal
 router.post("/admin/:adminId/add", async (req, res) => {
   const {
     location,
@@ -12,7 +13,7 @@ router.post("/admin/:adminId/add", async (req, res) => {
     email,
     startTime,
     endTime,
-    days,
+    daysOff,
     simultAppointment,
   } = req.body;
   const newBranchOffice = new BranchOffice({
@@ -22,7 +23,7 @@ router.post("/admin/:adminId/add", async (req, res) => {
     email,
     startTime,
     endTime,
-    days,
+    daysOff,
     simultAppointment,
   });
   const { adminId } = req.params;
@@ -41,6 +42,7 @@ router.post("/admin/:adminId/add", async (req, res) => {
   }
 });
 
+// Muestra todas las sucursales.
 router.get("/admin/:adminId/showBranch", async (req, res) => {
   const { adminId } = req.params;
   const userAdmin = await User.findOne({ _id: operation.parseId(adminId) });
@@ -57,6 +59,7 @@ router.get("/admin/:adminId/showBranch", async (req, res) => {
   }
 });
 
+// Eliminar una sucursal
 router.delete("/admin/:adminId/delete/:id", async (req, res) => {
   const { adminId } = req.params;
   const userAdmin = await User.findOne({ _id: operation.parseId(adminId) });
@@ -73,6 +76,7 @@ router.delete("/admin/:adminId/delete/:id", async (req, res) => {
   }
 });
 
+//Modificar datos de una sucursal
 router.put("/admin/:adminId/:id", async (req, res) => {
   const { adminId } = req.params;
   const { id } = req.params;
@@ -82,43 +86,65 @@ router.put("/admin/:adminId/:id", async (req, res) => {
     email,
     startTime,
     endTime,
-    days,
+    daysOff,
     simultAppointment,
     price,
   } = req.body;
   const userAdmin = await User.findOne({ _id: operation.parseId(adminId) });
-  try{
-  if (userAdmin.admin === true) {
-    BranchOffice.updateOne(
-      { _id: operation.parseId(id) },
-      {
-        address,
-        phone,
-        email,
-        startTime,
-        endTime,
-        days,
-        simultAppointment,
-        price,
-      },
-      (err, docs) => {
-        if (err) {
-          res.json({ error: "Error" });
-        } else {
-          res.send({
-            items: docs,
-          });
+  try {
+    if (userAdmin.admin === true) {
+      BranchOffice.updateOne(
+        { _id: operation.parseId(id) },
+        {
+          address,
+          phone,
+          email,
+          startTime,
+          endTime,
+          daysOff,
+          simultAppointment,
+          price,
+        },
+        (err, docs) => {
+          if (err) {
+            res.json({ error: "Error" });
+          } else {
+            res.send({
+              items: docs,
+            });
+          }
         }
-      }
-    );
-  } else {
-    res
-      .send("You don't have permission to modify the information of a branch")
-      .status(404);
-  }}
-  catch(error){
+      );
+    } else {
+      res
+        .send("You don't have permission to modify the information of a branch")
+        .status(404);
+    }
+  }
+  catch (error) {
     res.status(404).json(error);
   }
 });
+
+router.get("/operators", (req, res) => {
+  User.find({ operator: true }, (err, data) => {
+    if (err) {
+      res.json({ error: "Error" });
+    } else {
+      res.json(data);
+    }
+  })
+})
+
+router.put("/showBranch/:id", async (req, res) => {
+  const { id } = req.params;
+  const operatorId = req.body._id
+  await BranchOffice.findByIdAndUpdate(id, { $push: { operator: operatorId } })
+  .populate("operator")
+  .exec((err,operador) =>{
+    console.log("****OPERADOR*****", operador)
+    res.json(operador).status(200)
+    })
+})
 
 module.exports = router;
