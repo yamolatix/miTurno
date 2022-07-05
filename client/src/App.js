@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Route, Routes } from "react-router-dom";
 
 import General from "./views/General";
@@ -8,10 +8,18 @@ import AssistPassword from "./views/AssistPassword";
 import RestorePassword from "./views/RestorePassword";
 import Users from "./views/Users";
 import MyAccount from "./views/MyAccount";
+import BranchOffices from "./views/BranchOffices";
+import OfficeDetails from "./views/OfficeDetails";
 
 import style from "./styles/App.module.css";
 
 function App() {
+  const [selectedOffice, setSelectedOffice] = useState({});
+
+  const selectOffice = (office) => {
+    setSelectedOffice(office);
+  };
+
   return (
     <div className={style.App}>
       <Routes>
@@ -23,6 +31,14 @@ function App() {
         <Route path="/myaccount" element={<MyAccount />} />
         <Route path="/assist_password" element={<AssistPassword />} />
         <Route path="/restore_password" element={<RestorePassword />} />
+        <Route
+          path="/offices"
+          element={<BranchOffices selectOffice={selectOffice} />}
+        />
+        <Route
+          path="/officeDetails"
+          element={<OfficeDetails office={selectedOffice} />}
+        />
         {/* 
         <Route path="/welcome" element={<Welcome />}/>
         <Route path="/branch_offices" element={<BranchOffices />}/>

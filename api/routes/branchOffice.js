@@ -57,6 +57,22 @@ router.get("/admin/:adminId/showBranch", async (req, res) => {
   }
 });
 
+router.delete("/admin/:adminId/delete/:id", async (req, res) => {
+  const { adminId } = req.params;
+  const userAdmin = await User.findOne({ _id: operation.parseId(adminId) });
+  const { id } = req.params;
+  try {
+    if (userAdmin.admin === true && adminId !== id) {
+      await BranchOffice.deleteOne({ _id: operation.parseId(id) });
+      res.sendStatus(204);
+    } else if (adminId === id) {
+      res.send("You can't remove the permission yourself").status(404);
+    }
+  } catch {
+    res.sendStatus(500);
+  }
+});
+
 router.put("/admin/:adminId/:id", async (req, res) => {
   const { adminId } = req.params;
   const { id } = req.params;

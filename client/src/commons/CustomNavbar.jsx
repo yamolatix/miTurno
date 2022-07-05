@@ -29,7 +29,7 @@ const CustomNavbar = () => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
-              <Nav.Link href="#link" className="mx-3 fs-5">
+              <Nav.Link href="/offices" className="mx-3 fs-5">
                 Sucursales
               </Nav.Link>
               <Nav.Link href="/users" className="mx-3 fs-5">
