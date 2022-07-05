@@ -4,6 +4,7 @@ const BranchOffice = require("../models/BranchOffice");
 const User = require("../models/User");
 const operation = require("../utils/functions");
 
+//Crear una nueva sucursal
 router.post("/admin/:adminId/add", async (req, res) => {
   const {
     location,
@@ -12,7 +13,7 @@ router.post("/admin/:adminId/add", async (req, res) => {
     email,
     startTime,
     endTime,
-    days,
+    daysOff,
     simultAppointment,
   } = req.body;
   const newBranchOffice = new BranchOffice({
@@ -22,7 +23,7 @@ router.post("/admin/:adminId/add", async (req, res) => {
     email,
     startTime,
     endTime,
-    days,
+    daysOff,
     simultAppointment,
   });
   const { adminId } = req.params;
@@ -41,8 +42,7 @@ router.post("/admin/:adminId/add", async (req, res) => {
   }
 });
 
-
-// Muestra todas las sucursales.)
+// Muestra todas las sucursales.
 router.get("/admin/:adminId/showBranch", async (req, res) => {
   const { adminId } = req.params;
   const userAdmin = await User.findOne({ _id: operation.parseId(adminId) });
@@ -59,6 +59,7 @@ router.get("/admin/:adminId/showBranch", async (req, res) => {
   }
 });
 
+//Modificar datos de una sucursal
 router.put("/admin/:adminId/:id", async (req, res) => {
   const { adminId } = req.params;
   const { id } = req.params;
@@ -68,7 +69,7 @@ router.put("/admin/:adminId/:id", async (req, res) => {
     email,
     startTime,
     endTime,
-    days,
+    daysOff,
     simultAppointment,
     price,
   } = req.body;
@@ -83,7 +84,7 @@ router.put("/admin/:adminId/:id", async (req, res) => {
           email,
           startTime,
           endTime,
-          days,
+          daysOff,
           simultAppointment,
           price,
         },
@@ -117,7 +118,6 @@ router.get("/operators", (req, res) => {
     }
   })
 })
-
 
 router.put("/showBranch/:id", async (req, res) => {
   const { id } = req.params;
