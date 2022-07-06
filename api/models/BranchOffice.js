@@ -1,4 +1,4 @@
-const { Schema, model, default: mongoose } = require("mongoose");
+const { Schema, model,} = require("mongoose");
 
 function getPrice(value) {
   if (typeof value !== "undefined") {
@@ -23,10 +23,6 @@ const branchOfficeSchema = new Schema(
       type: Number,
       required: [true, "Phone is required"],
     },
-    operator: [{
-      type: Schema.Types.ObjectId,
-      ref: "User",
-    }],
     email: {
       type: String,
       lowercase: true,
@@ -37,13 +33,13 @@ const branchOfficeSchema = new Schema(
     },
     startTime: {
       type: String,
-      minlength: 4,
-      default: "0900"
+      maxlength: 5,
+      default: "09:00"
     },
     endTime: {
       type: String,
-      minlength: 4,
-      default: "1800"
+      maxlength: 5,
+      default: "18:00"
     },
     daysOff: {
       type: Array,
@@ -51,12 +47,16 @@ const branchOfficeSchema = new Schema(
     },
     simultAppointment: {
       type: Number,
-      default: 0,
+      default: 1,
     },
-    operator: {
-      type: mongoose.Types.ObjectId,
-      ref: "operator"
-    },
+    operator: [{
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    }],
+    appointment: [{
+      type: Schema.Types.ObjectId,
+      ref: "Appointment",
+    }],
     price: {
       type: Schema.Types.Decimal128,
       default: 0,

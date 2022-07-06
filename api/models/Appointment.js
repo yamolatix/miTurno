@@ -1,7 +1,6 @@
-const mongoose = require("mongoose");
+const { Schema, model} = require("mongoose");
 
-const appointmentSchema = new mongoose.Schema({
-
+const appointmentSchema = new Schema({
     date: { // 01 - 31
         type: String,
         maxlength: 2
@@ -30,14 +29,14 @@ const appointmentSchema = new mongoose.Schema({
         type: String,
         enum: ['pendiente de pago', 'confirmado', 'cancelado por cliente', 'cancelado por sucursal', 'finalizado']
     },
-    branchOffice: {
-        type: mongoose.Types.ObjectId,
+    branchOffice: [{
+        type: Schema.Types.ObjectId,
         ref: 'BranchOffice'
-    },
-    user: {
-        type: mongoose.Types.ObjectId,
+    }],
+    user: [{
+        type: Schema.Types.ObjectId,
         ref: 'User'
-    },
+    }],
     //Box ?
 }, { timestamps: true });
 
@@ -55,7 +54,7 @@ const appointmentSchema = new mongoose.Schema({
     ]
 ) */
 
-module.exports = mongoose.model('appointment', appointmentSchema)
+module.exports = model("Appointment", appointmentSchema)
 
 // https://mongoosejs.com/docs/tutorials/dates.html
 

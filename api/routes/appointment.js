@@ -5,12 +5,12 @@ const User = require("../models/User");
 const BranchOffice = require("../models/BranchOffice");
 const parseId = require("../utils/functions");
 
-//Crear un nuevo turno  -> create and save. Put use updateOne
+//Crear un nuevo turno
 router.post("/:id", async (req, res) => {
   const userId = req.params.id;
-  console.log("***USER ID***", userId);
   const { date, month, year, day, time } = req.body;
   const branchOfficeId = req.body._id;
+  console.log("***BRANCH OFFICE ID***", branchOfficeId);
 
   const newAppointment = new Appointment({
     date,
@@ -19,78 +19,69 @@ router.post("/:id", async (req, res) => {
     day,
     time,
   });
+  console.log("***NEW APPOINTMENT***", newAppointment);
 
   try {
+    const branchOffice = await BranchOffice.findOne({
+      _id: parseId(branchOfficeId),
+    });
+    console.log("***BRANCH OFFICE***", branchOffice);
+    const appointment = await Appointment.findOne({
+      date,
+      month,
+      year,
+      day,
+      time,
+      branchOffice: branchOfficeId,
+    });
+    console.log("***APPOINTMENT***", appointment);
 
-/*
-const turnosTomados = Appointment.count({day:02})
-if(simultAppointment === 1){
-    if(turnosTomados==simultAppointment){
-        no hay turno disponible
+    if (appointment == null) {
+      const saveAppointment = await newAppointment.save();
+      console.log("***SAVE APPOINTMENT DE UNO NULL***", saveAppointment);
+      const updateBranchOffice = await BranchOffice.updateOne(
+        { _id: branchOfficeId },
+        { $push: { appointment: saveAppointment._id } }
+      );
+      console.log("***UPDATE BRANCH OFFICE DE UNO NULL***", updateBranchOffice);
+      const updateUser = await User.updateOne(
+        { _id: userId },
+        { $push: { appointment: saveAppointment._id } }
+      );
+      console.log("SOY BRANCH SIMUL AP", branchOffice.simultAppointment);
+      console.log("***UPDATE USER DE UNO NULL***", updateUser);
+      return res.status(200).json("Turno creado");
     }
-    else {
-        crear el turno
+
+    if (branchOffice.simultAppointment === 1) {
+      if (appointment) {
+        console.log("SOY EL TURNO QUE EXISTE", appointment);
+        return res.json({ error: "Turno no disponible" });
+      }
+    } else if (branchOffice.simultAppointment > 1) {
+      if (appointment.length >= branchOffice.simultAppointment) {
+        console.log("***APPOINTMENT LENGTH***", appointment.length);
+        return res.json({ error: "Turno no disponible" });
+      } else {
+        const saveAppointment = await newAppointment.save();
+        const updateBranchOffice = await BranchOffice.updateOne(
+          { _id: branchOfficeId },
+          { $push: { appointment: saveAppointment._id } }
+        );
+        const updateUser = await User.updateOne(
+          { _id: userId },
+          { $push: { appointment: saveAppointment._id } }
+        );
+        //console.log("***SAVE APPOINTMENT***", saveAppointment);
+        //console.log("***UPDATEBRANCH***", updateBranchOffice);
+        //console.log("***UPDATEUSER***", updateUser);
+        return res.status(200).json("Turno creado");
+      }
     }
-  }
-
-
-if(simultAppointment > 1){
-    if(turnosTomados==simultAppointment){
-        no hay turno disponible
-    }
-    else {
-        crear el turno
-    }
-}
-
-    1) No hay turnos simultaneos -> no hay turno disponible
-    2) Hay turnos simultaneos -> 1
-     2.1) consultaTurnos >= simultAppointment -> GRIS
-     2.2) consultaTurnos < simultAppointment
-
-
-     2 personas atiendose
-
-     0 - 1 turno en simultaneo
-     1 - 2 personas en simultaneo
-
-     2 = 2 igual
-
-}
-
-*/
-    const saveAppointment = await newAppointment.save();
-    res.json({ error: null, data: saveAppointment });
   } catch (error) {
     res.status(404).json(error);
   }
-
-
-//   async function update_subscription_status(id) {
-//     await User.updateOne(
-//       { chat_id: id },
-//       [ { "$set": { "mailing": { "$eq": [false, "$mailing"] } } } ]
-//     )
-// }
-
-
-  
-  //   console.log("***ID DE LA SUCURSAL***", branchOfficeId);
-  //   Appointment.updateOne(
-  //     { userId },
-  //     { $set: { date, hour, id } },
-  //     (err, result) => {
-  //       if (err) {
-  //         console.log(err);
-  //         res.json({ error: err });
-  //       } else {
-  //         res.json({ data: result });
-  //       }
-  //     }
-  //   );
 });
-
-
 
 //Cancelar un turno - modificar estado en la base de datos
 
