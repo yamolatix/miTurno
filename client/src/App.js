@@ -1,6 +1,6 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-
+import TurnosUsers from "./views/TurnosUser";
 import General from "./views/General";
 import Register from "./views/Register";
 import Login from "./views/Login";
@@ -18,6 +18,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/layout" element={<General />} />
         <Route path="/users" element={<Users />} />
+        <Route path="/calendar" element={<TurnosUsers />} />
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
         <Route path="/myaccount" element={<MyAccount />} />
