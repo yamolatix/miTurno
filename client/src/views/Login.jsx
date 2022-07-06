@@ -6,10 +6,14 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { userLogin, userLogout } from '../features/user';
 import style from "../styles/General.module.css";
+import parseJwt from '../hooks/parseJwt';
 
 
 function Login() {
   
+   
+ 
+
   const navigate = useNavigate();
 
   const [email, setEmail] = useState();
@@ -26,14 +30,22 @@ function Login() {
       email,
       password,
     })
-    ).then(() => (
-      localStorage.getItem("user") 
-      ? navigate("/users") 
-      : alert('Problema en el login')
-      ));
+    ).then((user) => {
+      const token = JSON.parse(localStorage.getItem("user")).data.token;
+      const payload = parseJwt(token)
+      console.log(payload)
+      
+        payload.admin
+        ? navigate("/users") 
+        : payload.operator
+        ? navigate("/register")
+        : navigate("/welcome")
+      })
+      .catch(err => alert('Problema en el login'))
+
   }
   
-  return (
+  return (  
     
     <div className={style.mainContainer}>
       <div className={style.logoContainer}>
