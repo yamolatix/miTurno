@@ -46,10 +46,12 @@
 
 .contentContainer {
     background-color: white;
-    flex-grow: 6;
-    display:flex;
+    flex-grow: 8;
+    display: flexbox;
     align-items: center;
     flex-basis: 0;
+    margin-top: 15%;
+    
      
 }
   
