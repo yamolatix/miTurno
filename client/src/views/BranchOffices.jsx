@@ -36,10 +36,10 @@ const BranchOffices = ({ selectOffice }) => {
         `http://localhost:3001/api/branchOffice/admin/${payload.id}/showBranch`
       )
       .then((res) => {
-        console.log(res.data.data);
         const officesConstructor = res.data.data.map((office, i) => {
           return {
             _id: office._id,
+            operator: office.operator,
             id: office._id.slice(-4),
             name: office.location + " - " + office.address,
             isOpen:
@@ -239,7 +239,7 @@ const BranchOffices = ({ selectOffice }) => {
             />
           </div>
           <div className={style.buttonsContainer}>
-            <Button variant="secondary" className={style.buttons}>
+            <Button href="/newOffice" variant="secondary" className={style.buttons}>
               + Agregar sucursal
             </Button>
           </div>

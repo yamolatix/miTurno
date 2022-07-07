@@ -61,10 +61,14 @@
   list-style-type: none;
   margin: 0 10px;
   padding: 0;
-  line-height: 2.3rem;
+  line-height: 2.4rem;
 }
 
 .generalContainerTitle {
   display: flex;
   justify-content: space-between;
+}
+
+li {
+  display: flex;
 }

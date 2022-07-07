@@ -59,11 +59,11 @@ router.get("/showBranch", async (req, res) => {
 // Eliminar una sucursal
 router.delete("/admin/:adminId/delete/:id", async (req, res) => {
   const { adminId } = req.params;
-  const userAdmin = await User.findOne({ _id: operation.parseId(adminId) });
+  const userAdmin = await User.findOne({ _id: parseId(adminId) });
   const { id } = req.params;
   try {
     if (userAdmin.admin === true && adminId !== id) {
-      await BranchOffice.deleteOne({ _id: operation.parseId(id) });
+      await BranchOffice.deleteOne({ _id: parseId(id) });
       res.sendStatus(204);
     } else if (adminId === id) {
       res.send("You can't remove the permission yourself").status(404);
@@ -78,6 +78,7 @@ router.put("/admin/:adminId/:id", async (req, res) => {
   const { adminId } = req.params;
   const { id } = req.params;
   const {
+    location,
     address,
     phone,
     email,
@@ -93,6 +94,7 @@ router.put("/admin/:adminId/:id", async (req, res) => {
       BranchOffice.updateOne(
         { _id: parseId(id) },
         {
+          location,
           address,
           phone,
           email,
