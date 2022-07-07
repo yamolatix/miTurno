@@ -48,7 +48,6 @@ router.get("/showBranch", async (req, res) => {
     if (err) {
       res.json({ error: "Error" });
     } else {
-      console.log("SOY SHOWBRANCH", result);
       res.json({ data: result });
     }
   })
@@ -155,7 +154,7 @@ router.get(
   }
 );
 
-//Vincular o reemplaza un operador a una sucursal
+//Vincular y reemplaza un operador a una sucursal
 router.put("/admin/:adminId/showBranch/:branchId", async (req, res) => {
   const { adminId, branchId } = req.params;
   const operatorId = req.body._id;
@@ -248,7 +247,9 @@ module.exports = router;
 // operador mati: 62bee82135190159ce3e27a9
 // operador jeremias: 62bddee0d843833f35b73b2d
 
-// sucursal rio grande : 62bdf6cbe3c929d02eb7fb37
+// cliente toby : 62beff7c51268ea8474992c3
+// cliente gin tonic : 62c09e309e251bce4f8e60d8
+
 // sucursal moron: 62bdf17db8df123f8e53db4e
 // sucrusal ramos 62bdf1bcb8df123f8e53db4f
 // rio grande 999 : 62bdf84c61b143bec7f4a399
