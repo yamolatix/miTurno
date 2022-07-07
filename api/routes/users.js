@@ -6,10 +6,10 @@ const parseId = require("../utils/functions");
 
 router.put("/me/:id", (req, res) => {
   const { id } = req.params;
-  const { operator, address, phone, birthdate } = req.body;
+  const { fname, lname, dni, email, operator, address, phone, birthdate } = req.body;
   User.updateOne(
     { _id: parseId(id) },
-    { operator, address, phone, birthdate },
+    { fname, lname, dni, email, operator, address, phone, birthdate },
     (err, docs) => {
       res.send({
         items: docs,

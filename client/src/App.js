@@ -10,6 +10,7 @@ import Users from "./views/Users";
 import MyAccount from "./views/MyAccount";
 import BranchOffices from "./views/BranchOffices";
 import OfficeDetails from "./views/OfficeDetails";
+import NewOffice from "./views/NewOffice";
 
 import style from "./styles/App.module.css";
 
@@ -37,8 +38,14 @@ function App() {
         />
         <Route
           path="/officeDetails"
-          element={<OfficeDetails office={selectedOffice} />}
+          element={
+            <OfficeDetails
+              office={selectedOffice}
+              selectOffice={selectOffice}
+            />
+          }
         />
+        <Route path="/newOffice" element={<NewOffice />} />
         {/* 
         <Route path="/welcome" element={<Welcome />}/>
         <Route path="/branch_offices" element={<BranchOffices />}/>
