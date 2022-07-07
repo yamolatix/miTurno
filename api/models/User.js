@@ -33,7 +33,7 @@ const userSchema = new Schema(
       type: String,
       required: true,
       minlength: 4,
-      maxlength: 25,
+      maxlength: 255,
     },
     admin: {
       type: Boolean,
