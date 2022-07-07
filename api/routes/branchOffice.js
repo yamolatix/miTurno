@@ -41,21 +41,15 @@ router.post("/admin/:adminId/add", async (req, res) => {
   }
 });
 
-router.get("/admin/:adminId/showBranch", async (req, res) => {
-  const { adminId } = req.params;
-  const userAdmin = await User.findOne({ _id: operation.parseId(adminId) });
-  if (userAdmin.admin === true) {
-    BranchOffice.find({}, (err, result) => {
-      if (err) {
-        res.json({ error: "Error" });
-      } else {
-        res.json({ data: result });
-      }
-    });
-  } else {
-    res.send("You don't have permission to view all branches").status(404);
-  }
-});
+router.get("/showBranch", async (req, res) => {
+  await BranchOffice.find({}, (err, result) => {
+        if (err) {
+          res.json({ error: "Error" });
+        } else {
+          res.json({ data: result });
+        }
+      });
+  });
 
 router.put("/admin/:adminId/:id", async (req, res) => {
   const { adminId } = req.params;

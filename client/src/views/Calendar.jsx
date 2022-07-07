@@ -1,6 +1,7 @@
 import React,  { useState } from "react";
 import DatePicker from "react-datepicker"
-
+import { registerLocale, setDefaultLocale } from  "react-datepicker";
+import es from 'date-fns/locale/es';
 import setHours from "date-fns/setHours";
 import setMinutes from "date-fns/setMinutes";
 import addDays from  "date-fns/addDays"
@@ -8,7 +9,7 @@ import getDay from "date-fns/getDay"
 
 
 import "react-datepicker/dist/react-datepicker.css"
-//import style from "../styles/Users.module.css";
+import style from "../styles/Users.module.css";
 
 const Calendar = () => {
     //const [sucursal, setSucursal] = useState({}) 
@@ -58,7 +59,11 @@ const Calendar = () => {
         let stock = 0
         backArr.forEach(e => stock += e[str] || 0 ) */
       const strTime = time.toTimeString().slice(0, 5)  
-      return manyStockTimes.includes(strTime) ? "text-success" : "text-error";
+      return manyStockTimes.includes(strTime) 
+        ? "text-success" 
+        : fewStockTimes.includes(strTime)
+        ? "text-warning"
+        : null;
     };
     const disabledDates = [
     new Date(2022, 6, 6),
@@ -69,9 +74,15 @@ const Calendar = () => {
       return !sucursal.daysOff.includes(day)
     }
 
+    registerLocale('es', es)
+
     return (
+      <>
+      
       <DatePicker
         inline
+        locale='es'
+        calendarStartDay={0}
         minDate={new Date()}
         maxDate={addDays(new Date(), 21)}
         timeIntervals={15}
@@ -89,7 +100,10 @@ const Calendar = () => {
         filterDate={isWeekday}
         excludeTimes={timesExcluded}
         excludeDates={disabledDates}
+        //withPortal
       />
+       {console.log('DATE ELEGIDO ES', startDate)}
+      </>
     );
 };
 
