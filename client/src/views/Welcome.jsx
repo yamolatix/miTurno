@@ -3,14 +3,9 @@ import Button from "react-bootstrap/esm/Button";
 import { Link } from "react-router-dom";
 import parseJwt from "../hooks/parseJwt";
 
-import style from "../styles/General.module.css";
+import style from "../styles/Welcome.module.css";
 
 const Welcome = () => {
-   /*  const token = JSON.parse(localStorage.getItem("user").padStart.token);
-    const payload = parseJwt(token)
-    console.log(payload)
- */
-
 
   return (
     <div className={style.mainContainer}>
@@ -27,14 +22,14 @@ const Welcome = () => {
         />
       </div>
         <div className={style.contentContainer}>
-            <div className={style.boton}>
+            <div>
                 <Link to="/calendar">
-                    <h3>Sacar un turno</h3>    
+                    <h3>Sacar un turno</h3>
                 </Link>
             </div>
-            <div className={style.boton}>
+            <div >
                 <Link to="/">
-                    <h3>Ver mis turnos</h3>    
+                    <h3>Ver mis turnos</h3>
                 </Link>
             </div>
             
