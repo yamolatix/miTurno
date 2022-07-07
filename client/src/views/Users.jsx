@@ -11,6 +11,7 @@ import filterFactory, {
 } from "react-bootstrap-table2-filter";
 import paginationFactory from "react-bootstrap-table2-paginator";
 import parseJwt from "../hooks/parseJwt";
+import capitalize from "../hooks/capitalize";
 
 import style from "../styles/Users.module.css";
 
@@ -38,8 +39,8 @@ const Users = () => {
           return {
             _id: user._id,
             id: user._id.slice(-4),
-            lname: user.lname,
-            fname: user.fname,
+            lname: capitalize(user.lname),
+            fname: capitalize(user.fname),
             dni: user.dni,
             role: user.admin ? "AD" : user.operator ? "OP" : "CL",
             actions: user.admin ? (

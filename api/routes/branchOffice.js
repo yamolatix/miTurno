@@ -15,6 +15,7 @@ router.post("/admin/:adminId/add", async (req, res) => {
     endTime,
     daysOff,
     simultAppointment,
+    price,
   } = req.body;
   const newBranchOffice = new BranchOffice({
     location,
@@ -25,6 +26,7 @@ router.post("/admin/:adminId/add", async (req, res) => {
     endTime,
     daysOff,
     simultAppointment,
+    price,
   });
   const { adminId } = req.params;
   try {
