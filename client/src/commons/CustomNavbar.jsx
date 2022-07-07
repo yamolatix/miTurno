@@ -4,6 +4,7 @@ import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import { useNavigate } from "react-router-dom";
 import parseJwt from "../hooks/parseJwt";
+import capitalize from "../hooks/capitalize"
 
 import style from "../styles/CustomNavbar.module.css";
 
@@ -31,8 +32,11 @@ const CustomNavbar = () => {
               alt="Logo mi turno"
             />
           </Navbar.Brand>
+
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <a className="navbar-brand ms-5" href="#">Hola {capitalize(payload.fname)}</a>
           <Navbar.Collapse id="basic-navbar-nav">
+          
             <Nav className="ms-auto">
               {role === "AD" ? (
                 <>

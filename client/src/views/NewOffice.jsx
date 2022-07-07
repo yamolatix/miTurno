@@ -148,7 +148,7 @@ const NewOffice = () => {
                                   ? "form-control is-invalid"
                                   : "form-control"
                               }
-                              type="text"
+                              type="email"
                             />
                             {formik.touched.name && formik.errors.name ? (
                               <div className="invalid-feedback">
@@ -174,7 +174,7 @@ const NewOffice = () => {
                                   ? "form-control is-invalid"
                                   : "form-control"
                               }
-                              type="text"
+                              type="number"
                             />
                             {formik.touched.name && formik.errors.name ? (
                               <div className="invalid-feedback">
@@ -193,7 +193,7 @@ const NewOffice = () => {
                                   ? "form-control is-invalid"
                                   : "form-control"
                               }
-                              type="text"
+                              type="number"
                             />
                             {formik.touched.name && formik.errors.name ? (
                               <div className="invalid-feedback">
@@ -212,7 +212,7 @@ const NewOffice = () => {
                                   ? "form-control is-invalid"
                                   : "form-control"
                               }
-                              type="text"
+                              type="number"
                             />
                             {formik.touched.name && formik.errors.name ? (
                               <div className="invalid-feedback">
@@ -231,7 +231,7 @@ const NewOffice = () => {
                                   ? "form-control is-invalid"
                                   : "form-control"
                               }
-                              type="text"
+                              type="number"
                             />
                             {formik.touched.name && formik.errors.name ? (
                               <div className="invalid-feedback">

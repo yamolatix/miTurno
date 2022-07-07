@@ -6,7 +6,8 @@ const parseId = require("../utils/functions");
 
 router.put("/me/:id", (req, res) => {
   const { id } = req.params;
-  const { fname, lname, dni, email, operator, address, phone, birthdate } = req.body;
+  const { fname, lname, dni, email, operator, address, phone, birthdate } =
+    req.body;
   User.updateOne(
     { _id: parseId(id) },
     { fname, lname, dni, email, operator, address, phone, birthdate },
@@ -15,6 +16,10 @@ router.put("/me/:id", (req, res) => {
         items: docs,
       });
     }
+  ).then(
+    User.findOne({ _id: id }, (err, result) => {
+      res.send(result);
+    })
   );
 });
 
@@ -83,4 +88,3 @@ router.put("/admin/:adminId/role/:id", async (req, res) => {
 });
 
 module.exports = router;
-

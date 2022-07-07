@@ -6,6 +6,7 @@ import Button from "react-bootstrap/Button";
 import parseJwt from "../hooks/parseJwt";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
+import capitalize from "../hooks/capitalize"
 
 import style from "../styles/MyAccount.module.css";
 

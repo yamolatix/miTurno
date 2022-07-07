@@ -12,6 +12,7 @@ import filterFactory, {
 import paginationFactory from "react-bootstrap-table2-paginator";
 import Button from "react-bootstrap/esm/Button";
 import parseJwt from "../hooks/parseJwt";
+import capitalize from "../hooks/capitalize";
 
 import style from "../styles/BranchOffices.module.css";
 import { Navigate } from "react-router-dom";
@@ -24,7 +25,6 @@ const BranchOffices = ({ selectOffice }) => {
 
   const token = JSON.parse(localStorage.getItem("user")).data.token;
   const payload = parseJwt(token);
-  console.log(payload);
 
   useEffect(() => {
     loadOffices();
@@ -32,16 +32,14 @@ const BranchOffices = ({ selectOffice }) => {
 
   const loadOffices = () => {
     axios
-      .get(
-        `http://localhost:3001/api/branchOffice/admin/${payload.id}/showBranch`
-      )
+      .get(`http://localhost:3001/api/branchOffice/showBranch`)
       .then((res) => {
         const officesConstructor = res.data.data.map((office, i) => {
           return {
             _id: office._id,
             operator: office.operator,
             id: office._id.slice(-4),
-            name: office.location + " - " + office.address,
+            name: capitalize(office.location + " - " + office.address),
             isOpen:
               office.startTime.toString() +
               ":00 a " +
@@ -74,7 +72,6 @@ const BranchOffices = ({ selectOffice }) => {
             ),
           };
         });
-        console.log(officesConstructor);
         setOffices(officesConstructor);
       })
       .catch((err) => console.log(err));
@@ -91,7 +88,6 @@ const BranchOffices = ({ selectOffice }) => {
         `http://localhost:3001/api/branchOffice/admin/${payload.id}/delete/${id}`
       )
       .then((res) => {
-        console.log(res);
         setLoad(!load);
       })
       .catch((err) => console.log(err));
@@ -239,7 +235,11 @@ const BranchOffices = ({ selectOffice }) => {
             />
           </div>
           <div className={style.buttonsContainer}>
-            <Button href="/newOffice" variant="secondary" className={style.buttons}>
+            <Button
+              href="/newOffice"
+              variant="secondary"
+              className={style.buttons}
+            >
               + Agregar sucursal
             </Button>
           </div>
