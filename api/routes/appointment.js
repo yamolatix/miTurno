@@ -5,8 +5,6 @@ const User = require("../models/User");
 const BranchOffice = require("../models/BranchOffice");
 const parseId = require("../utils/functions");
 
-// 62c712f4c261b4d23d5b93b6
-
 // Collecion Appointment: no impacta a la sucursal a la que pertenece
 // Collecion BranchOffice: no impactan los appointments
 //Collecion User: no impacta el appointment
@@ -14,8 +12,8 @@ const parseId = require("../utils/functions");
 //A - Crear un nuevo turno
 router.post("/:id", async (req, res) => {
   const userId = req.params.id;
-  const { date, month, year, day, time } = req.body;
-  const branchOfficeId = req.body._id;
+  const { date, month, year, day, time, id } = req.body;
+  const branchOfficeId = req.body.id;
 
   const newAppointment = new Appointment({
     date,
@@ -28,93 +26,117 @@ router.post("/:id", async (req, res) => {
   });
   // Busco turno para ese mismo dia, horario, sucursal
   //ej Hoy 15:00 en RG1
+
   try {
     const branchOffice = await BranchOffice.findOne({
       _id: parseId(branchOfficeId),
     });
-    const appointment = await Appointment.findOne({
+    const appointment = await Appointment.find({
       date,
       month,
       year,
       day,
       time,
-      branchOffice: branchOfficeId
+      branchOffice: branchOfficeId,
+    });
+    //APPOINTMENTFALSE = Turno tomado
+    const appointmentFALSE = await Appointment.find({
+      date,
+      month,
+      year,
+      day,
+      time,
+      branchOffice: branchOfficeId,
+      available: false,
+    });
+    //APPOINTMENTTRUE = Turno cancelado
+    const appointmentTRUE = await Appointment.find({
+      date,
+      month,
+      year,
+      day,
+      time,
+      branchOffice: branchOfficeId,
+      available: true,
     });
 
-    // (A.1) Existe en Base Appoiment un turno para ese mismo dia, horario, sucursa
-    if (appointment == null) {
+    console.log("SOY APPOINTMENFALSE", appointmentFALSE.length);
+    console.log("SOY APPOINTMENTRUE", appointmentTRUE.length);
 
-    // (A.1.1) No Exise. Lo tomo
+    // (A.1) Existe en Base Appoiment un turno para ese mismo dia, horario, sucursa
+    if (appointment === null) {
+      // (A.1.1) No Exise. Lo tomo
       const saveAppointment = await newAppointment.save();
 
-       // Tomo turno nuevo - cambios en collection BrandOffice 
+      // Tomo turno nuevo - cambios en collection BrandOffice
       const updateBranchOffice = await BranchOffice.updateOne(
         { _id: branchOfficeId },
         { $push: { appointment: parseId(saveAppointment._id) } }
-      ).populate("branchOffice")
+      ).populate("branchOffice");
 
-       // Tomo turno nuevo - cambios en collection User 
+      // Tomo turno nuevo - cambios en collection User
       const updateUser = await User.updateOne(
         { _id: userId },
-        { $push: { appointment: parseId(saveAppointment._id) } }
-      ).populate("user")
+        {
+          $push: {
+            appointment: parseId(saveAppointment._id),
+            state: "reservado",
+          },
+        }
+      ).populate("user");
 
-      // Tomo turno nuevo - cambios en collection Appoinment 
-      await Appointment.findOneAndUpdate({ _id: parseId(saveAppointment._id) }, [
-        { $set: { available: { $eq: [false, "$available"] } } },
-      ])
-
-      await Appointment.findOneAndUpdate({ _id: parseId(saveAppointment._id) }, [
-        { $set: { state: state } },
-      ])
-
+      // Tomo turno nuevo - cambios en collection Appoinment
+      await Appointment.findOneAndUpdate(
+        { _id: parseId(saveAppointment._id) },
+        [{ $set: { available: { $eq: [false, "$available"] } } }]
+      );
+      await Appointment.findOneAndUpdate(
+        { _id: parseId(saveAppointment._id) },
+        [{ $set: { state: "reservado" } }]
+      );
       return res.status(200).json("Turno creado");
     }
-    // (A.1.2) Si existe 
+    // (A.1.2) Si existe
 
     // (A.2) Permite Base brandOffice otro turno en simultaneo
-    if (appointment && branchOffice.simultAppointment === 1) {
-
-      // (A.2.1) No, no permite
-      return res.json({ error: "Turno no disponible" });
-    }
-
-    // (A.2.2) Si permite
-    else if (appointment && branchOffice.simultAppointment > 1) {
-
-    // (A.3) La cantidad de turnos actuales mas el que estoy pidiendo superan el limite de esa sucursal?
-    // ej: tengo 4 turnos [0,1,2,3] y la sucursal permite 4 en simultaneo
-      if (appointment.length >= branchOffice.simultAppointment) {
-
-      // (A.3.1) Si lo supera,no tomo turno
+    if (appointment) {
+      if (branchOffice.simultAppointment === 1) {
+        // (A.2.1) No, no permite
         return res.json({ error: "Turno no disponible" });
       }
-      // (A.3.2) no lo supera, tomo turno
+      // (A.2.2) Si permite
       else {
-        const saveAppointment = await newAppointment.save();
+        // (A.3) La cantidad de turnos actuales mas el que estoy pidiendo superan el limite de esa sucursal?
+        // ej: tengo 4 turnos [0,1,2,3] y la sucursal permite 4 en simultaneo
+        if (appointmentFALSE.length < branchOffice.simultAppointment) {
+          // (A.3.2) no lo supera, tomo turno
+          const saveAppointment = await newAppointment.save();
 
-        const updateBranchOffice = await BranchOffice.updateOne(
-          { _id: branchOfficeId },
-          { $push: { appointment: parseId(saveAppointment._id) } }
-        ).populate("branchOffice")
+          const updateBranchOffice = await BranchOffice.updateOne(
+            { _id: branchOfficeId },
+            { $push: { appointment: parseId(saveAppointment._id) } }
+          ).populate("branchOffice");
 
-        const updateUser = await User.updateOne(
-          { _id: userId },
-          { $push: { appointment: parseId(saveAppointment._id) } }
-        ).populate("user")
+          const updateUser = await User.updateOne(
+            { _id: userId },
+            { $push: { appointment: parseId(saveAppointment._id) } }
+          ).populate("user");
 
-        // const data = await Appointment.schema.path('status').options.enum;
-        // console.log(data); 
-
-        await Appointment.findOneAndUpdate({ _id: parseId(saveAppointment._id) }, [
-          { $set: { available: { $eq: [false, "$available"] } } },
-        ])
-
-        await Appointment.findOneAndUpdate({ _id: parseId(saveAppointment._id) }, [
-          { $set: { state: { $eq: ["reservado", "$state"] } } },
-        ])
-
-        return res.status(200).json("Turno creado");
+          // const data = await Appointment.schema.path('status').options.enum;
+          // console.log(data);
+          await Appointment.findOneAndUpdate(
+            { _id: parseId(saveAppointment._id) },
+            [{ $set: { available: { $eq: [false, "$available"] } } }]
+          );
+          await Appointment.findOneAndUpdate(
+            { _id: parseId(saveAppointment._id) },
+            [{ $set: { state: "reservado" } }]
+          );
+          return res.status(200).json("Turno creado");
+        } else {
+          // (A.3.1) Si lo supera,no tomo turno
+          return res.json({ error: "Turno no disponible" });
+        }
       }
     }
   } catch (error) {
@@ -122,7 +144,65 @@ router.post("/:id", async (req, res) => {
   }
 });
 
-//Cancelar un turno - modificar estado en la base de datos
+//Cancelar un turno - (modificar estado en la base de datos) - por un usuario
+router.put("/:userId/myAppointment/remove", async (req, res) => {
+  const { userOperatorId } = req.params;
+  const appointmentId = req.body.id; //no sabemos como lo trae es el id del turno
+  try {
+    await Appointment.findOneAndUpdate({ _id: parseId(appointmentId) }, [
+      { $set: { available: { $eq: [false, "$available"] } } },
+    ]);
+    await Appointment.findOneAndUpdate({ _id: parseId(appointmentId) }, [
+      { $set: { state: "cancelado" } },
+    ]);
+    res.status(200).json("Turno cancelado");
+  } catch (err) {
+    res.status(404).json(err);
+  }
+});
+
+//Mostrar todos los turnos de un usuario
+
+// findById(id) is almost* equivalent to findOne({ _id: id })
+
+router.get("/:id/showAppointments", async (req, res) => {
+  const { id } = req.params;
+  console.log("**ID DE PARAMS**",id )
+  try {
+    await Appointment.findOne({ user: id } , (err, result) => {
+      if (err) {
+        return res.json({ err: "Error" });
+      } else {
+        console.log(result)
+        return res.json({ data: result });
+      }
+    }).clone().exec();
+  } catch (err) {
+    res.status(404).json(err);
+  }
+});
+
+//Confirmar un turno - operador - VER CON MATI
+
+router.put("/:operatorId/showAppointments", async (req, res) => {
+  const { operatorId } = req.params;
+  const appointmentId = req.body.id;
+  try {
+    const userOperator = await User.findOne({ _id: parseId(operatorId) });
+    if (userOperator.operator === true) {
+      await Appointment.findOneAndUpdate({ _id: parseId(appointmentId) }, [
+        { $set: { state: "asistido" } },
+      ]);
+      res.status(200).json("Turno asistido/confirmado");
+    } else {
+      res
+        .send("You don't have permission to create a new branch office")
+        .status(404);
+    }
+  } catch (err) {
+    res.status(404).json(err);
+  }
+});
 
 //Mostrar todos los turnos con el formato de arreglo de objetos
 router.get("/", (req, res) => {
