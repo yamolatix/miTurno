@@ -1,6 +1,7 @@
 import React from "react";
 import Button from "react-bootstrap/Button";
 import style from "../styles/Users.module.css";
+import capitalize from "../hooks/capitalize";
 
 const UserDetails = ({ user, handleDelete, handleRoleChange }) => {
   console.log(user.lname);
@@ -10,9 +11,9 @@ const UserDetails = ({ user, handleDelete, handleRoleChange }) => {
       <h5>Detalle de usuario</h5>
       <ul>
         <li>ID: {user._id}</li>
-        <li>Rol: {user.admin ? "AD" : user.operator ? "OP" : "CL"}</li>
-        <li>Apellido: {user.lname}</li>
-        <li>Nombre: {user.fname}</li>
+        {/* <li>Rol: {user.admin ? "AD" : user.operator ? "OP" : "CL"}</li> */}
+        <li>Apellido: {capitalize(user.lname)}</li>
+        <li>Nombre: {capitalize(user.fname)}</li>
         <li>DNI: {user.dni}</li>
         <li>E-mail: {user.email}</li>
         <li>Fecha de nacimiento: {user.birthdate}</li>

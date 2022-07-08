@@ -10,6 +10,8 @@ import filterFactory, {
   selectFilter,
 } from "react-bootstrap-table2-filter";
 import paginationFactory from "react-bootstrap-table2-paginator";
+import parseJwt from "../hooks/parseJwt";
+import capitalize from "../hooks/capitalize";
 
 import style from "../styles/Users.module.css";
 
@@ -19,13 +21,17 @@ const Users = () => {
   const [load, setLoad] = useState(true);
   const [selectedUser, setSelectedUser] = useState({});
 
+  const token = JSON.parse(localStorage.getItem("user")).data.token;
+  const payload = parseJwt(token);
+  console.log(payload);
+
   useEffect(() => {
     loadUsers();
   }, [load]);
 
   const loadUsers = () => {
     axios
-      .get(`http://localhost:3001/api/users/showUsers`)
+      .get(`http://localhost:3001/api/users/admin/${payload.id}/showUsers`)
       .then((res) => {
         console.log(res.data.data);
         setUsersRaw(res.data.data);
@@ -33,8 +39,8 @@ const Users = () => {
           return {
             _id: user._id,
             id: user._id.slice(-4),
-            lname: user.lname,
-            fname: user.fname,
+            lname: capitalize(user.lname),
+            fname: capitalize(user.fname),
             dni: user.dni,
             role: user.admin ? "AD" : user.operator ? "OP" : "CL",
             actions: user.admin ? (
@@ -77,7 +83,7 @@ const Users = () => {
     if (isAdmin) console.log("No se puede cambiar rol de un administrador");
     else
       axios
-        .put(`http://localhost:3001/api/users/me/${id}`, {
+        .put(`http://localhost:3001/api/users/admin/${payload.id}/role/${id}`, {
           operator: !isOperator,
         })
         .then((res) => {
@@ -90,7 +96,7 @@ const Users = () => {
 
   const handleDelete = (id) => {
     axios
-      .delete(`http://localhost:3001/api/users/delete/${id}`)
+      .delete(`http://localhost:3001/api/users/admin/${payload.id}/delete/${id}`)
       .then((res) => {
         console.log(res);
         setSelectedUser({});

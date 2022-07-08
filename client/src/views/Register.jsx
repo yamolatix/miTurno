@@ -8,9 +8,11 @@ import { useNavigate, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { userRegister } from "../features/user";
 import style from "../styles/General.module.css";
+import { usePasswordToggle } from "../utils/togglePasswordVisibility";
 
 function Register() {
   const navigate = useNavigate();
+  const [inputType, icon] = usePasswordToggle();
 
   /* const [fname, setFname] = useState();
   const [lname, setLname] = useState();
@@ -202,13 +204,16 @@ function Register() {
                   <Field
                     name="password"
                     placeholder="Al menos: 8 caracteres, 1 mayúscula, 1 minúscula y 1 número"
-                    type="password"
+                    type={inputType}
                     className={
                       formik.touched.password && formik.errors.password
                         ? "form-control is-invalid"
                         : "form-control"
                     }
                   />
+                  <span className="password-toogle-icon">
+                    ICON {icon}
+                  </span>
                   {formik.touched.password && formik.errors.password ? (
                     <div className="invalid-feedback">
                       {formik.errors.password}

@@ -17,9 +17,23 @@
   justify-content: center;
 }
 
+#dropBranches {
+  margin: 15px auto;
+  width: 50%;
+}
+
 .tableContainer {
   width: 90%;
   margin-top: 40px;
+  text-align: center;
+}
+
+.calendarContainer {
+  padding: 20px;
+  width: 50%;
+  margin: 40px auto;
+  background-color: aquamarine;
+  text-align: center;
 }
 
 .userDetails > ul {
