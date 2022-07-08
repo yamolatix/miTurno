@@ -26,7 +26,7 @@ router.post("/:id", async (req, res) => {
   });
   // Busco turno para ese mismo dia, horario, sucursal
   //ej Hoy 15:00 en RG1
-
+  console.log("SOY NEWAPPOINT", newAppointment);
   try {
     const branchOffice = await BranchOffice.findOne({
       _id: parseId(branchOfficeId),
@@ -39,6 +39,7 @@ router.post("/:id", async (req, res) => {
       time,
       branchOffice: branchOfficeId,
     });
+    console.log("SOY APPOINT", appointment);
     //APPOINTMENTFALSE = Turno tomado
     const appointmentFALSE = await Appointment.find({
       date,
@@ -60,11 +61,11 @@ router.post("/:id", async (req, res) => {
       available: true,
     });
 
-    console.log("SOY APPOINTMENFALSE", appointmentFALSE.length);
-    console.log("SOY APPOINTMENTRUE", appointmentTRUE.length);
+    console.log("SOY APPOINTMENFALSE", appointmentFALSE);
+    console.log("SOY APPOINTMENTRUE", appointmentTRUE);
 
     // (A.1) Existe en Base Appoiment un turno para ese mismo dia, horario, sucursa
-    if (appointment === null) {
+    if (appointment.length === 0) {
       // (A.1.1) No Exise. Lo tomo
       const saveAppointment = await newAppointment.save();
 
@@ -102,12 +103,17 @@ router.post("/:id", async (req, res) => {
     if (appointment) {
       if (branchOffice.simultAppointment === 1) {
         // (A.2.1) No, no permite
-        return res.json({ error: "Turno no disponible" });
+        return res.json({
+          error:
+            "Turno no disponible dado que no se permiten turnos simultaneos",
+        });
       }
       // (A.2.2) Si permite
       else {
         // (A.3) La cantidad de turnos actuales mas el que estoy pidiendo superan el limite de esa sucursal?
         // ej: tengo 4 turnos [0,1,2,3] y la sucursal permite 4 en simultaneo
+        //Se debe contar el arreglo de turnos con estado no disponible dado que puede haber turnos creados
+        //y disponibles porque fueron cancelados por el cliente, por lo tanto no se cuenta en el arreglo
         if (appointmentFALSE.length < branchOffice.simultAppointment) {
           // (A.3.2) no lo supera, tomo turno
           const saveAppointment = await newAppointment.save();
@@ -135,7 +141,10 @@ router.post("/:id", async (req, res) => {
           return res.status(200).json("Turno creado");
         } else {
           // (A.3.1) Si lo supera,no tomo turno
-          return res.json({ error: "Turno no disponible" });
+          return res.json({
+            error:
+              "Turno no disponible, ya se han otorgado todos los disponibles",
+          });
         }
       }
     }
@@ -144,10 +153,10 @@ router.post("/:id", async (req, res) => {
   }
 });
 
-//Cancelar un turno - (modificar estado en la base de datos) - por un usuario
+//Cancelar un turno por un usuario - (modificar estado en la base de datos)
 router.put("/:userId/myAppointment/remove", async (req, res) => {
-  const { userOperatorId } = req.params;
-  const appointmentId = req.body.id; //no sabemos como lo trae es el id del turno
+  const { userId } = req.params;
+  const appointmentId = req.body.id;
   try {
     await Appointment.findOneAndUpdate({ _id: parseId(appointmentId) }, [
       { $set: { available: { $eq: [false, "$available"] } } },
@@ -161,22 +170,29 @@ router.put("/:userId/myAppointment/remove", async (req, res) => {
   }
 });
 
-//Mostrar todos los turnos de un usuario
+router.put("/:userID/myAppointment/edit", async (req,res)=>{
+  const {userId} = req.params;
+  const { date, month, year, day, time, id } = req.body;
+  const appointmentId = req.body.id;
+  const appointmentToChange = await Appointment.findOne({_id: parseId(appointmentId)})
+})
 
-// findById(id) is almost* equivalent to findOne({ _id: id })
+//Mostrar todos los turnos de un usuario para el mismo
 
 router.get("/:id/showAppointments", async (req, res) => {
   const { id } = req.params;
-  console.log("**ID DE PARAMS**",id )
+  console.log("**ID DE PARAMS**", id);
   try {
-    await Appointment.findOne({ user: id } , (err, result) => {
+    await Appointment.findOne({ user: id }, (err, result) => {
       if (err) {
         return res.json({ err: "Error" });
       } else {
-        console.log(result)
+        console.log(result);
         return res.json({ data: result });
       }
-    }).clone().exec();
+    })
+      .clone()
+      .exec();
   } catch (err) {
     res.status(404).json(err);
   }
