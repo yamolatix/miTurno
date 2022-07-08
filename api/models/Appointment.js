@@ -27,15 +27,15 @@ const appointmentSchema = new Schema({
     },
     state: {
         type: String,
-        enum: ['pendiente de pago', 'reservado', 'cancelado por cliente', 'cancelado por sucursal', 'finalizado'] //reservado, cancelado y confirmado
+        enum: ['pendiente de pago', 'reservado', 'cancelado por cliente', 'cancelado por sucursal', 'asistido'] //reservado, cancelado y confirmado
     },
     branchOffice: [{
         type: Schema.Types.ObjectId,
-        ref: 'BranchOffice'
+        ref: "BranchOffice"
     }],
     user: [{
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: "User"
     }],
     //Box ?
 }, { timestamps: true });

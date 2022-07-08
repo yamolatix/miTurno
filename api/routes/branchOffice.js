@@ -237,19 +237,3 @@ router.put("/admin/:adminId/showBranch/:branchId", async (req, res) => {
 // );
 
 module.exports = router;
-
-
-
-// admin fat: 62bddec0d843833f35b73b29
-//
-// operador dargelos : 62bddf07d843833f35b73b30
-// operador yami: 62bdf4aff70a386319eef430
-// operador mati: 62bee82135190159ce3e27a9
-// operador jeremias: 62bddee0d843833f35b73b2d
-
-// cliente toby : 62beff7c51268ea8474992c3
-// cliente gin tonic : 62c09e309e251bce4f8e60d8
-
-// sucursal moron: 62bdf17db8df123f8e53db4e
-// sucrusal ramos 62bdf1bcb8df123f8e53db4f
-// rio grande 999 : 62bdf84c61b143bec7f4a399
