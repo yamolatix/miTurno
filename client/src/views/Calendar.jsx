@@ -116,6 +116,7 @@ const Calendar = () => {
         selected={pickedDate}
         onChange={(date) => {
           setPickedDate(date)
+          localStorage.setItem('pickedDate', JSON.stringify(date))
           console.log(date)
           }}
         showTimeSelect
