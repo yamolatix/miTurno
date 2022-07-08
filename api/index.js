@@ -6,8 +6,6 @@ const routes = require("./routes/index")
 const cors = require("cors")
 const authRoutes = require('./routes/auth')
 const validaToken = require('./routes/validate-token')
-const admin = require('./routes/admin')
-
 
 //para que funcione el .env
 require("dotenv").config();
@@ -55,7 +53,6 @@ mongoose
 //import routes
 app.use("/api/user", authRoutes)
 app.use("/api", routes)
-// app.use("/api/admin",validaToken, admin )
 
 
 //route middlewares

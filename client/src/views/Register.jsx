@@ -36,7 +36,6 @@ function Register() {
   //   : {};
 
   const handleRegister = (values) => {
-
     dispatch(
       userRegister({
         fname: values.fname,

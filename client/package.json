@@ -50,11 +50,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "overrides": {
-    "@types/eslint": "8.4.3"
-  },
-  "resolutions": {
-    "@types/eslint": "8.4.3"
   }
 }
