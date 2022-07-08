@@ -10,3 +10,4 @@ router.use("/users", userRoutes)
 router.use("/appointment", appointmentRoutes)
 
 module.exports = router;
+
