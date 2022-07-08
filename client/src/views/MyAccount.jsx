@@ -6,21 +6,41 @@ import Button from "react-bootstrap/Button";
 import parseJwt from "../hooks/parseJwt";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
-import capitalize from "../hooks/capitalize"
+import capitalize from "../hooks/capitalize";
 
 import style from "../styles/MyAccount.module.css";
 
 const MyAccount = () => {
   const [isEditing, setIsEditing] = useState(false);
-
+  
   const token = JSON.parse(localStorage.getItem("user")).data.token;
   const payload = parseJwt(token);
   console.log(payload);
 
+  useEffect(() => {
+    loadUserData();
+  }, []);
+
+  const [userData, setUserData] = useState(payload);
+
+  const loadUserData = () => {
+    axios
+      .get(`http://localhost:3001/api/users/me/${payload.id}`)
+      // .then((res) => setUserData(res.data))
+      .then((res) => {
+        console.log(res.data);
+        setUserData(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
   const handleSubmit = (values) => {
     axios
       .put(`http://localhost:3001/api/users/me/${payload.id}`, values)
-      .then((res) => console.log(res))
+      .then((res) => {
+        console.log(res);
+        loadUserData();
+      })
       .catch((err) => console.log(err));
     setIsEditing(false);
   };
@@ -31,13 +51,13 @@ const MyAccount = () => {
       <div className={style.mainContainer}>
         <Formik
           initialValues={{
-            lname: payload.lname,
-            fname: payload.fname,
-            dni: payload.dni,
-            email: payload.email,
-            birthdate: payload.birthdate,
-            phone: payload.phone,
-            address: payload.address,
+            lname: userData.lname,
+            fname: userData.fname,
+            dni: userData.dni,
+            email: userData.email,
+            birthdate: userData.birthdate,
+            phone: userData.phone,
+            address: userData.address,
           }}
           // validationSchema={validate}
           onSubmit={(values) => {
@@ -65,7 +85,7 @@ const MyAccount = () => {
                     <li>
                       ID:&emsp;{payload.id}
                       &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Rol:{" "}
-                      {payload.admin ? "AD" : payload.operator ? "OP" : "CL"}
+                      {userData.admin ? "AD" : userData.operator ? "OP" : "CL"}
                     </li>
                     <li>
                       Apellido:&emsp;
@@ -87,7 +107,7 @@ const MyAccount = () => {
                           ) : null}
                         </div>
                       ) : (
-                        payload.lname
+                        capitalize(userData.lname)
                       )}
                     </li>
                     <li>
@@ -110,7 +130,7 @@ const MyAccount = () => {
                           ) : null}
                         </div>
                       ) : (
-                        payload.fname
+                        capitalize(userData.fname)
                       )}
                     </li>
                     <li>
@@ -133,7 +153,7 @@ const MyAccount = () => {
                           ) : null}
                         </div>
                       ) : (
-                        payload.dni
+                        userData.dni
                       )}
                     </li>
                     <li>
@@ -156,7 +176,7 @@ const MyAccount = () => {
                           ) : null}
                         </div>
                       ) : (
-                        payload.email
+                        userData.email
                       )}
                     </li>
                     <li>
@@ -179,7 +199,7 @@ const MyAccount = () => {
                           ) : null}
                         </div>
                       ) : (
-                        payload.birthdate
+                        userData.birthdate
                       )}
                     </li>
                     <li>
@@ -202,7 +222,7 @@ const MyAccount = () => {
                           ) : null}
                         </div>
                       ) : (
-                        payload.phone
+                        userData.phone
                       )}
                     </li>
                     <li>
@@ -225,7 +245,7 @@ const MyAccount = () => {
                           ) : null}
                         </div>
                       ) : (
-                        payload.address
+                        userData.address ? capitalize(userData.address) : userData.address
                       )}
                     </li>
                   </ul>

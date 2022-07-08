@@ -16,11 +16,18 @@ router.put("/me/:id", (req, res) => {
         items: docs,
       });
     }
-  ).then(
-    User.findOne({ _id: id }, (err, result) => {
-      res.send(result);
-    })
+    // ).then(
+    //   User.findOne({ _id: id }, (err, result) => {
+    //     res.send(result);
+    //   })
   );
+});
+
+router.get("/me/:id", (req, res) => {
+  const { id } = req.params;
+  User.findOne({ _id: id }, (err, result) => {
+    res.send(result);
+  });
 });
 
 //ADMINISTRADOR - PAGINATION
