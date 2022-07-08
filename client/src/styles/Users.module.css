@@ -34,6 +34,8 @@
   margin: 40px auto;
   background-color: aquamarine;
   text-align: center;
+  border: 1px solid grey;
+  border-radius: 20px;
 }
 
 .userDetails > ul {
@@ -45,4 +47,16 @@
 .sideButton {
   margin-top: 20px;
   margin-right: 10px;
+}
+
+.fewStock {
+  text-align: center;
+  margin: 8px auto;
+  color: #ffc107;
+  font-size: medium;
+  background-color: #6c757d;
+  max-width: 324.466px;
+  border: 1px solid grey;
+  border-radius: 5px;
+
 }

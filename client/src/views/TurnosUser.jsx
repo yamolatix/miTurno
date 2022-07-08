@@ -8,7 +8,7 @@ import BranchOfficeSelector from "../commons/BranchOfficeSelector";
 
 const TurnosUsers = () => {
 
-  const initialBranchOffice = {} //definir cómo nos llega la suc seleccionada en Welcome
+  /* const initialBranchOffice = {} //definir cómo nos llega la suc seleccionada en Welcome
   const initialDate = getInitialDate()
   const initialTime = ""
 
@@ -18,18 +18,19 @@ const TurnosUsers = () => {
 
   console.log('SUCURSAL ES ', branchOffice)
   console.log('DATE ES ', date)
-  console.log('TIME ES ', time)
+  console.log('TIME ES ', time) */
 
   return (
+    // condicionar el renderizado del fragment de abajo a que haya un usuario logueado. Si no, redirigir a /login
     <>
       <CustomNavbar />
 
       <div className={style.mainContainer}>      
         <div className={style.sideContainer}>
           <AppointmentDetails
-            branchOffice={branchOffice}
+            /* branchOffice={branchOffice}
             date={date}
-            time={time}
+            time={time} */
           />
         </div>
 
