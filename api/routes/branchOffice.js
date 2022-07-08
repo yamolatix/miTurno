@@ -43,13 +43,15 @@ router.post("/admin/:adminId/add", async (req, res) => {
 
 router.get("/showBranch", async (req, res) => {
   await BranchOffice.find({}, (err, result) => {
-        if (err) {
-          res.json({ error: "Error" });
-        } else {
-          res.json({ data: result });
-        }
-      });
-  });
+    if (err) {
+      res.json({ error: "Error" });
+    } else {
+      res.json({ data: result });
+    }
+  })
+    .clone()
+    .exec();
+});
 
 router.put("/admin/:adminId/:id", async (req, res) => {
   const { adminId } = req.params;
