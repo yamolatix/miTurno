@@ -1,11 +1,11 @@
-const { Schema, model } = require("mongoose");
+const { Schema, model,} = require("mongoose");
 
 function getPrice(value) {
   if (typeof value !== "undefined") {
     return parseFloat(value.toString());
   }
   return value;
-}
+};
 
 const branchOfficeSchema = new Schema(
   {
@@ -21,7 +21,7 @@ const branchOfficeSchema = new Schema(
     },
     phone: {
       type: Number,
-      required: [true, "Phone is required"]
+      required: [true, "Phone is required"],
     },
     email: {
       type: String,
@@ -32,24 +32,35 @@ const branchOfficeSchema = new Schema(
       match: [/.+\@.+\..+/, "Fill a valid email address"],
     },
     startTime: {
-      type: Number,
-      required: [true, "Start time is required"]
+      type: String,
+      maxlength: 5,
+      default: "09:00"
     },
     endTime: {
-      type: Number,
-      required: [true, "End time is required"]
+      type: String,
+      maxlength: 5,
+      default: "18:00"
     },
-    days: {
-      type: Number,
-      required: [true, "Day is required"]
+    daysOff: {
+      type: Array,
+      default: [0,6]
     },
     simultAppointment: {
       type: Number,
-      default: 0
+      default: 1,
     },
+    operator: [{
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    }],
+    appointment: [{
+      type: Schema.Types.ObjectId,
+      ref: "Appointment",
+    }],
     price: {
       type: Schema.Types.Decimal128,
-      default: 0, get: getPrice
+      default: 0,
+      get: getPrice,
     },
     id: false,
   },
@@ -61,4 +72,4 @@ const branchOfficeSchema = new Schema(
 //ver como vamos a manejar los días
 //turnos simultáneos -> ver como se solicitan
 
-module.exports = model("BranchOffice", branchOfficeSchema)
+module.exports = model("BranchOffice", branchOfficeSchema);
