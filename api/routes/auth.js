@@ -56,6 +56,7 @@ router.post("/login", async (req, res) => {
     data: { token },
   });
 });
+
 router.post("/register", async (req, res) => {
   //validaciones de usuarios (registro)
   const { error } = schemaRegister.validate(req.body);
