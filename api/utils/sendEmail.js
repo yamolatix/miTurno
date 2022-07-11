@@ -44,4 +44,14 @@ Usuario Cliente
 id: 62c7131ac261b4d23d5b93be
 correo: franco@gmail.com
 pass: Hola1234
+
+Usuario Cliente
+id: 62c825563f93b0d3b2d46cb6
+correo: diego@gmail.com
+pass: Hola1234
+
+Usuario Cliente
+id: 62c825243f93b0d3b2d46cb2
+correo: matias@gmail.com
+pass: Hola1234
 */

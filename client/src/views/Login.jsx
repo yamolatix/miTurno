@@ -38,7 +38,7 @@ function Login() {
         payload.admin
         ? navigate("/users") 
         : payload.operator
-        ? navigate("/register")
+        ? navigate("/MyAccount")
         : navigate("/welcome")
       })
       .catch(err => alert('Problema en el login'))
