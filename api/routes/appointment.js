@@ -183,7 +183,7 @@ router.get("/:id/showAppointments", async (req, res) => {
   const { id } = req.params;
   console.log("**ID DE PARAMS**", id);
   try {
-    await Appointment.findOne({ user: id }, (err, result) => {
+    await Appointment.find({ user: id }, (err, result) => {
       if (err) {
         return res.json({ err: "Error" });
       } else {
