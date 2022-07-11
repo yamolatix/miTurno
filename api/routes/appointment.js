@@ -4,6 +4,8 @@ const Appointment = require("../models/Appointment");
 const User = require("../models/User");
 const BranchOffice = require("../models/BranchOffice");
 const parseId = require("../utils/functions");
+//const Buscar = require("../utils/Buscar");
+const NewAppointment = require("../utils/NewAppoinment");
 
 // Collecion Appointment: no impacta a la sucursal a la que pertenece
 // Collecion BranchOffice: no impactan los appointments
@@ -12,6 +14,7 @@ const parseId = require("../utils/functions");
 //A - Crear un nuevo turno
 router.post("/:id", async (req, res) => {
   const userId = req.params.id;
+  console.log(userId);
   const { date, month, year, day, time, id } = req.body;
   const branchOfficeId = req.body.id;
 
@@ -60,7 +63,6 @@ router.post("/:id", async (req, res) => {
       branchOffice: branchOfficeId,
       available: true,
     });
-
     console.log("SOY APPOINTMENFALSE", appointmentFALSE);
     console.log("SOY APPOINTMENTRUE", appointmentTRUE);
 
@@ -68,34 +70,9 @@ router.post("/:id", async (req, res) => {
     if (appointment.length === 0) {
       // (A.1.1) No Exise. Lo tomo
       const saveAppointment = await newAppointment.save();
-
-      // Tomo turno nuevo - cambios en collection BrandOffice
-      const updateBranchOffice = await BranchOffice.updateOne(
-        { _id: branchOfficeId },
-        { $push: { appointment: parseId(saveAppointment._id) } }
-      ).populate("branchOffice");
-
-      // Tomo turno nuevo - cambios en collection User
-      const updateUser = await User.updateOne(
-        { _id: userId },
-        {
-          $push: {
-            appointment: parseId(saveAppointment._id),
-            state: "reservado",
-          },
-        }
-      ).populate("user");
-
-      // Tomo turno nuevo - cambios en collection Appoinment
-      await Appointment.findOneAndUpdate(
-        { _id: parseId(saveAppointment._id) },
-        [{ $set: { available: { $eq: [false, "$available"] } } }]
-      );
-      await Appointment.findOneAndUpdate(
-        { _id: parseId(saveAppointment._id) },
-        [{ $set: { state: "reservado" } }]
-      );
-      return res.status(200).json("Turno creado");
+      const saveAppointmentId = saveAppointment._id
+      NewAppointment(branchOfficeId, userId, saveAppointmentId);
+      res.status(200).json("Turno creado");
     }
     // (A.1.2) Si existe
 
@@ -117,27 +94,8 @@ router.post("/:id", async (req, res) => {
         if (appointmentFALSE.length < branchOffice.simultAppointment) {
           // (A.3.2) no lo supera, tomo turno
           const saveAppointment = await newAppointment.save();
-
-          const updateBranchOffice = await BranchOffice.updateOne(
-            { _id: branchOfficeId },
-            { $push: { appointment: parseId(saveAppointment._id) } }
-          ).populate("branchOffice");
-
-          const updateUser = await User.updateOne(
-            { _id: userId },
-            { $push: { appointment: parseId(saveAppointment._id) } }
-          ).populate("user");
-
-          // const data = await Appointment.schema.path('status').options.enum;
-          // console.log(data);
-          await Appointment.findOneAndUpdate(
-            { _id: parseId(saveAppointment._id) },
-            [{ $set: { available: { $eq: [false, "$available"] } } }]
-          );
-          await Appointment.findOneAndUpdate(
-            { _id: parseId(saveAppointment._id) },
-            [{ $set: { state: "reservado" } }]
-          );
+          const saveAppointmentId = saveAppointment._id
+          NewAppointment(branchOfficeId, userId, saveAppointmentId);
           return res.status(200).json("Turno creado");
         } else {
           // (A.3.1) Si lo supera,no tomo turno
@@ -161,21 +119,26 @@ router.put("/:userId/myAppointment/remove", async (req, res) => {
     await Appointment.findOneAndUpdate({ _id: parseId(appointmentId) }, [
       { $set: { available: { $eq: [false, "$available"] } } },
     ]);
-    await Appointment.findOneAndUpdate({ _id: parseId(appointmentId) }, [
-      { $set: { state: "cancelado" } },
-    ]);
+    const appointmentCanceled = await Appointment.findOneAndUpdate(
+      { _id: parseId(appointmentId) },
+      [{ $set: { state: "cancelado" } }]
+    );
     res.status(200).json("Turno cancelado");
   } catch (err) {
     res.status(404).json(err);
   }
 });
 
-router.put("/:userID/myAppointment/edit", async (req,res)=>{
-  const {userId} = req.params;
+router.put("/:userID/myAppointment/edit", async (req, res) => {
+  const { userId } = req.params;
   const { date, month, year, day, time, id } = req.body;
   const appointmentId = req.body.id;
-  const appointmentToChange = await Appointment.findOne({_id: parseId(appointmentId)})
-})
+  const appointmentToChange = await Appointment.findOne({
+    _id: parseId(appointmentId),
+  });
+});
+
+//recibe por el body el id del turno y de la persona
 
 //Mostrar todos los turnos de un usuario para el mismo
 
