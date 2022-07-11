@@ -64,10 +64,10 @@ const CustomNavbar = () => {
                   <Nav.Item className="navbar-brand ms-5">
                     {countdown()}
                   </Nav.Item>
-                  <Nav.Link href="#link" className="mx-3 fs-5">
+                  <Nav.Link href="/calendar" className="mx-3 fs-5">
                     Reservar
                   </Nav.Link>
-                  <Nav.Link href="#link" className="mx-3 fs-5">
+                  <Nav.Link href="/myappointments" className="mx-3 fs-5">
                     Mis Turnos
                   </Nav.Link>
                 </>
