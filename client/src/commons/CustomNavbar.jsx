@@ -5,8 +5,10 @@ import Nav from "react-bootstrap/Nav";
 import { useNavigate } from "react-router-dom";
 import parseJwt from "../hooks/parseJwt";
 import capitalize from "../hooks/capitalize"
+import countdown from "../utils/countdown";
 
 import style from "../styles/CustomNavbar.module.css";
+
 
 const CustomNavbar = () => {
   const navigate = useNavigate();
@@ -19,6 +21,7 @@ const CustomNavbar = () => {
     localStorage.removeItem("user");
     navigate("/");
   };
+  
 
   return (
     <div>
@@ -35,8 +38,8 @@ const CustomNavbar = () => {
 
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <a className="navbar-brand ms-5" href="#">Hola {capitalize(payload.fname)}</a>
-          <Navbar.Collapse id="basic-navbar-nav">
           
+          <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
               {role === "AD" ? (
                 <>
@@ -58,6 +61,9 @@ const CustomNavbar = () => {
                 </>
               ) : (
                 <>
+                  <Nav.Item className="navbar-brand ms-5">
+                    {countdown()}
+                  </Nav.Item>
                   <Nav.Link href="#link" className="mx-3 fs-5">
                     Reservar
                   </Nav.Link>
