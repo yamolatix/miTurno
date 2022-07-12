@@ -12,36 +12,30 @@ import filterFactory, {
 import paginationFactory from "react-bootstrap-table2-paginator";
 import parseJwt from "../hooks/parseJwt";
 import capitalize from "../hooks/capitalize";
+import AppDetailsUser from "../commons/AppDetailsUser";
 
 import style from "../styles/Users.module.css";
+
 
 const MyAppointments = () => {
   const [appsRaw, setAppsRaw] = useState([]);
   const [apps, setApps] = useState([]);
   const [load, setLoad] = useState(true);
+  const [selectedApp, setSelectedApp] = useState({});
 
   const token = JSON.parse(localStorage.getItem("user")).data.token;
   const payload = parseJwt(token);
-  console.log(payload);
 
   useEffect(() => {
     loadApps();
+    setSelectedApp({});
   }, [load]);
 
-  const findOfficeName = (officeId, offices) => {
+  const findOffice = (officeId, offices) => {
     const office = offices.filter((office) => office._id === officeId);
-    return office.length > 0
-      ? capitalize(office[0].location) + " - " + capitalize(office[0].address)
-      : "Sin especificar";
+    console.log(office[0]);
+    return office[0] ? office[0] : {};
   };
-
-  const handleEdit = (appointmentId) => {
-    console.log("EDITAR TURNO ", appointmentId);
-  }
-
-  const handleDelete = (appointmentId) => {
-    console.log("CANCELAR TURNO ", appointmentId);
-  }
 
   const loadApps = () => {
     let appointments;
@@ -65,6 +59,9 @@ const MyAppointments = () => {
           })
           .then(() => {
             const appsConstructor = appointments.map((appointment, i) => {
+              const office = findOffice(appointment.branchOffice[0], offices);
+              console.log(appointment);
+              console.log(office);
               return {
                 _id: appointment._id,
                 id: appointment._id.slice(-4),
@@ -75,37 +72,81 @@ const MyAppointments = () => {
                   "/" +
                   appointment.year,
                 time: appointment.time + " hs",
-                status: capitalize(appointment.state),
-                office: findOfficeName(appointment.branchOffice[0], offices),
-                actions: (
-                  <>
-                    <Badge
-                      bg="secondary"
-                      role="button"
-                      data-bs-toggle="tooltip"
-                      title="Reprogramar"
-                      onClick={() => handleEdit(appointment._id)}
-                    >
-                      <i className="bi bi-pencil-square"></i>
-                    </Badge>
-                    &nbsp;&nbsp;
-                    <Badge
-                      bg="secondary"
-                      role="button"
-                      data-bs-toggle="tooltip"
-                      title="Cancelar"
-                      onClick={() => handleDelete(appointment._id)}
-                    >
-                      <i className="bi bi-trash3"></i>
-                    </Badge>
-                  </>
-                ),
+                status:
+                  appointment.state !== undefined
+                    ? capitalize(appointment.state)
+                    : "Reservado",
+                office: office._id
+                  ? capitalize(office.location) +
+                    " - " +
+                    capitalize(office.address)
+                  : "Sin especificar",
+                officeAddress: office.address
+                  ? capitalize(office.address)
+                  : "-",
+                officePhone: office.phone ? office.phone : "-",
+                officeEmail: office.email ? office.email : "-",
+                officePrice: office._id
+                  ? "ARS " + office.price.$numberDecimal
+                  : "-",
+                actions:
+                  appointment.state === undefined ? (
+                    <>
+                      <Badge
+                        bg="secondary"
+                        role="button"
+                        data-bs-toggle="tooltip"
+                        title="Reprogramar"
+                        onClick={() => handleEdit(appointment._id)}
+                      >
+                        <i className="bi bi-pencil-square"></i>
+                      </Badge>
+                      &nbsp;&nbsp;
+                      <Badge
+                        bg="secondary"
+                        role="button"
+                        data-bs-toggle="tooltip"
+                        title="Cancelar"
+                        onClick={() => handleDelete(appointment._id)}
+                      >
+                        <i className="bi bi-trash3"></i>
+                      </Badge>
+                    </>
+                  ) : (
+                    <></>
+                  ),
               };
             });
             console.log(appsConstructor);
             setApps(appsConstructor);
           });
       })
+      .catch((err) => console.log(err));
+  };
+
+  const handleAppSelection = (id) => {
+    const appointment = apps.filter((appointment) => appointment._id === id)[0];
+    console.log("Clicked on appointment with ID: ", id);
+    console.log(appointment);
+    setSelectedApp(appointment);
+  };
+
+  const handleEdit = (appointmentId) => {
+    console.log("EDITAR TURNO ", appointmentId);
+  };
+
+  const handleDelete = (appointmentId) => {
+    console.log("CANCELAR TURNO ", appointmentId);
+    axios
+      .put(
+        `http://localhost:3001/api/appointment/${payload.id}/myAppointment/remove`,
+        { id: appointmentId }
+      )
+      .then((res) => {
+        console.log(res);
+        setLoad(!load);
+      })
+
       .catch((err) => console.log(err));
   };
 
@@ -244,7 +285,7 @@ const MyAppointments = () => {
   ];
   const rowEvents = {
     onClick: (e, row, rowIndex) => {
-      console.log(row._id);
+      handleAppSelection(row._id);
     },
   };
 
@@ -253,11 +294,11 @@ const MyAppointments = () => {
       <CustomNavbar />
       <div className={style.mainContainer}>
         <div className={style.sideContainer}>
-          {/* <AppointmentDetails
-            user={selectedUser}
+          <AppDetailsUser
+            appointment={selectedApp}
             handleDelete={handleDelete}
-            handleRoleChange={handleRoleChange}
-          /> */}
+            handleEdit={handleEdit}
+          />
         </div>
         <div className={style.contentContainer}>
           <div className={style.tableContainer}>
