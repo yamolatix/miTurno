@@ -6,17 +6,20 @@ const BranchOffice = require("../models/BranchOffice");
 const parseId = require("../utils/functions");
 //const Buscar = require("../utils/Buscar");
 const NewAppointment = require("../utils/NewAppoinment");
+const Cancelar = require("../utils/Cancelar");
 
 // Collecion Appointment: no impacta a la sucursal a la que pertenece
 // Collecion BranchOffice: no impactan los appointments
 //Collecion User: no impacta el appointment
 
+//1)
 //A - Crear un nuevo turno
 router.post("/:id", async (req, res) => {
   const userId = req.params.id;
   console.log(userId);
-  const { date, month, year, day, time, id } = req.body;
-  const branchOfficeId = req.body.id;
+  const { date, month, year, day, time } = req.body;
+  const branchOfficeId = req.body.branchId;
+  const appointmentId = req.body.appointId;
 
   const newAppointment = new Appointment({
     date,
@@ -29,7 +32,7 @@ router.post("/:id", async (req, res) => {
   });
   // Busco turno para ese mismo dia, horario, sucursal
   //ej Hoy 15:00 en RG1
-  console.log("SOY NEWAPPOINT", newAppointment);
+  
   try {
     const branchOffice = await BranchOffice.findOne({
       _id: parseId(branchOfficeId),
@@ -42,7 +45,7 @@ router.post("/:id", async (req, res) => {
       time,
       branchOffice: branchOfficeId,
     });
-    console.log("SOY APPOINT", appointment);
+   
     //APPOINTMENTFALSE = Turno tomado
     const appointmentFALSE = await Appointment.find({
       date,
@@ -63,16 +66,17 @@ router.post("/:id", async (req, res) => {
       branchOffice: branchOfficeId,
       available: true,
     });
-    console.log("SOY APPOINTMENFALSE", appointmentFALSE);
-    console.log("SOY APPOINTMENTRUE", appointmentTRUE);
 
     // (A.1) Existe en Base Appoiment un turno para ese mismo dia, horario, sucursa
     if (appointment.length === 0) {
-      // (A.1.1) No Exise. Lo tomo
+      // (A.1.1) No Existe. Lo tomo
       const saveAppointment = await newAppointment.save();
       const saveAppointmentId = saveAppointment._id;
       NewAppointment(branchOfficeId, userId, saveAppointmentId);
-      res.status(200).json("Turno creado");
+      if (appointmentId) {
+        Cancelar(appointmentId);
+      }
+      return res.status(200).json("Turno creado");
     }
     // (A.1.2) Si existe
 
@@ -84,6 +88,7 @@ router.post("/:id", async (req, res) => {
           error:
             "Turno no disponible dado que no se permiten turnos simultaneos",
         });
+
       }
       // (A.2.2) Si permite
       else {
@@ -96,6 +101,9 @@ router.post("/:id", async (req, res) => {
           const saveAppointment = await newAppointment.save();
           const saveAppointmentId = saveAppointment._id;
           NewAppointment(branchOfficeId, userId, saveAppointmentId);
+          if (appointmentId) {
+            Cancelar(appointmentId)
+          }
           return res.status(200).json("Turno creado");
         } else {
           // (A.3.1) Si lo supera,no tomo turno
@@ -107,11 +115,11 @@ router.post("/:id", async (req, res) => {
       }
     }
   } catch (error) {
-    res.status(404).json(error);
+    return res.status(404).json(error);
   }
 });
 
-//Cancelar un turno por un usuario - (modificar estado en la base de datos)
+//2) Cancelar un turno por un usuario - (modificar estado en la base de datos)
 router.put("/:userId/myAppointment/remove", async (req, res) => {
   const { userId } = req.params;
   const appointmentId = req.body.id;
@@ -129,20 +137,7 @@ router.put("/:userId/myAppointment/remove", async (req, res) => {
   }
 });
 
-//modificar un turno - pendiente
-router.put("/:userID/myAppointment/edit", async (req, res) => {
-  const { userId } = req.params;
-  const { date, month, year, day, time, id } = req.body;
-  const appointmentId = req.body.id;
-  const appointmentToChange = await Appointment.findOne({
-    _id: parseId(appointmentId),
-  });
-});
-
-//recibe por el body el id del turno y de la persona
-
-//Mostrar todos los turnos de un usuario para el mismo
-
+//3) Mostrar todos los turnos de un usuario para el mismo
 router.get("/:id/showAppointments", async (req, res) => {
   const { id } = req.params;
   console.log("**ID DE PARAMS**", id);
@@ -162,8 +157,7 @@ router.get("/:id/showAppointments", async (req, res) => {
   }
 });
 
-//Confirmar un turno - operador - VER CON MATI
-
+//4) Confirmar un turno - operador
 router.put("/:operatorId/showAppointments", async (req, res) => {
   const { operatorId } = req.params;
   const appointmentId = req.body.id;
@@ -184,18 +178,7 @@ router.put("/:operatorId/showAppointments", async (req, res) => {
   }
 });
 
-//Mostrar todos los turnos con el formato de arreglo de objetos
-router.get("/", (req, res) => {
-  Appointment.find({}, (err, result) => {
-    if (err) {
-      res.json({ err: "Error" });
-    } else {
-      res.json({ data: result });
-    }
-  });
-});
-
-// Muestra al operador los turnos de X sucursal del dia especificado.
+// 5) Muestra al operador los turnos de X sucursal del dia especificado.
 router.get("/:operatorId/dayAppointments", async (req, res) => {
   const { operatorId } = req.params;
   const { date, month, year, time } = req.body;
@@ -226,13 +209,25 @@ router.get("/:operatorId/dayAppointments", async (req, res) => {
   }
 });
 
-/*
-  const { date, month, year } = req.body;
-  const branchOfficeId = req.body.id;
-  const findBranch = await BranchOffice.find({ _id: branchOfficeId }).exec();
-  start = findBranch[0].startTime;
-  limit = findBranch[0].endTime;
-  simultAppointment = findBranch[0].simultAppointment;
-*/
+//6) Mostrar todos los turnos con el formato de arreglo de objetos
+// router.get("/", (req, res) => {
+//   Appointment.find({}, (err, result) => {
+//     if (err) {
+//       res.json({ err: "Error" });
+//     } else {
+//       res.json({ data: result });
+//     }
+//   });
+// });
 
 module.exports = router;
+
+
+/*
+1) CREAR TURNO / MODIFICA UN TURNO EXISTENTE CANCELANDOLO (CAMBIA ESTADO DE AVAILABLE FALSE A TRUE Y STATE DE RESERVADO A CANCELADO)
+2) CANCELAR UN TURNO POR EL USUARIO
+3) MOSTRAR TODOS LOS TURNOS DE UN USUARIO CON TODOS SUS ESTADOS
+4) CONFIRMAR UN TURNO POR UN OPERADOR
+5) MOSTRAR TODOS LOS TURNOS PARA UN DÍA, HORARIO Y SUCURSAL SELECCIONADA POR EL OPERADOR
+6) MOSTRAR TODOS LOS TURNOS CON EL FORMATO DE ARREGLO DE OBJETOS SIN NINGÚN TIPO DE VALIDACIÓN - COMENTADA PORQUE NO SE UTILIZARÍA
+*/

@@ -120,4 +120,6 @@ router.get("/", async (req, res) => {
   res.json({ data: arrFranjaHoraria });
 });
 
+// 1) MOSTRAR EN FORMATO ARREGLO DE OBJETOS TODOS LOS TURNOS DISPONIBLES PARA UN DÍA, HORARIO Y SUCURSAL - A UTILIZAR EN EL CALENDARIO
+
 module.exports = router;
