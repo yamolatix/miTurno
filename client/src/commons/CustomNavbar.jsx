@@ -5,7 +5,6 @@ import Nav from "react-bootstrap/Nav";
 import { useNavigate } from "react-router-dom";
 import parseJwt from "../hooks/parseJwt";
 import capitalize from "../hooks/capitalize"
-import countdown from "../utils/countdown";
 
 import style from "../styles/CustomNavbar.module.css";
 
@@ -19,6 +18,7 @@ const CustomNavbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("endTime");
     navigate("/");
   };
   
@@ -27,17 +27,26 @@ const CustomNavbar = () => {
     <div>
       <Navbar variant="dark" expand="lg" className={style.navbar}>
         <Container fluid className="mx-4">
-          <Navbar.Brand>
-            <img
+          {!payload.admin && !payload.operator ? 
+          <Navbar.Brand href="/welcome">
+            <img 
               src={require("../images/3.png")}
               height="36px"
               className="d-inline-block align-top"
               alt="Logo mi turno"
             />
-          </Navbar.Brand>
-
+          </Navbar.Brand> : 
+          <Navbar.Brand href="/users">
+          <img 
+            src={require("../images/3.png")}
+            height="36px"
+            className="d-inline-block align-top"
+            alt="Logo mi turno"
+          />
+        </Navbar.Brand>
+          }
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <a className="navbar-brand ms-5" href="#">Hola {capitalize(payload.fname)}</a>
+          <a className="navbar-brand ms-5" >Hola {capitalize(payload.fname)}</a>
           
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
@@ -51,6 +60,7 @@ const CustomNavbar = () => {
                   </Nav.Link>
                   <Nav.Link href="#link" className="mx-3 fs-5">
                     Turnos
+                  
                   </Nav.Link>
                 </>
               ) : role === "OP" ? (
@@ -61,13 +71,10 @@ const CustomNavbar = () => {
                 </>
               ) : (
                 <>
-                  <Nav.Item className="navbar-brand ms-5">
-                    {countdown()}
-                  </Nav.Item>
-                  <Nav.Link href="#link" className="mx-3 fs-5">
+                  <Nav.Link href="/calendar" className="mx-3 fs-5">
                     Reservar
                   </Nav.Link>
-                  <Nav.Link href="#link" className="mx-3 fs-5">
+                  <Nav.Link href="/myturns" className="mx-3 fs-5">
                     Mis Turnos
                   </Nav.Link>
                 </>
