@@ -1,30 +1,23 @@
-//import React from "react";
-
-export const getInitialDate = () => {
+export const getFullDate = (pickedDate) => {
+    let { day, date, month, year } = pickedDate
     
-    const today = new Date()
-    let day = today.toDateString().slice(0,3), 
-        date = today.getDate(), 
-        month = today.getMonth(), 
-        year = today.getFullYear()
-
     switch (day) {
-        case "Sun":
+        case '0':
             day = "domingo"            
             break;
-        case "Mon":
+        case '1':
             day = "lunes"            
             break;
-        case "Tue":
-            day = "martes"            
+        case '2':
+            day = "martes"           
             break;
-        case "Wed":
+        case '3':
             day = "miércoles"            
             break;
-        case "Thu":
+        case '4':
             day = "jueves"            
             break;
-        case "Fri":
+        case '5':
             day = "viernes"            
             break;
         default:
@@ -33,37 +26,37 @@ export const getInitialDate = () => {
     };
 
     switch (month) {
-        case 0:
+        case'0':
             month = "enero"            
             break;
-        case 1:
+        case '1':
             month = "febrero"            
             break;
-        case 2:
+        case '2':
             month = "marzo"            
             break;
-        case 3:
+        case '3':
             month = "abril"            
             break;
-        case 4:
+        case '4':
             month = "mayo"            
             break;
-        case 5:
+        case '5':
             month = "junio"            
             break;
-        case 6:
+        case '6':
             month = "julio"            
             break;
-        case 7:
+        case '7':
             month = "agosto"            
             break;
-        case 8:
+        case '8':
             month = "septiembre"            
             break;
-        case 9:
+        case '9':
             month = "octubre"            
             break;
-        case 10:
+        case '10':
             month = "noviembre"            
             break;
         default:

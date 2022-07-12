@@ -2,29 +2,35 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import axios from 'axios'
 import { useEffect, useState } from 'react';
-import TurnosUsers from '../views/TurnosUser';
 import Calendar from '../views/Calendar';
 import style from "../styles/Users.module.css";
-
-
+import { useSelector, useDispatch } from 'react-redux';
+import { branchOfficePicker } from '../features/branchOffice';
+import parseJwt from "../hooks/parseJwt";
 
 function BranchOfficeSelector() {
   
-  const initValueSelectedBranchOffice = localStorage.getItem('selectedBranchOffice')
-    ? JSON.parse(localStorage.getItem('selectedBranchOffice'))
-    : {}
-
+  const dispatch = useDispatch()
+  //const pickedDate = useSelector(state => state.appointment.value)
   const [branchOffices, setBranchOffices] = useState([])
-  const [selectedBranchOffice, setSelectedBranchOffice] = useState(initValueSelectedBranchOffice)
+  const pickedBranchOffice = useSelector(state => state.branchOffice.clickedOffice)
+  const user = parseJwt(JSON.parse(localStorage.getItem('user')).data.token)
+  
+  console.log('ES ADMIN ? ', user.admin)
+  console.log('ES OPERADOR ? ', user.operator)
 
   const handleSelection = (e) => {
     e.preventDefault();
     const locationClon = e.target.innerText.toLowerCase()
     const clickedOffice = branchOffices.find(branch => 
         branch.location === locationClon);
-    console.log('CLICKED ES ', clickedOffice)
-    setSelectedBranchOffice(clickedOffice);
-    localStorage.setItem('selectedBranchOffice', JSON.stringify(clickedOffice))
+    dispatch(branchOfficePicker({clickedOffice}));
+  }
+
+  if (user.operator && !user.admin) {
+    const asignedOffice = branchOffices.find(branch => 
+      Object.values(branch.operator).includes(user.id))
+    dispatch(branchOfficePicker({asignedOffice}))
   }
 
   const getBranchOffices = async () => {   
@@ -36,44 +42,56 @@ function BranchOfficeSelector() {
     getBranchOffices()
   }, [])
 
-  return (
-    <>
-    <div id={style.dropBranches}>
-    <DropdownButton variant="secondary" id="dropdown-basic-button" title="Seleccione una sucursal">
-      {branchOffices.map(e => (
-        <Dropdown.Item 
-          onClick={handleSelection}
-          key={branchOffices.indexOf(e)}  
+  return (!user.operator || user.admin)
+  ? (
+      <>
+      <div id={style.dropBranches}>
+        <DropdownButton variant="secondary" id="dropdown-basic-button" title="Seleccione una sucursal">
+          {branchOffices.map(e => (
+            <Dropdown.Item 
+              onClick={handleSelection}
+              key={branchOffices.indexOf(e)}  
             >
-                {console.log('EN EL DROP, BACKOFFICES ES ', branchOffices)}
               {e.location.toUpperCase()}
-        </Dropdown.Item>
-        )
-      )}
-    </DropdownButton>
-    </div>
+            </Dropdown.Item>
+            )
+          )}
+        </DropdownButton>
+      </div>
 
-    <>{localStorage.getItem('selectedBranchOffice')
-    ? (
-       <div className={style.calendarContainer}>
+      <>{pickedBranchOffice
+      ? (
+        <div className={style.calendarContainer}>
           <h5 >
-            Turnos sucursal {selectedBranchOffice.location
-                            ? selectedBranchOffice.location.toUpperCase() : "(seleccione una sucursal)"}
+            Turnos sucursal {pickedBranchOffice.location.toUpperCase()}
           </h5>
           <Calendar />
-
           {/* condicionar lo que sigue a que tenga algún horario en amarillo */}
           <ul className={style.fewStock}>
             <li>
                 últimos turnos disponibles
             </li>
           </ul>
-       </div>)
-    : (<></>)
-    }</>
-    
-    </>
-  );
-}
+        </div>)
+      : (<></>)
+      }</>
+      </>
+    )
+  : (
+    <div className={style.calendarContainer}>
+      <h5 >
+        Turnos sucursal {pickedBranchOffice.location.toUpperCase()}
+      </h5>
+      <Calendar />
+
+      {/* condicionar lo que sigue a que tenga algún horario en amarillo */}
+      <ul className={style.fewStock}>
+        <li>
+          últimos turnos disponibles
+        </li>
+      </ul>
+    </div>
+  )
+};
 
 export default BranchOfficeSelector;
