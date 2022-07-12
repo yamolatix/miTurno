@@ -80,14 +80,12 @@ router.get("/tuTurno", async (req, res) => {
   // ajustar el fin del arreglo
   hsArray = hsArray.slice(0, hsArray.indexOf(limitString));
 
-  arrFranjaHoraria = [];
+  let arrFranjaHoraria = [];
   hsArray.map((num) => {
     arrFranjaHoraria.push({ [num]: simultAppointment });
   });
 
   // Paso 3 - Arreglo de todos los turnos tomados en la franja horaria para una fecha y una sucursal determinada
-
-  let arreglosTomados = [];
 
   const findAppointment = await Appointment.find({
     date,
@@ -97,22 +95,60 @@ router.get("/tuTurno", async (req, res) => {
     available: false,
   }).exec();
 
-  arreglosTomados = findAppointment.map((turno) =>
-    arreglosTomados.push(turno.time)
-  );
+  let reservedAppointment = [];
+
+  findAppointment.map((turno) => reservedAppointment.push(turno.time));
 
   console.log("FRANJA HORARIA", arrFranjaHoraria);
-  console.log("TURNOS TOMADOS", arreglosTomados);
+  //console.log("TURNOS TOMADOS", reservedAppointment);
 
-  // arreglosTomados.map((turnoTomado)=> arrFranjaHoraria.map((turnosDisponibles) => {
-  //   if (turnoTomado == turnosDisponibles
-  // }))
+  const reservedAppointmentCounts = {};
 
-  for (let i = 0; i <= arreglosTomados.length; i++) {
-    for (let horarios in arrFranjaHoraria) {
-      console.log(`${horarios}:${arrFranjaHoraria[horarios]}`);
+  reservedAppointment.forEach(function (i) {
+    reservedAppointmentCounts[i] = reservedAppointmentCounts[i]
+      ? reservedAppointmentCounts[i] + 1
+      : 1;
+  });
+  const reservedAppointmentObj = Object.keys(reservedAppointmentCounts).map(
+    (key) => {
+      return { [key]: reservedAppointmentCounts[key] };
     }
-  }
+  );
+  //console.log("SOY RESERVED APPONT COUNTS", reservedAppointmentCounts);
+  console.log("SOY RESERVED APPOINTEMENT", reservedAppointment);
+  console.log("SOY RESERVED APPOINTEMENT IN OBJE", reservedAppointmentObj);
 
+//   const availableAppointment = Object.fromEntries(
+//     Object.entries(arrFranjaHoraria).map( ([k, v]) => [k, v - reservedAppointmentObj[k]] )
+// );
+
+  const difference = (obj1, obj2) => {
+    const arrObj1 = Object.entries(obj1)
+    const arrObj2 = Object.entries(obj2)
+    console.log("SOY UN ARREGLO DEL OBJETO 1", arrObj1);
+    console.log("SOY UN ARREGLO DEL OBJETO 2", arrObj2);
+  }
+  // CON LA FUNCIÓN DE ARRIBA TRATE DE CONVERTIR EL ARRAY DE OBJETOS A UN ARRAY DE ARRAY, ES DECIR ["13:00", 3] Y ASÍ CON CADA UNO PERO TENEMOS QUE VER COMO PASAR LA KEY DE TAL FORMA QUE NO QUEDE COMO "0", "1" QUE ES LO QUE HACE AHORA, GRRRR HIJO DE PERRA
+  
+ const availableAppointment = difference(arrFranjaHoraria, reservedAppointmentObj);
+  
+
+  // for (let value in arrFranjaHorariaObj) {
+  //   if(arrFranjaHorariaObj.hasOwnProperty(value)){
+  //     availableAppointment[value] = arrFranjaHorariaObj[value] - reservedAppointmentCounts[value];
+  //   }
+  // }
+
+  // const availableAppointment = Object.keys(arrFranjaHorariaObj).reduce(
+  //   (acc, curr) => (
+  //     (acc[curr] = arrFranjaHorariaObj[curr] - reservedAppointmentObj[curr]),
+  //     acc
+  //   ),
+  //   {}
+  // );
+
+  console.log("SOY TURNOS DISPONIBLES", availableAppointment);
+
+  res.json("RESPUESTA A MODO DE EJEMPLO");
 });
 module.exports = router;
