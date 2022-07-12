@@ -9,25 +9,15 @@ let start,
   simultAppointment = "";
 
 // Paso 1 - Arreglo de todos los turnos en la franja horaria para una fecha y una sucursal determinada
-router.get("/tuTurnoPasoUno", async (req, res) => {
+router.get("/", async (req, res) => {
+  const { date, month, year } = req.body;
   const branchOfficeId = req.body.id;
-  await BranchOffice.find({ _id: branchOfficeId }, (err, result) => {
-    if (err) {
-      res.json({ err: "Error" });
-    } else {
-      res.json({ data: result });
-      start = result[0].startTime;
-      limit = result[0].endTime;
-      simultAppointment = result[0].simultAppointment;
-    }
-  }).clone();
+  const findBranch = await BranchOffice.find({ _id: branchOfficeId }).exec();
+  start = findBranch[0].startTime;
+  limit = findBranch[0].endTime;
+  simultAppointment = findBranch[0].simultAppointment;
 
   //   ----------------------- ----------------------------
-  console.log("xxxxxxxxxxxxxxxxx");
-  console.log("SOY START", start);
-  console.log("SOY END", limit);
-  console.log("SOY SIMULT", simultAppointment);
-
   // Paso 2 - capturar los datos de la consulta y armar la franja horaria
 
   let hsArray = [];
@@ -79,42 +69,55 @@ router.get("/tuTurnoPasoUno", async (req, res) => {
   hsArray;
 
   // ajustar el inicio del arreglo
-
   hsArray = hsArray.slice(hsArray.indexOf(startString));
 
   // ajustar el fin del arreglo
   hsArray = hsArray.slice(0, hsArray.indexOf(limitString));
 
-  arrFinal = [];
+  let arrFranjaHoraria = [];
   hsArray.map((num) => {
-    arrFinal.push({ [num]: simultAppointment });
+    arrFranjaHoraria.push({ [num]: simultAppointment });
   });
-  console.log(arrFinal);
-});
 
-// Paso 3 - Arreglo de todos los turnos tomados en la franja horaria para una fecha y una sucursal determinada
-let arreglosTomados = []
+  // Paso 3 - Arreglo de todos los turnos tomados en la franja horaria para una fecha y una sucursal determinada
+  const findAppointment = await Appointment.find({
+    date,
+    month,
+    year,
+    id: branchOfficeId,
+    available: false,
+  }).exec();
 
+  let reservedAppointment = [];
 
-router.get("/tuTurnoPasoTres", async (req, res) => {
-  const { date, month, year } = req.body;
-  const branchOfficeId = req.body.id;
-  await Appointment.find(
-    { date, month, year, id: branchOfficeId, available: false },
-    (err, result) => {
-      if (err) {
-        res.json({ err: "Error" });
-      } else {
-        res.json({ data: result });
-      }
-      result.map((turno) => arreglosTomados.push(turno.time))
-      console.log("ARREGLO TURNOS TOMADOS", arreglosTomados)
+  findAppointment.map((turno) => reservedAppointment.push(turno.time));
+
+  const reservedAppointmentCounts = {};
+
+  reservedAppointment.forEach(function (i) {
+    reservedAppointmentCounts[i] = reservedAppointmentCounts[i]
+      ? reservedAppointmentCounts[i] + 1
+      : 1;
+  });
+  const reservedAppointmentObj = Object.keys(reservedAppointmentCounts).map(
+    (key) => {
+      return { [key]: reservedAppointmentCounts[key] };
     }
-  ).clone();
+  );
+
+  arrFranjaHoraria.map((franja) => {
+    for (let horario in franja) {
+      reservedAppointmentObj.map((franja2) => {
+        for (let horario2 in franja2) {
+          if (horario === horario2) {
+            franja[horario] = franja[horario] - franja2[horario2];
+          }
+        }
+      });
+    }
+  });
+
+  res.json({ data: arrFranjaHoraria });
 });
-
-
 
 module.exports = router;
-
-
