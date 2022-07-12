@@ -70,7 +70,7 @@ router.post("/:id", async (req, res) => {
     if (appointment.length === 0) {
       // (A.1.1) No Exise. Lo tomo
       const saveAppointment = await newAppointment.save();
-      const saveAppointmentId = saveAppointment._id
+      const saveAppointmentId = saveAppointment._id;
       NewAppointment(branchOfficeId, userId, saveAppointmentId);
       res.status(200).json("Turno creado");
     }
@@ -94,7 +94,7 @@ router.post("/:id", async (req, res) => {
         if (appointmentFALSE.length < branchOffice.simultAppointment) {
           // (A.3.2) no lo supera, tomo turno
           const saveAppointment = await newAppointment.save();
-          const saveAppointmentId = saveAppointment._id
+          const saveAppointmentId = saveAppointment._id;
           NewAppointment(branchOfficeId, userId, saveAppointmentId);
           return res.status(200).json("Turno creado");
         } else {
@@ -129,6 +129,7 @@ router.put("/:userId/myAppointment/remove", async (req, res) => {
   }
 });
 
+//modificar un turno - pendiente
 router.put("/:userID/myAppointment/edit", async (req, res) => {
   const { userId } = req.params;
   const { date, month, year, day, time, id } = req.body;
@@ -185,7 +186,6 @@ router.put("/:operatorId/showAppointments", async (req, res) => {
 
 //Mostrar todos los turnos con el formato de arreglo de objetos
 router.get("/", (req, res) => {
-  //const branchOfficeId = req.body._id;
   Appointment.find({}, (err, result) => {
     if (err) {
       res.json({ err: "Error" });
@@ -194,5 +194,45 @@ router.get("/", (req, res) => {
     }
   });
 });
+
+// Muestra al operador los turnos de X sucursal del dia especificado.
+router.get("/:operatorId/dayAppointments", async (req, res) => {
+  const { operatorId } = req.params;
+  const { date, month, year, time } = req.body;
+  const branchOfficeId = req.body.id;
+
+  try {
+    const userOperator = await User.findOne({ _id: parseId(operatorId) });
+    if (userOperator.operator === true) {
+      await Appointment.find(
+        { date, month, year, time, branchOfficeId },
+        (err, result) => {
+          if (err) {
+            res.json({ err: "Error" });
+          } else {
+            res.json({ data: result });
+          }
+        }
+      )
+        .clone()
+        .exec();
+    } else {
+      res
+        .send("You don't have permission to create a new branch office")
+        .status(404);
+    }
+  } catch (error) {
+    res.status(404).json(error);
+  }
+});
+
+/*
+  const { date, month, year } = req.body;
+  const branchOfficeId = req.body.id;
+  const findBranch = await BranchOffice.find({ _id: branchOfficeId }).exec();
+  start = findBranch[0].startTime;
+  limit = findBranch[0].endTime;
+  simultAppointment = findBranch[0].simultAppointment;
+*/
 
 module.exports = router;
