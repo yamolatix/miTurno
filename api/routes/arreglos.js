@@ -12,8 +12,13 @@ let arrFranjaHoraria = [
   ]
 
   let arreglosTomados = [ '13:00', '13:00', '13:15' ]
+  const counts = {}
+  arreglosTomados.forEach(function (i) { counts[i] = (counts[i] || 0) + 1; });
+  console.log(counts);
 
-  for 
 
-
-  
+for (let i = 0; i <= arreglosTomados.length; i++) {
+    for (let horarios in arrFranjaHoraria) {
+      console.log(`${horarios}:${arrFranjaHoraria[horarios]}`);
+    }
+  }
