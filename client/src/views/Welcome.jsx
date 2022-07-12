@@ -28,12 +28,12 @@ const Welcome = () => {
         </div>
           <div className={style.contentContainer}>
               <div>
-                  <Link to="/calendar">
+                  <Link to="/calendar" style={{textDecoration:"none"}}>
                       <h3>Sacar un turno</h3>
                   </Link>
               </div>
               <div >
-                  <Link to="/myturns">
+                  <Link to="/myturns" style={{textDecoration:"none"}}>
                       <h3>Ver mis turnos</h3>
                   </Link>
               </div>
