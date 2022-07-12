@@ -1,6 +1,7 @@
 import React,  { useState, useEffect } from "react";
 import DatePicker from "react-datepicker"
 import { registerLocale, setDefaultLocale } from  "react-datepicker";
+import { useDispatch, useSelector } from "react-redux";
 import es from 'date-fns/locale/es';
 import setHours from "date-fns/setHours";
 import setMinutes from "date-fns/setMinutes";
@@ -11,22 +12,28 @@ import getDay from "date-fns/getDay"
 import "react-datepicker/dist/react-datepicker.css"
 import style from "../styles/Users.module.css";
 import axios from "axios";
+import { appointmentPicker } from "../features/appointment";
 
 const Calendar = () => {
+
+  const dispatch = useDispatch()
+  const pickedDate = useSelector(state => state.appointment)
+  const pickedBranchOffice = useSelector(state => state.branchOffice.clickedOffice)
+  
   const backArr = [{'09:00': 5}, {'09:15': 4}, {'09:30': 5}, {'09:45': 1}, {'10:00': 5}, {'10:15': 3}, {'10:30': 5}, {'10:45': 0}, {'11:00': 1}, {'11:15': 5}, {'11:30': 5}, {'11:45': 5}, {'12:00': 0}, {'12:15': 5}, {'12:30': 0}, {'12:45': 1}, {'13:00': 5}, {'13:15': 5}, {'13:30': 2}, {'13:45': 5}, {'14:00': 5}, {'14:15': 5}, {'14:30': 5}, {'14:45': 5}, {'15:00': 5}, {'15:15': 0}, {'15:30': 5}, {'15:45': 5}, {'16:00': 5}, {'16:15': 5}, {'16:30': 5}, {'16:45': 5}, {'17:00': 5}, {'17:15': 5}, {'17:30': 5}, {'17:45': 5}, {'18:00': 5}, {'18:15': 5}, {'18:30': 5}, {'18:45': 5}, {'19:00': 5}, {'19:15': 5}, {'19:30': 5}]
     // el back devuelve arreglo de objetos "backArr" formato {'hhmm': num(stock disponible) }
      
 
-    const sucursal = {
+    /* const sucursal = {
         startTime: '09:00',
         endTime: '19:30',
         daysOff: [0, 6]
-        }
+        } */
     
     // lo anterior viene del menu inicial y pasa por prop el objeto suc elegida
     //const [sucursal, setSucursal] = useState({})
-    const [pickedDate, setPickedDate] = useState();
-    const [appointments, setAppointments] = useState([]);
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    //const [appointments, setAppointments] = useState([]);
     const [hhStart, setHhStart] = useState("");
     const [mmStart, setMmStart] = useState("");
     const [hhEnd, setHhEnd] = useState("");
@@ -47,7 +54,7 @@ const Calendar = () => {
 
     // pedido GET al backend con una fecha y una sucursal
     const loadAppointments = () => {
-      console.log('PACK DE TURNOS, SUC ', sucursal.location)
+      console.log('SUCURSAL EN CALENDAR ', pickedBranchOffice)
       /* async axios.get('http://localhost:3001/api/COMPLETAR URL')
         .then(arrAppointments => setAppointments(arrAppointments))
         .catch(err => alert(err));
@@ -65,13 +72,13 @@ const Calendar = () => {
 
     useEffect(() => {
       loadAppointments();
-      setHhStart(sucursal.startTime.slice(0,2));
-      setMmStart(sucursal.startTime.slice(3));
-      setHhEnd(sucursal.endTime.slice(0,2));
-      setMmEnd(sucursal.endTime.slice(3));
-    }, [sucursal]);
+      setHhStart(pickedBranchOffice.startTime);
+      setMmStart('00');
+      setHhEnd(pickedBranchOffice.endTime);
+      setMmEnd('00');
+    }, [pickedBranchOffice]);
 
-
+    console.log('SUCURSAL EN CALENDAR ', pickedBranchOffice)
     //const [timesExcluded, setTimesExcluded] = useState([])
 
     
@@ -80,6 +87,15 @@ const Calendar = () => {
         noStockTimes.map(
         e => setHours(setMinutes(new Date(), e.slice(3)), e.slice(0,2))
         )  
+
+    const disabledDates = [
+    new Date(2022, 6, 6),
+  ];
+
+    const isWeekday = (date) => {
+      const day = getDay(date);
+      return !pickedBranchOffice.daysOff.includes(day)
+    }
     
     let handleColor = (time) => {
         /* const str = '1245'
@@ -92,14 +108,6 @@ const Calendar = () => {
         ? "text-warning"
         : null;
     };
-    const disabledDates = [
-    new Date(2022, 6, 6),
-  ];
-    
-    const isWeekday = (date) => {
-      const day = getDay(date);
-      return !sucursal.daysOff.includes(day)
-    }
 
     registerLocale('es', es)
 
@@ -113,11 +121,17 @@ const Calendar = () => {
         minDate={new Date()}
         maxDate={addDays(new Date(), 21)}
         timeIntervals={15}
-        selected={pickedDate}
+        selected={selectedDate}
         onChange={(date) => {
-          setPickedDate(date)
-          localStorage.setItem('pickedDate', JSON.stringify(date))
-          console.log(date)
+          //setPickedDate(date)
+          //localStorage.setItem('pickedDate', JSON.stringify(date))
+          console.log('DATE ELEGIDO en oncchange ES', date)
+          console.log('EL .date de DATE ELEGIDO en oncchange ES', date.getDate())
+          console.log('EL .date de pickedDate en oncchange ES', pickedDate.date)
+
+          setSelectedDate(date)
+          //if (date.getDate() == pickedDate.date)
+          dispatch(appointmentPicker({date}))
           }}
         showTimeSelect
         timeCaption="horarios"

@@ -1,69 +1,78 @@
 import axios from "axios";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
+import { useSelector } from "react-redux";
 import style from "../styles/Users.module.css";
+import { getFullDate } from "../utils/getFullDate";
+import { getFixedTime } from "../utils/getFixedTime";
+import parseJwt from "../hooks/parseJwt";
 
 const AppointmentDetails = () => {
 
-    /* console.log('SUCURSAL ES ', branchOffice)
-    console.log('DATE ES ', date)
-    console.log('TIME ES ', time) */
+  //const initialSelectedDate = new Date()
+  const pickedDate = useSelector(state => state.appointment)
+  const pickedBranchOffice = useSelector(state => state.branchOffice.clickedOffice)
+  const user = parseJwt(JSON.parse(localStorage.getItem('user')).data.token)
+  //const [selectedDate, setSelectedDate] = useState(initialSelectedDate.getDate().toString());
+  
+  // let auxDate = ''
+  
+  //console.log('SELECTED DATE EN APPOINTMENT DETAILS ES ', selectedDate)
+  //console.log('PICKED DATE EN APPOINTMENT DETAILS ES ', pickedDate)
+  //console.log('PICKED BRANCH EN APPOINTMENT DETAILS ES ', pickedBranchOffice)
+  //console.log('USER EN APPOINTMENT DETAILS ES ', user)
+  
+  const handleSaveAppointment = () => {
+    axios.post(`http://localhost:3001/api/appointment/${user.id}`, {
+      date: pickedDate.date,
+      month: pickedDate.month,
+      year: pickedDate.year,
+      day: pickedDate.day,
+      time: getFixedTime(pickedDate),
+      id: pickedBranchOffice.id
+    })
+    .then(() => alert('Turno reservado exitosamente'))
+    .catch(err => console.log(err))
+  }
 
-    const branchOffice = {
-        location: "rawson",
-        address: "Av. Illia 4651",
-        phone: 1147854211,
-        email: "rawson@correo.com",
-        startTime: "08:00",
-        endTime: "19:30",
-        days: [0, 6],
-        simultAppointment: 5,
-        price: 700,
-        id: 5
-    }
+  
+  /* if (pickedDate.date === auxDate) {
+    console.log('LA COMPARACION DE GLOBAL Y AUX DA ', pickedDate.date == auxDate)
+    console.log('FECHA LOCAL ANTES DE INTENTAR RESETEARLA ES ', selectedDate)
+    setSelectedDate(pickedDate.date)
+    console.log('FECHA LOCAL DESPUES DE INTENTAR RESETEARLA ES ', selectedDate)
+  } */
 
-    const time = "13:00"
-    const date = 'viernes 08 de julio de 2022'
+  //if (pickedDate.date) auxDate = pickedDate.date
 
-    const handleRoleChange = () => {
-      const idUser = '62c712f4c261b4d23d5b93b6'
-      const date = '08'
-      const month = '06'
-      const year = '2022'
-      const day = '5'
-      const sucId = '62c7105843c1b26ad3f3583b'
-      axios.post(`http://localhost:3001/api/appointment/${idUser}`, {
-        date,
-        month,
-        year,
-        day,
-        time,
-        sucId
-      })
-    }
+  //console.log('FECHA GLOBAL ES ', pickedDate.date)
+  //console.log('FECHA LOCAL ES ', selectedDate)
+  //console.log('FECHA AUXILIAR ES ', auxDate)
 
-  return time ? (
+  //console.log('LOS DATES SON IGUALES ?', pickedDate.date == selectedDate)
+
+  /* useEffect(() => {
+    console.log('DISPARÓ EL USE EFFECT')
+  }, [!pickedDate.date])
+ */
+  return pickedDate.date ? (
     <div className={style.userDetails}>
       <h5>Detalle del turno</h5>
       <ul>
-        <li>Sucursal: {branchOffice.location.toUpperCase()}</li>
-        <li>Dirección: {branchOffice.address}</li>
-        <li>Teléfono: {branchOffice.phone}</li>
-        <li>Email: {branchOffice.email}</li>
-        <li>Fecha: {date}</li>
-        <li>Hora: {time}</li>
-        <li>Precio: ${branchOffice.price}</li>
+        <li>Sucursal: {pickedBranchOffice.location.toUpperCase()}</li>
+        <li>Dirección: {pickedBranchOffice.address}</li>
+        <li>Teléfono: {pickedBranchOffice.phone}</li>
+        <li>Email: {pickedBranchOffice.email}</li>
+        <li>Fecha: {getFullDate(pickedDate)}</li>
+        <li>Hora: {getFixedTime(pickedDate)} hs</li>
+        <li>Precio: ${pickedBranchOffice.price.$numberDecimal}</li>
       </ul>
       
         <>
           <Button
             variant="secondary"
             className={style.sideButton}
-
-            onClick={() =>
-              handleRoleChange()
-            }
-
+            onClick={() => handleSaveAppointment()}
           >
             Reservar
           </Button>
@@ -71,7 +80,7 @@ const AppointmentDetails = () => {
             variant="secondary"
             className={style.sideButton}
 
-            //onClick={() => handleDelete(user._id)}
+            onClick={() => {}}
 
           >
             Cancelar
@@ -79,9 +88,10 @@ const AppointmentDetails = () => {
         </>
       
     </div>
-  ) : (
+  ) : //selectedDate.setDate(Number(pickedDate.date)) 
+  (
     <></>
-  );
+  ) ;
 };
 
 export default AppointmentDetails;

@@ -2,8 +2,7 @@
     
     // lo anterior viene del menu inicial y pasa por prop el objeto suc elegida
 
-    const [startDate, setStartDate] = useState(null
-    );
+    const [startDate, setStartDate] = useState({});
 
     const hhStart = sucursal.startTime.slice(0,2)
     const mmStart = sucursal.startTime.slice(3)
