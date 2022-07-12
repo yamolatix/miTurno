@@ -4,7 +4,7 @@ const User = require("../models/User");
 const BranchOffice = require("../models/BranchOffice");
 const parseId = require("../utils/functions");
 
-const NewAppointment = async (branchOfficeId, userId, saveAppointmentId, done) => {
+const NewAppointment = async (branchOfficeId, userId, saveAppointmentId) => {
  // ID MESSI(CLIENTE): I62c8256b3f93b0d3b2d46cb
  // Tomo turno nuevo - cambios en collection BrandOffice
  const updateBranchOffice = await BranchOffice.updateOne(
@@ -32,6 +32,6 @@ const NewAppointment = async (branchOfficeId, userId, saveAppointmentId, done) =
    { _id: parseId(saveAppointmentId) },
    [{ $set: { state: "reservado" } }]
  )
- return done()}
+ return}
 
  module.exports = NewAppointment;

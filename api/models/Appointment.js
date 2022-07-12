@@ -17,7 +17,7 @@ const appointmentSchema = new Schema({
         type: String,
         maxlength:1
     },
-    time: { // 09:15 - modificar a time 
+    time: { // 09:15
         type: String,
         maxlength:5 //a 5
     },
@@ -27,7 +27,7 @@ const appointmentSchema = new Schema({
     },
     state: {
         type: String,
-        enum: ['pendiente de pago', 'reservado', 'cancelado por cliente', 'cancelado por sucursal', 'asistido'] //reservado, cancelado y confirmado
+        enum: ['reservado', 'cancelado', 'asistido'],
     },
     branchOffice: [{
         type: Schema.Types.ObjectId,
@@ -37,26 +37,6 @@ const appointmentSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User"
     }],
-    //Box ?
 }, { timestamps: true });
 
-//Para traer los datos en su totalidad.
-/* const union = await Appointment.aggregate(
-    [
-        {
-            $lookup: {
-                from: 'User',
-                localField: 'user',
-                foreignField: '_id',
-                as: 'turnoUsuario',
-            }
-        }
-    ]
-) */
-
 module.exports = model("Appointment", appointmentSchema)
-
-// https://mongoosejs.com/docs/tutorials/dates.html
-
-//El calendario puede devolver una fecha desde el front y si nosotros en cuanto a esa fecha abordarlo con los turnos.
-//Si a ellos les sirve recibir un arreglo con los horarios.
