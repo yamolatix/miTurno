@@ -12,6 +12,7 @@ import filterFactory, {
 import paginationFactory from "react-bootstrap-table2-paginator";
 import parseJwt from "../hooks/parseJwt";
 import capitalize from "../hooks/capitalize";
+import { Confirm } from "notiflix/build/notiflix-confirm-aio";
 
 import style from "../styles/Users.module.css";
 
@@ -79,30 +80,51 @@ const Users = () => {
   };
 
   const handleRoleChange = (id, isAdmin, isOperator) => {
-    console.log(id, isAdmin, isOperator);
-    if (isAdmin) console.log("No se puede cambiar rol de un administrador");
-    else
-      axios
-        .put(`http://localhost:3001/api/users/admin/${payload.id}/role/${id}`, {
-          operator: !isOperator,
-        })
-        .then((res) => {
-          console.log(res);
-          setLoad(!load);
-          console.log(selectedUser._id, selectedUser.operator);
-        })
-        .catch((err) => console.log(err));
+    Confirm.show(
+      "miTurno",
+      "¿Confirma que desea cambiar el rol del usuario?",
+      "Si",
+      "No",
+      () => {
+        console.log(id, isAdmin, isOperator);
+        if (isAdmin) console.log("No se puede cambiar rol de un administrador");
+        else
+          axios
+            .put(
+              `http://localhost:3001/api/users/admin/${payload.id}/role/${id}`,
+              {
+                operator: !isOperator,
+              }
+            )
+            .then((res) => {
+              console.log(res);
+              setLoad(!load);
+              console.log(selectedUser._id, selectedUser.operator);
+            })
+            .catch((err) => console.log(err));
+      }
+    );
   };
 
   const handleDelete = (id) => {
-    axios
-      .delete(`http://localhost:3001/api/users/admin/${payload.id}/delete/${id}`)
-      .then((res) => {
-        console.log(res);
-        setSelectedUser({});
-        setLoad(!load);
-      })
-      .catch((err) => console.log(err));
+    Confirm.show(
+      "miTurno",
+      "¿Confirma que desea eliminar el usuario?",
+      "Si",
+      "No",
+      () => {
+        axios
+          .delete(
+            `http://localhost:3001/api/users/admin/${payload.id}/delete/${id}`
+          )
+          .then((res) => {
+            console.log(res);
+            setSelectedUser({});
+            setLoad(!load);
+          })
+          .catch((err) => console.log(err));
+      }
+    );
   };
 
   const handleUserSelection = (id) => {

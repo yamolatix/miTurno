@@ -13,6 +13,7 @@ import paginationFactory from "react-bootstrap-table2-paginator";
 import Button from "react-bootstrap/esm/Button";
 import parseJwt from "../hooks/parseJwt";
 import capitalize from "../hooks/capitalize";
+import { Confirm } from "notiflix/build/notiflix-confirm-aio";
 
 import style from "../styles/BranchOffices.module.css";
 import { Navigate } from "react-router-dom";
@@ -83,14 +84,22 @@ const BranchOffices = ({ selectOffice }) => {
   };
 
   const handleDelete = (id) => {
-    axios
-      .delete(
-        `http://localhost:3001/api/branchOffice/admin/${payload.id}/delete/${id}`
-      )
-      .then((res) => {
-        setLoad(!load);
-      })
-      .catch((err) => console.log(err));
+    Confirm.show(
+      "miTurno",
+      "¿Confirma que desea eliminar la sucursal?",
+      "Si",
+      "No",
+      () => {
+        axios
+          .delete(
+            `http://localhost:3001/api/branchOffice/admin/${payload.id}/delete/${id}`
+          )
+          .then((res) => {
+            setLoad(!load);
+          })
+          .catch((err) => console.log(err));
+      }
+    );
   };
 
   const columns = [
