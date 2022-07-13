@@ -66,12 +66,6 @@ function BranchOfficeSelector() {
             Turnos sucursal {pickedBranchOffice.location.toUpperCase()}
           </h5>
           <Calendar />
-          {/* condicionar lo que sigue a que tenga algún horario en amarillo */}
-          <ul className={style.fewStock}>
-            <li>
-                últimos turnos disponibles
-            </li>
-          </ul>
         </div>)
       : (<></>)
       }</>
