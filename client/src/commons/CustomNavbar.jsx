@@ -5,15 +5,19 @@ import Nav from "react-bootstrap/Nav";
 import { useNavigate } from "react-router-dom";
 import parseJwt from "../hooks/parseJwt";
 import capitalize from "../hooks/capitalize";
-import countdown from "../utils/countdown";
+//import countdown from "../utils/countdown";
 import { Confirm } from 'notiflix/build/notiflix-confirm-aio';
 
 
 import style from "../styles/CustomNavbar.module.css";
+import { emptyBranchOffice } from "../features/branchOffice";
+import { emptyAppointment } from "../features/appointment";
+import { useDispatch } from "react-redux";
 
 const CustomNavbar = () => {
   const navigate = useNavigate();
 
+  const dispatch = useDispatch();
   const token = JSON.parse(localStorage.getItem("user")).data.token;
   const payload = parseJwt(token);
   const role = payload.admin ? "AD" : payload.operator ? "OP" : "CL";
@@ -26,7 +30,9 @@ const CustomNavbar = () => {
       "No",
       () => {
       localStorage.removeItem("endTime");
-        localStorage.removeItem("user");
+      localStorage.removeItem("user");
+      dispatch(emptyAppointment());
+      dispatch(emptyBranchOffice())
         navigate("/");
       },
     );

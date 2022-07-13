@@ -97,7 +97,10 @@ const AppointmentDetails = () => {
               Cancelar
             </Button>
           </>)
-        : (<>{ countdown() }</>)
+        : (<>
+            { countdown() }
+            
+          </>)
       }    
     </div>
   ) : //selectedDate.setDate(Number(pickedDate.date)) 
