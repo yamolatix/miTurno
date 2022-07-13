@@ -7,12 +7,17 @@ import parseJwt from "../hooks/parseJwt";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import capitalize from "../hooks/capitalize";
+import { Confirm } from "notiflix/build/notiflix-confirm-aio";
+import { useNavigate } from "react-router-dom";
+
 
 import style from "../styles/MyAccount.module.css";
 
 const MyAccount = () => {
   const [isEditing, setIsEditing] = useState(false);
-  
+
+  const navigate = useNavigate();
+
   const token = JSON.parse(localStorage.getItem("user")).data.token;
   const payload = parseJwt(token);
   console.log(payload);
@@ -35,14 +40,42 @@ const MyAccount = () => {
   };
 
   const handleSubmit = (values) => {
-    axios
-      .put(`http://localhost:3001/api/users/me/${payload.id}`, values)
-      .then((res) => {
-        console.log(res);
-        loadUserData();
-      })
-      .catch((err) => console.log(err));
-    setIsEditing(false);
+    Confirm.show(
+      "miTurno",
+      "¿Confirma que desea aplicar los cambios en su perfil?",
+      "Si",
+      "No",
+      () => {
+        axios
+          .put(`http://localhost:3001/api/users/me/${payload.id}`, values)
+          .then((res) => {
+            console.log(res);
+            loadUserData();
+          })
+          .catch((err) => console.log(err));
+        setIsEditing(false);
+      }
+    );
+  };
+
+  const handleDelete = () => {
+    Confirm.show(
+      "miTurno",
+      "¿Confirma que desea eliminar su cuenta?",
+      "Si",
+      "No",
+      () => {
+        axios
+          .delete(
+            `http://localhost:3001/api/users/admin/62c71168c261b4d23d5b93a5/delete/${payload.id}`
+          )
+          .then((res) => {
+            localStorage.removeItem("user");
+            navigate("/");
+          })
+          .catch((err) => console.log(err));
+      }
+    );
   };
 
   return (
@@ -244,8 +277,10 @@ const MyAccount = () => {
                             </div>
                           ) : null}
                         </div>
+                      ) : userData.address ? (
+                        capitalize(userData.address)
                       ) : (
-                        userData.address ? capitalize(userData.address) : userData.address
+                        userData.address
                       )}
                     </li>
                   </ul>
@@ -275,9 +310,11 @@ const MyAccount = () => {
                     <></>
                   )}
                   <Button
-                    href="/newOffice"
                     variant="secondary"
                     className={style.buttons}
+                    onClick={() => {
+                      handleDelete();
+                    }}
                   >
                     Eliminar mi cuenta
                   </Button>

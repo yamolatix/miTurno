@@ -13,9 +13,9 @@ import paginationFactory from "react-bootstrap-table2-paginator";
 import parseJwt from "../hooks/parseJwt";
 import capitalize from "../hooks/capitalize";
 import AppDetailsUser from "../commons/AppDetailsUser";
+import { Confirm } from "notiflix/build/notiflix-confirm-aio";
 
 import style from "../styles/Users.module.css";
-
 
 const MyAppointments = () => {
   const [appsRaw, setAppsRaw] = useState([]);
@@ -90,7 +90,8 @@ const MyAppointments = () => {
                   ? "ARS " + office.price.$numberDecimal
                   : "-",
                 actions:
-                  appointment.state === undefined ? (
+                  appointment.state === undefined ||
+                  appointment.state === "reservado" ? (
                     <>
                       <Badge
                         bg="secondary"
@@ -136,18 +137,25 @@ const MyAppointments = () => {
   };
 
   const handleDelete = (appointmentId) => {
-    console.log("CANCELAR TURNO ", appointmentId);
-    axios
-      .put(
-        `http://localhost:3001/api/appointment/${payload.id}/myAppointment/remove`,
-        { id: appointmentId }
-      )
-      .then((res) => {
-        console.log(res);
-        setLoad(!load);
-      })
-
-      .catch((err) => console.log(err));
+    Confirm.show(
+      "miTurno",
+      "¿Confirma que desea cancelar este turno?",
+      "Si",
+      "No",
+      () => {
+        console.log("CANCELAR TURNO ", appointmentId);
+        axios
+          .put(
+            `http://localhost:3001/api/appointment/${payload.id}/myAppointment/remove`,
+            { id: appointmentId }
+          )
+          .then((res) => {
+            console.log(res);
+            setLoad(!load);
+          })
+          .catch((err) => console.log(err));
+      }
+    );
   };
 
   // Table setups

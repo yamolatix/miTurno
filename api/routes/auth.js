@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const Joi = require("@hapi/joi");
 const { default: mongoose } = require("mongoose");
 require("dotenv").config();
+const emailer = require("../config/emailer");
 
 /* const { getTemplate, sendEmail } = require('../config/mail.config');
 const { getToken, getTokenData } = require('../config/jwt.config'); */
@@ -111,6 +112,7 @@ router.post("/register", async (req, res) => {
 
   try {
     const userDB = await user.save();
+    emailer.sendMail(user); //con esta sentencia enviamos el mail
     //console.log('MAIL DE DESTINO ', user.email)
     //console.log('MAIL DE DESTINO ', template)
     // Enviar el email

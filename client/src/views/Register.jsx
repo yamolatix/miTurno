@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux";
 import { userRegister } from "../features/user";
 import style from "../styles/General.module.css";
 import { usePasswordToggle } from "../utils/togglePasswordVisibility";
+import { Report } from "notiflix/build/notiflix-report-aio";
 
 function Register() {
   const navigate = useNavigate();
@@ -23,8 +24,8 @@ function Register() {
 
   const dispatch = useDispatch();
 
-  if (localStorage.getItem("registered")) localStorage.removeItem("registered")
-/* 
+  if (localStorage.getItem("registered")) localStorage.removeItem("registered");
+  /* 
   const user = localStorage.getItem('user')
     ? JSON.parse(localStorage.getItem('user'))
     : {} */
@@ -45,13 +46,29 @@ function Register() {
         password: values.password,
       })
     ).then(() => {
-      const registered = JSON.parse(localStorage.getItem("registered")).data.fname || null;
-      console.log('ESTO ES el FNAME de REGISTERED', registered)
-      alert(registered
-      ? 'Hola ' + registered + ', te has registrado exitosamente!'
-      : 'Problema en el registro')
-    })
-      .then(() => navigate("/login"));
+      const registered =
+        JSON.parse(localStorage.getItem("registered")).data.fname || null;
+      console.log("ESTO ES el FNAME de REGISTERED", registered);
+      if (registered) {
+        Report.success(
+          "¡Registro exitoso!",
+          "Recibirás un email confirmando tu registro.<br/>Ya podés loguearte y comenzar a utilizar miTurno.",
+          "Ok"
+        );
+        navigate("/login");
+      } else {
+        Report.failure(
+          "Ocurrió un problema...",
+          "Ingresá nuevamente tu información de registro, por favor.",
+          "Ok"
+        );
+        navigate("/register");
+      }
+      // alert(registered
+      // ? 'Hola ' + registered + ', te has registrado exitosamente!'
+      // : 'Problema en el registro')
+    });
+    // .then(() => navigate("/login"));
   };
 
   const validate = Yup.object({
@@ -211,9 +228,7 @@ function Register() {
                         : "form-control"
                     }
                   />
-                  <span className="password-toogle-icon">
-                    ICON {icon}
-                  </span>
+                  <span className="password-toogle-icon">ICON {icon}</span>
                   {formik.touched.password && formik.errors.password ? (
                     <div className="invalid-feedback">
                       {formik.errors.password}
