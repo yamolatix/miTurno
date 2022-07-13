@@ -17,8 +17,7 @@ const NewAppointment = async (branchOfficeId, userId, saveAppointmentId) => {
    { _id: userId },
    {
      $push: {
-       appointment: parseId(saveAppointmentId),
-       state: "reservado",
+       appointment: parseId(saveAppointmentId)
      },
    }
  ).populate("user");

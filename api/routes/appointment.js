@@ -1,16 +1,23 @@
+/* RUTAS
+1) CREAR TURNO / MODIFICA UN TURNO EXISTENTE CANCELANDOLO (CAMBIA ESTADO DE AVAILABLE FALSE A TRUE Y STATE DE RESERVADO A CANCELADO)
+2) CANCELAR UN TURNO POR EL USUARIO
+3) MOSTRAR TODOS LOS TURNOS DE UN USUARIO CON TODOS SUS ESTADOS
+4) CONFIRMAR UN TURNO POR UN OPERADOR
+5) MOSTRAR TODOS LOS TURNOS PARA UN DÍA, HORARIO Y SUCURSAL SELECCIONADA POR EL OPERADOR
+6) MOSTRAR TODOS LOS TURNOS CON EL FORMATO DE ARREGLO DE OBJETOS SIN NINGÚN TIPO DE VALIDACIÓN - COMENTADA PORQUE NO SE UTILIZARÍA
+7) CAMBIA EL ESTADO DEL TURNO A CONFIRMADO
+8) Eliminar reserva de turno
+*/
+
+
 const { Router } = require("express");
 const router = Router();
 const Appointment = require("../models/Appointment");
 const User = require("../models/User");
 const BranchOffice = require("../models/BranchOffice");
 const parseId = require("../utils/functions");
-//const Buscar = require("../utils/Buscar");
 const NewAppointment = require("../utils/NewAppoinment");
 const Cancelar = require("../utils/Cancelar");
-
-// Collecion Appointment: no impacta a la sucursal a la que pertenece
-// Collecion BranchOffice: no impactan los appointments
-//Collecion User: no impacta el appointment
 
 //1)
 //A - Crear un nuevo turno
@@ -91,8 +98,8 @@ router.post("/:id", async (req, res) => {
         if (appointmentId) {
           Cancelar(appointmentId);
         }
+        return res.status(200).json(saveAppointment);
       }
-      return res.status(200).json("Turno creado");
     }
 
     // (A.2) Si existe.
@@ -123,7 +130,7 @@ router.post("/:id", async (req, res) => {
           if (appointmentId) {
             Cancelar(appointmentId)
           }
-          return res.status(200).json("Turno creado");
+          return res.status(200).json(saveAppointment);
         } else {
           // (A.2.2.2.2) Si lo supera,no tomo turno
           return res.json({
@@ -237,14 +244,44 @@ router.get("/:operatorId/dayAppointments", async (req, res) => {
 //   });
 // });
 
+//7)Turno Confirmado
+router.put("/:userId/myAppointment/confirmed", async (req, res) => {
+  const { userId } = req.params;
+  const appointmentId = req.body.id;
+
+  try {
+    const appointmentConfirm = await Appointment.findOneAndUpdate(
+      { _id: parseId(appointmentId) },
+      [{ $set: { state: "confirmado" } }]
+    );
+    res.status(200).json("miTurno ha sido confirmado!");
+  } catch (err) {
+    res.status(404).json(err);
+  }
+});
+
+//8)Eliminar reserva de turno
+
+router.delete("/:userId/myAppointment/deleteAppointment", async (req, res) => {
+  const { userId } = req.params;
+  const appointmentId = req.body.appointId;
+  const branchOfficeId = req.body.branchId;
+
+  try {
+    const deleteAppointment = await Appointment.deleteOne({ _id: parseId(appointmentId) })
+    res.status(204).json("Su reserva a caducado")
+    // elimina de BranchOffice el turno
+    const deleteAppointmentBranch = await BranchOffice.findByIdAndUpdate(branchOfficeId, {
+      $pull: { appointment: parseId(appointmentId) }
+    })
+    // elimina de User el turno
+    const deleteAppointmentUser = await User.findByIdAndUpdate(userId, {
+      $pull: { appointment: parseId(appointmentId) }
+    })
+
+  } catch (err) {
+    res.status(404).json(err)
+  }
+})
+
 module.exports = router;
-
-
-/*
-1) CREAR TURNO / MODIFICA UN TURNO EXISTENTE CANCELANDOLO (CAMBIA ESTADO DE AVAILABLE FALSE A TRUE Y STATE DE RESERVADO A CANCELADO)
-2) CANCELAR UN TURNO POR EL USUARIO
-3) MOSTRAR TODOS LOS TURNOS DE UN USUARIO CON TODOS SUS ESTADOS
-4) CONFIRMAR UN TURNO POR UN OPERADOR
-5) MOSTRAR TODOS LOS TURNOS PARA UN DÍA, HORARIO Y SUCURSAL SELECCIONADA POR EL OPERADOR
-6) MOSTRAR TODOS LOS TURNOS CON EL FORMATO DE ARREGLO DE OBJETOS SIN NINGÚN TIPO DE VALIDACIÓN - COMENTADA PORQUE NO SE UTILIZARÍA
-*/
