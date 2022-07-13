@@ -33,7 +33,7 @@ const Welcome = () => {
                   </Link>
               </div>
               <div >
-                  <Link to="/myturns">
+                  <Link to="/myappointments">
                       <h3>Ver mis turnos</h3>
                   </Link>
               </div>

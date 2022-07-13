@@ -43,9 +43,9 @@ const BranchOffices = ({ selectOffice }) => {
             name: capitalize(office.location + " - " + office.address),
             isOpen:
               office.startTime.toString() +
-              ":00 a " +
+              " a " +
               office.endTime.toString() +
-              ":00",
+              " hs",
             simultAppointment: office.simultAppointment,
             price: office.price.$numberDecimal,
             actions: (
