@@ -45,7 +45,7 @@ router.post("/:id", async (req, res) => {
       time,
       branchOffice: branchOfficeId,
     });
-   
+   //turnoyaexiste = appont.find()
     //APPOINTMENTFALSE = Turno tomado
     const appointmentFALSE = await Appointment.find({
       date,
@@ -56,7 +56,7 @@ router.post("/:id", async (req, res) => {
       branchOffice: branchOfficeId,
       available: false,
     });
-    //APPOINTMENTTRUE = Turno cancelado
+
     const appointmentTRUE = await Appointment.find({
       date,
       month,
