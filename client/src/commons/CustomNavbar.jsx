@@ -4,11 +4,12 @@ import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import { useNavigate } from "react-router-dom";
 import parseJwt from "../hooks/parseJwt";
-import capitalize from "../hooks/capitalize"
+import capitalize from "../hooks/capitalize";
 import countdown from "../utils/countdown";
+import { Confirm } from 'notiflix/build/notiflix-confirm-aio';
+
 
 import style from "../styles/CustomNavbar.module.css";
-
 
 const CustomNavbar = () => {
   const navigate = useNavigate();
@@ -18,27 +19,45 @@ const CustomNavbar = () => {
   const role = payload.admin ? "AD" : payload.operator ? "OP" : "CL";
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
-    navigate("/");
+    Confirm.show(
+      "miTurno",
+      "¿Confirma que desea finalizar la sesión?",
+      "Si",
+      "No",
+      () => {
+      localStorage.removeItem("endTime");
+        localStorage.removeItem("user");
+        navigate("/");
+      },
+    );
   };
-  
 
   return (
     <div>
       <Navbar variant="dark" expand="lg" className={style.navbar}>
         <Container fluid className="mx-4">
-          <Navbar.Brand>
-            <img
+          {!payload.admin && !payload.operator ? 
+          <Navbar.Brand href="/welcome">
+            <img 
               src={require("../images/3.png")}
               height="36px"
               className="d-inline-block align-top"
               alt="Logo mi turno"
             />
-          </Navbar.Brand>
-
+          </Navbar.Brand> : 
+          <Navbar.Brand href="/users">
+          <img 
+            src={require("../images/3.png")}
+            height="36px"
+            className="d-inline-block align-top"
+            alt="Logo mi turno"
+          />
+        </Navbar.Brand>
+          }
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <a className="navbar-brand ms-5" href="#">Hola {capitalize(payload.fname)}</a>
-          
+          <a className="navbar-brand ms-5" href="#">
+            Hola {capitalize(payload.fname)}
+          </a>
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
               {role === "AD" ? (
@@ -51,6 +70,7 @@ const CustomNavbar = () => {
                   </Nav.Link>
                   <Nav.Link href="#link" className="mx-3 fs-5">
                     Turnos
+                  
                   </Nav.Link>
                 </>
               ) : role === "OP" ? (
