@@ -15,8 +15,13 @@ export const appointmentPicker = createAsyncThunk("APPOINTMENT_PICKER", (picked)
     return {day, date, month, year, hours, minutes}
 });
 
+export const emptyAppointment = createAsyncThunk("EMPTY_APPOINTMENT", () => {
+    return {}
+});
+
 const appointmentReducer = createReducer({}, {
-    [appointmentPicker.fulfilled]: (state, action) => action.payload
+    [appointmentPicker.fulfilled]: (state, action) => action.payload,
+    [emptyAppointment.fulfilled]: (state, action) => action.payload
 });
 
 export default appointmentReducer;

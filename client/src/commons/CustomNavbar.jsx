@@ -62,7 +62,7 @@ const CustomNavbar = () => {
               ) : (
                 <>
                   <Nav.Item className="navbar-brand ms-5">
-                    {countdown()}
+                    {/* {countdown()} */}
                   </Nav.Item>
                   <Nav.Link href="/calendar" className="mx-3 fs-5">
                     Reservar
