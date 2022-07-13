@@ -8,6 +8,7 @@ import capitalize from "../hooks/capitalize";
 import countdown from "../utils/countdown";
 import { Confirm } from 'notiflix/build/notiflix-confirm-aio';
 
+
 import style from "../styles/CustomNavbar.module.css";
 
 const CustomNavbar = () => {
@@ -24,6 +25,7 @@ const CustomNavbar = () => {
       "Si",
       "No",
       () => {
+      localStorage.removeItem("endTime");
         localStorage.removeItem("user");
         navigate("/");
       },
@@ -34,20 +36,28 @@ const CustomNavbar = () => {
     <div>
       <Navbar variant="dark" expand="lg" className={style.navbar}>
         <Container fluid className="mx-4">
-          <Navbar.Brand>
-            <img
+          {!payload.admin && !payload.operator ? 
+          <Navbar.Brand href="/welcome">
+            <img 
               src={require("../images/3.png")}
               height="36px"
               className="d-inline-block align-top"
               alt="Logo mi turno"
             />
-          </Navbar.Brand>
-
+          </Navbar.Brand> : 
+          <Navbar.Brand href="/users">
+          <img 
+            src={require("../images/3.png")}
+            height="36px"
+            className="d-inline-block align-top"
+            alt="Logo mi turno"
+          />
+        </Navbar.Brand>
+          }
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <a className="navbar-brand ms-5" href="#">
             Hola {capitalize(payload.fname)}
           </a>
-
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
               {role === "AD" ? (
@@ -60,6 +70,7 @@ const CustomNavbar = () => {
                   </Nav.Link>
                   <Nav.Link href="#link" className="mx-3 fs-5">
                     Turnos
+                  
                   </Nav.Link>
                 </>
               ) : role === "OP" ? (
