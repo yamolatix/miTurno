@@ -16,7 +16,6 @@ const Cancelar = require("../utils/Cancelar");
 //A - Crear un nuevo turno
 router.post("/:id", async (req, res) => {
   const userId = req.params.id;
-  console.log(userId);
   const { date, month, year, day, time } = req.body;
   const branchOfficeId = req.body.branchId;
   const appointmentId = req.body.appointId;
@@ -32,11 +31,12 @@ router.post("/:id", async (req, res) => {
   });
   // Busco turno para ese mismo dia, horario, sucursal
   //ej Hoy 15:00 en RG1
-  
+
   try {
     const branchOffice = await BranchOffice.findOne({
       _id: parseId(branchOfficeId),
     });
+
     const appointment = await Appointment.find({
       date,
       month,
@@ -45,7 +45,7 @@ router.post("/:id", async (req, res) => {
       time,
       branchOffice: branchOfficeId,
     });
-   //turnoyaexiste = appont.find()
+
     //APPOINTMENTFALSE = Turno tomado
     const appointmentFALSE = await Appointment.find({
       date,
@@ -67,46 +67,65 @@ router.post("/:id", async (req, res) => {
       available: true,
     });
 
-    // (A.1) Existe en Base Appoiment un turno para ese mismo dia, horario, sucursa
+    const appointmentSameUser = await Appointment.find({
+      date,
+      month,
+      year,
+      available: false,
+      user: userId
+    });
+
+    // (A.1) Existe en Base Appoiment un turno para ese mismo dia, horario, sucursal
+
     if (appointment.length === 0) {
-      // (A.1.1) No Existe. Lo tomo
-      const saveAppointment = await newAppointment.save();
-      const saveAppointmentId = saveAppointment._id;
-      NewAppointment(branchOfficeId, userId, saveAppointmentId);
-      if (appointmentId) {
-        Cancelar(appointmentId);
+      // (A.1) No Existe. Ahora Consulto si el Usuario ya tiene turno para ese dia
+      // (A.1.1) Si tiene le rechazo la peticion
+      if (appointmentSameUser.length > 0) {
+        return res.status(200).json({ error: "Usted ya tiene un turno activo para este dia" })
+        // (A.1.2) Si no tiene, le acepto el turno 
+      } else {
+        const saveAppointment = await newAppointment.save();
+        const saveAppointmentId = saveAppointment._id;
+        NewAppointment(branchOfficeId, userId, saveAppointmentId);
+        // (B) Ademas, si esto sucede desde modificar, el turno anterior que figura en el req.body lo cancelo
+        if (appointmentId) {
+          Cancelar(appointmentId);
+        }
       }
       return res.status(200).json("Turno creado");
     }
-    // (A.1.2) Si existe
 
-    // (A.2) Permite Base brandOffice otro turno en simultaneo
+    // (A.2) Si existe.
+    // Ahora Consulto si el Usuario ya tiene turno para ese dia
+    // (A.2.1)Si tiene, le rechazo la peticion
+    if (appointmentSameUser.length > 0) {
+      return res.status(200).json({ error: "Usted ya tiene un turno activo para este dia" })
+    }
+
+    // (A.2.2) No tiene, avanzo con el siguiente filtro
+    // Permite Base brandOffice otro turno en simultaneo
     if (appointment) {
       if (branchOffice.simultAppointment === 1) {
-        // (A.2.1) No, no permite
+        // (A.2.2.1) No, no permite
         return res.json({
           error:
             "Turno no disponible dado que no se permiten turnos simultaneos",
         });
-
       }
-      // (A.2.2) Si permite
+      // (A.2.2.2) Si permite
       else {
-        // (A.3) La cantidad de turnos actuales mas el que estoy pidiendo superan el limite de esa sucursal?
-        // ej: tengo 4 turnos [0,1,2,3] y la sucursal permite 4 en simultaneo
-        //Se debe contar el arreglo de turnos con estado no disponible dado que puede haber turnos creados
-        //y disponibles porque fueron cancelados por el cliente, por lo tanto no se cuenta en el arreglo
         if (appointmentFALSE.length < branchOffice.simultAppointment) {
-          // (A.3.2) no lo supera, tomo turno
+          // (A.2.2.2.1) no lo supera, tomo turno
           const saveAppointment = await newAppointment.save();
           const saveAppointmentId = saveAppointment._id;
           NewAppointment(branchOfficeId, userId, saveAppointmentId);
+          // (B) Ademas, si esto sucede desde modificar, el turno anterior que figura en el req.body lo cancelo
           if (appointmentId) {
             Cancelar(appointmentId)
           }
           return res.status(200).json("Turno creado");
         } else {
-          // (A.3.1) Si lo supera,no tomo turno
+          // (A.2.2.2.2) Si lo supera,no tomo turno
           return res.json({
             error:
               "Turno no disponible, ya se han otorgado todos los disponibles",
@@ -115,7 +134,7 @@ router.post("/:id", async (req, res) => {
       }
     }
   } catch (error) {
-    return res.status(404).json(error);
+    return res.status(405).json(error);
   }
 });
 
@@ -140,13 +159,11 @@ router.put("/:userId/myAppointment/remove", async (req, res) => {
 //3) Mostrar todos los turnos de un usuario para el mismo
 router.get("/:id/showAppointments", async (req, res) => {
   const { id } = req.params;
-  console.log("**ID DE PARAMS**", id);
   try {
     await Appointment.find({ user: id }, (err, result) => {
       if (err) {
         return res.json({ err: "Error" });
       } else {
-        console.log(result);
         return res.json({ data: result });
       }
     })
