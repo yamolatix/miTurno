@@ -5,13 +5,13 @@ const User = require("../models/User");
 const BranchOffice = require("../models/BranchOffice");
 
 let start,
-  end,
+  limit,
   simultAppointment = "";
 
 // Paso 1 - Arreglo de todos los turnos en la franja horaria para una fecha y una sucursal determinada
 router.get("/", async (req, res) => {
-  const { date, month, year } = req.body;
-  const branchOfficeId = req.body.id;
+  const { date, month, year } = req.headers;
+  const branchOfficeId = req.headers.id;
   const findBranch = await BranchOffice.find({ _id: branchOfficeId }).exec();
   start = findBranch[0].startTime;
   limit = findBranch[0].endTime;

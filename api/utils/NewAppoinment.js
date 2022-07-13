@@ -5,12 +5,12 @@ const BranchOffice = require("../models/BranchOffice");
 const parseId = require("../utils/functions");
 
 const NewAppointment = async (branchOfficeId, userId, saveAppointmentId) => {
- // ID MESSI(CLIENTE): I62c8256b3f93b0d3b2d46cb
+
  // Tomo turno nuevo - cambios en collection BrandOffice
  const updateBranchOffice = await BranchOffice.updateOne(
    { _id: branchOfficeId },
    { $push: { appointment: parseId(saveAppointmentId) } }
- ).populate("branchOffice");
+ ).populate("branchOffice")
 
  // Tomo turno nuevo - cambios en collection User
  const updateUser = await User.updateOne(

@@ -1,15 +1,20 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import style from "../styles/Users.module.css";
 import { getFullDate } from "../utils/getFullDate";
 import { getFixedTime } from "../utils/getFixedTime";
 import parseJwt from "../hooks/parseJwt";
+import { emptyAppointment } from "../features/appointment";
+import countdown from "../utils/countdown";
 
 const AppointmentDetails = () => {
 
+  const dispatch = useDispatch()
+
   //const initialSelectedDate = new Date()
+  const [hasClickedDetailsButton, setHasClickedDetailsButton] = useState(false)
   const pickedDate = useSelector(state => state.appointment)
   const pickedBranchOffice = useSelector(state => state.branchOffice.clickedOffice)
   const user = parseJwt(JSON.parse(localStorage.getItem('user')).data.token)
@@ -31,7 +36,10 @@ const AppointmentDetails = () => {
       time: getFixedTime(pickedDate),
       id: pickedBranchOffice.id
     })
-    .then(() => alert('Turno reservado exitosamente'))
+    .then(() => {
+      alert('Tenés 10 minutos para confirmar el turno')
+      // DISPARAR DESDE ACÁ EL RELOJ ???
+    })
     .catch(err => console.log(err))
   }
 
@@ -51,11 +59,11 @@ const AppointmentDetails = () => {
 
   //console.log('LOS DATES SON IGUALES ?', pickedDate.date == selectedDate)
 
-  /* useEffect(() => {
-    console.log('DISPARÓ EL USE EFFECT')
-  }, [!pickedDate.date])
- */
-  return pickedDate.date ? (
+  useEffect(() => {
+    setHasClickedDetailsButton(false)
+  }, [pickedDate])
+ 
+  return (pickedDate.date) ? (
     <div className={style.userDetails}>
       <h5>Detalle del turno</h5>
       <ul>
@@ -68,25 +76,32 @@ const AppointmentDetails = () => {
         <li>Precio: ${pickedBranchOffice.price.$numberDecimal}</li>
       </ul>
       
-        <>
-          <Button
-            variant="secondary"
-            className={style.sideButton}
-            onClick={() => handleSaveAppointment()}
-          >
-            Reservar
-          </Button>
-          <Button
-            variant="secondary"
-            className={style.sideButton}
-
-            onClick={() => {}}
-
-          >
-            Cancelar
-          </Button>
-        </>
-      
+      {!hasClickedDetailsButton
+        ? (<>
+            <Button
+              variant="secondary"
+              className={style.sideButton}
+              onClick={() => {
+                handleSaveAppointment()
+                setHasClickedDetailsButton(true)
+                }
+              }
+            >
+              Reservar
+            </Button>
+            <Button
+              variant="secondary"
+              className={style.sideButton}
+              onClick={() => {dispatch(emptyAppointment())}}
+            >
+              Cancelar
+            </Button>
+          </>)
+        : (<>
+            { countdown() }
+            
+          </>)
+      }    
     </div>
   ) : //selectedDate.setDate(Number(pickedDate.date)) 
   (
