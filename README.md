@@ -31,5 +31,4 @@ npm start --force
 Y desde la carpeta `api`:
 ```sh 
 npm start
-``` 
-## Proyecto realizado por
+```
