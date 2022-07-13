@@ -4,16 +4,22 @@ const Appointment = require("../models/Appointment");
 const User = require("../models/User");
 const BranchOffice = require("../models/BranchOffice");
 const parseId = require("../utils/functions");
+//const Buscar = require("../utils/Buscar");
+const NewAppointment = require("../utils/NewAppoinment");
+const Cancelar = require("../utils/Cancelar");
 
 // Collecion Appointment: no impacta a la sucursal a la que pertenece
 // Collecion BranchOffice: no impactan los appointments
 //Collecion User: no impacta el appointment
 
+//1)
 //A - Crear un nuevo turno
 router.post("/:id", async (req, res) => {
   const userId = req.params.id;
-  const { date, month, year, day, time, id } = req.body;
-  const branchOfficeId = req.body.id;
+  console.log(userId);
+  const { date, month, year, day, time } = req.body;
+  const branchOfficeId = req.body.branchId;
+  const appointmentId = req.body.appointId;
 
   const newAppointment = new Appointment({
     date,
@@ -26,7 +32,7 @@ router.post("/:id", async (req, res) => {
   });
   // Busco turno para ese mismo dia, horario, sucursal
   //ej Hoy 15:00 en RG1
-  console.log("SOY NEWAPPOINT", newAppointment);
+  
   try {
     const branchOffice = await BranchOffice.findOne({
       _id: parseId(branchOfficeId),
@@ -39,7 +45,7 @@ router.post("/:id", async (req, res) => {
       time,
       branchOffice: branchOfficeId,
     });
-    console.log("SOY APPOINT", appointment);
+   //turnoyaexiste = appont.find()
     //APPOINTMENTFALSE = Turno tomado
     const appointmentFALSE = await Appointment.find({
       date,
@@ -50,7 +56,7 @@ router.post("/:id", async (req, res) => {
       branchOffice: branchOfficeId,
       available: false,
     });
-    //APPOINTMENTTRUE = Turno cancelado
+
     const appointmentTRUE = await Appointment.find({
       date,
       month,
@@ -61,40 +67,15 @@ router.post("/:id", async (req, res) => {
       available: true,
     });
 
-    console.log("SOY APPOINTMENFALSE", appointmentFALSE);
-    console.log("SOY APPOINTMENTRUE", appointmentTRUE);
-
     // (A.1) Existe en Base Appoiment un turno para ese mismo dia, horario, sucursa
     if (appointment.length === 0) {
-      // (A.1.1) No Exise. Lo tomo
+      // (A.1.1) No Existe. Lo tomo
       const saveAppointment = await newAppointment.save();
-
-      // Tomo turno nuevo - cambios en collection BrandOffice
-      const updateBranchOffice = await BranchOffice.updateOne(
-        { _id: branchOfficeId },
-        { $push: { appointment: parseId(saveAppointment._id) } }
-      ).populate("branchOffice");
-
-      // Tomo turno nuevo - cambios en collection User
-      const updateUser = await User.updateOne(
-        { _id: userId },
-        {
-          $push: {
-            appointment: parseId(saveAppointment._id),
-            state: "reservado",
-          },
-        }
-      ).populate("user");
-
-      // Tomo turno nuevo - cambios en collection Appoinment
-      await Appointment.findOneAndUpdate(
-        { _id: parseId(saveAppointment._id) },
-        [{ $set: { available: { $eq: [false, "$available"] } } }]
-      );
-      await Appointment.findOneAndUpdate(
-        { _id: parseId(saveAppointment._id) },
-        [{ $set: { state: "reservado" } }]
-      );
+      const saveAppointmentId = saveAppointment._id;
+      NewAppointment(branchOfficeId, userId, saveAppointmentId);
+      if (appointmentId) {
+        Cancelar(appointmentId);
+      }
       return res.status(200).json("Turno creado");
     }
     // (A.1.2) Si existe
@@ -107,6 +88,7 @@ router.post("/:id", async (req, res) => {
           error:
             "Turno no disponible dado que no se permiten turnos simultaneos",
         });
+
       }
       // (A.2.2) Si permite
       else {
@@ -117,27 +99,11 @@ router.post("/:id", async (req, res) => {
         if (appointmentFALSE.length < branchOffice.simultAppointment) {
           // (A.3.2) no lo supera, tomo turno
           const saveAppointment = await newAppointment.save();
-
-          const updateBranchOffice = await BranchOffice.updateOne(
-            { _id: branchOfficeId },
-            { $push: { appointment: parseId(saveAppointment._id) } }
-          ).populate("branchOffice");
-
-          const updateUser = await User.updateOne(
-            { _id: userId },
-            { $push: { appointment: parseId(saveAppointment._id) } }
-          ).populate("user");
-
-          // const data = await Appointment.schema.path('status').options.enum;
-          // console.log(data);
-          await Appointment.findOneAndUpdate(
-            { _id: parseId(saveAppointment._id) },
-            [{ $set: { available: { $eq: [false, "$available"] } } }]
-          );
-          await Appointment.findOneAndUpdate(
-            { _id: parseId(saveAppointment._id) },
-            [{ $set: { state: "reservado" } }]
-          );
+          const saveAppointmentId = saveAppointment._id;
+          NewAppointment(branchOfficeId, userId, saveAppointmentId);
+          if (appointmentId) {
+            Cancelar(appointmentId)
+          }
           return res.status(200).json("Turno creado");
         } else {
           // (A.3.1) Si lo supera,no tomo turno
@@ -149,11 +115,11 @@ router.post("/:id", async (req, res) => {
       }
     }
   } catch (error) {
-    res.status(404).json(error);
+    return res.status(404).json(error);
   }
 });
 
-//Cancelar un turno por un usuario - (modificar estado en la base de datos)
+//2) Cancelar un turno por un usuario - (modificar estado en la base de datos)
 router.put("/:userId/myAppointment/remove", async (req, res) => {
   const { userId } = req.params;
   const appointmentId = req.body.id;
@@ -161,29 +127,22 @@ router.put("/:userId/myAppointment/remove", async (req, res) => {
     await Appointment.findOneAndUpdate({ _id: parseId(appointmentId) }, [
       { $set: { available: { $eq: [false, "$available"] } } },
     ]);
-    await Appointment.findOneAndUpdate({ _id: parseId(appointmentId) }, [
-      { $set: { state: "cancelado" } },
-    ]);
+    const appointmentCanceled = await Appointment.findOneAndUpdate(
+      { _id: parseId(appointmentId) },
+      [{ $set: { state: "cancelado" } }]
+    );
     res.status(200).json("Turno cancelado");
   } catch (err) {
     res.status(404).json(err);
   }
 });
 
-router.put("/:userID/myAppointment/edit", async (req,res)=>{
-  const {userId} = req.params;
-  const { date, month, year, day, time, id } = req.body;
-  const appointmentId = req.body.id;
-  const appointmentToChange = await Appointment.findOne({_id: parseId(appointmentId)})
-})
-
-//Mostrar todos los turnos de un usuario para el mismo
-
+//3) Mostrar todos los turnos de un usuario para el mismo
 router.get("/:id/showAppointments", async (req, res) => {
   const { id } = req.params;
   console.log("**ID DE PARAMS**", id);
   try {
-    await Appointment.findOne({ user: id }, (err, result) => {
+    await Appointment.find({ user: id }, (err, result) => {
       if (err) {
         return res.json({ err: "Error" });
       } else {
@@ -198,8 +157,7 @@ router.get("/:id/showAppointments", async (req, res) => {
   }
 });
 
-//Confirmar un turno - operador - VER CON MATI
-
+//4) Confirmar un turno - operador
 router.put("/:operatorId/showAppointments", async (req, res) => {
   const { operatorId } = req.params;
   const appointmentId = req.body.id;
@@ -220,16 +178,56 @@ router.put("/:operatorId/showAppointments", async (req, res) => {
   }
 });
 
-//Mostrar todos los turnos con el formato de arreglo de objetos
-router.get("/", (req, res) => {
-  //const branchOfficeId = req.body._id;
-  Appointment.find({}, (err, result) => {
-    if (err) {
-      res.json({ err: "Error" });
+// 5) Muestra al operador los turnos de X sucursal del dia especificado.
+router.get("/:operatorId/dayAppointments", async (req, res) => {
+  const { operatorId } = req.params;
+  const { date, month, year, time } = req.body;
+  const branchOfficeId = req.body.id;
+
+  try {
+    const userOperator = await User.findOne({ _id: parseId(operatorId) });
+    if (userOperator.operator === true) {
+      await Appointment.find(
+        { date, month, year, time, branchOfficeId },
+        (err, result) => {
+          if (err) {
+            res.json({ err: "Error" });
+          } else {
+            res.json({ data: result });
+          }
+        }
+      )
+        .clone()
+        .exec();
     } else {
-      res.json({ data: result });
+      res
+        .send("You don't have permission to create a new branch office")
+        .status(404);
     }
-  });
+  } catch (error) {
+    res.status(404).json(error);
+  }
 });
 
+//6) Mostrar todos los turnos con el formato de arreglo de objetos
+// router.get("/", (req, res) => {
+//   Appointment.find({}, (err, result) => {
+//     if (err) {
+//       res.json({ err: "Error" });
+//     } else {
+//       res.json({ data: result });
+//     }
+//   });
+// });
+
 module.exports = router;
+
+
+/*
+1) CREAR TURNO / MODIFICA UN TURNO EXISTENTE CANCELANDOLO (CAMBIA ESTADO DE AVAILABLE FALSE A TRUE Y STATE DE RESERVADO A CANCELADO)
+2) CANCELAR UN TURNO POR EL USUARIO
+3) MOSTRAR TODOS LOS TURNOS DE UN USUARIO CON TODOS SUS ESTADOS
+4) CONFIRMAR UN TURNO POR UN OPERADOR
+5) MOSTRAR TODOS LOS TURNOS PARA UN DÍA, HORARIO Y SUCURSAL SELECCIONADA POR EL OPERADOR
+6) MOSTRAR TODOS LOS TURNOS CON EL FORMATO DE ARREGLO DE OBJETOS SIN NINGÚN TIPO DE VALIDACIÓN - COMENTADA PORQUE NO SE UTILIZARÍA
+*/

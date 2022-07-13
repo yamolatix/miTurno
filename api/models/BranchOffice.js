@@ -33,11 +33,13 @@ const branchOfficeSchema = new Schema(
     },
     startTime: {
       type: String,
+      minlength: 5,
       maxlength: 5,
       default: "09:00"
     },
     endTime: {
       type: String,
+      minlength: 5,
       maxlength: 5,
       default: "18:00"
     },

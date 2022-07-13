@@ -4,10 +4,12 @@ import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import { useNavigate } from "react-router-dom";
 import parseJwt from "../hooks/parseJwt";
-import capitalize from "../hooks/capitalize"
+import capitalize from "../hooks/capitalize";
+import countdown from "../utils/countdown";
+import { Confirm } from 'notiflix/build/notiflix-confirm-aio';
+
 
 import style from "../styles/CustomNavbar.module.css";
-
 
 const CustomNavbar = () => {
   const navigate = useNavigate();
@@ -17,11 +19,18 @@ const CustomNavbar = () => {
   const role = payload.admin ? "AD" : payload.operator ? "OP" : "CL";
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("endTime");
-    navigate("/");
+    Confirm.show(
+      "miTurno",
+      "¿Confirma que desea finalizar la sesión?",
+      "Si",
+      "No",
+      () => {
+      localStorage.removeItem("endTime");
+        localStorage.removeItem("user");
+        navigate("/");
+      },
+    );
   };
-  
 
   return (
     <div>
@@ -46,8 +55,9 @@ const CustomNavbar = () => {
         </Navbar.Brand>
           }
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <a className="navbar-brand ms-5" >Hola {capitalize(payload.fname)}</a>
-          
+          <a className="navbar-brand ms-5" href="#">
+            Hola {capitalize(payload.fname)}
+          </a>
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
               {role === "AD" ? (
@@ -71,10 +81,13 @@ const CustomNavbar = () => {
                 </>
               ) : (
                 <>
+                  <Nav.Item className="navbar-brand ms-5">
+                    {countdown()}
+                  </Nav.Item>
                   <Nav.Link href="/calendar" className="mx-3 fs-5">
                     Reservar
                   </Nav.Link>
-                  <Nav.Link href="/myturns" className="mx-3 fs-5">
+                  <Nav.Link href="/myappointments" className="mx-3 fs-5">
                     Mis Turnos
                   </Nav.Link>
                 </>

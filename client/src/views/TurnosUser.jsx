@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import CustomNavbar from "../commons/CustomNavbar";
 import AppointmentDetails from "../commons/AppointmentDetails";
-import { getInitialDate } from "../utils/getInitialDate";
+import { getInitialDate } from "../utils/getFullDate";
 
 import style from "../styles/Users.module.css";
 import BranchOfficeSelector from "../commons/BranchOfficeSelector";
+import { useSelector } from "react-redux";
 
 const TurnosUsers = () => {
+
+  const pickedDate = useSelector(state => state.appointment.value)
 
   /* const initialBranchOffice = {} //definir cómo nos llega la suc seleccionada en Welcome
   const initialDate = getInitialDate()

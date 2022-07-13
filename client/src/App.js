@@ -12,6 +12,7 @@ import BranchOffices from "./views/BranchOffices";
 import OfficeDetails from "./views/OfficeDetails";
 import NewOffice from "./views/NewOffice";
 import Welcome from "./views/Welcome";
+import MyAppointments from "./views/MyAppointments";
 
 import style from "./styles/App.module.css";
 
@@ -28,9 +29,9 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/layout" element={<General />} />
         <Route path="/users" element={<Users />} />
-        <Route path="/login" element={<Login />}/>
-        <Route path="/assist_password" element={<AssistPassword />}/>
-        <Route path="/restore_password" element={<RestorePassword />}/>
+        <Route path="/login" element={<Login />} />
+        <Route path="/assist_password" element={<AssistPassword />} />
+        <Route path="/restore_password" element={<RestorePassword />} />
         <Route path="/calendar" element={<TurnosUsers />} />
         <Route path="/" element={<Login />} />
         <Route path="/myaccount" element={<MyAccount />} />
@@ -50,7 +51,8 @@ function App() {
           }
         />
         <Route path="/newOffice" element={<NewOffice />} />
-        <Route path="/welcome" element={<Welcome />}/>
+        <Route path="/welcome" element={<Welcome />} />
+        <Route path="/myappointments" element={<MyAppointments />} />
         {/* 
         
         <Route path="/branch_offices" element={<BranchOffices />}/>
