@@ -310,7 +310,7 @@ const OfficeDetails = ({ office, selectOffice }) => {
                                     ? "form-control is-invalid"
                                     : "form-control"
                                 }
-                                type="number"
+                                type="text"
                               />
                               {formik.touched.name && formik.errors.name ? (
                                 <div className="invalid-feedback">
@@ -319,7 +319,7 @@ const OfficeDetails = ({ office, selectOffice }) => {
                               ) : null}
                             </div>
                           ) : (
-                            office.startTime + ":00 hs"
+                            office.startTime + " hs"
                           )}
                         </li>
                         <li>
@@ -333,7 +333,7 @@ const OfficeDetails = ({ office, selectOffice }) => {
                                     ? "form-control is-invalid"
                                     : "form-control"
                                 }
-                                type="number"
+                                type="text"
                               />
                               {formik.touched.name && formik.errors.name ? (
                                 <div className="invalid-feedback">
@@ -342,7 +342,7 @@ const OfficeDetails = ({ office, selectOffice }) => {
                               ) : null}
                             </div>
                           ) : (
-                            office.endTime + ":00 hs"
+                            office.endTime + " hs"
                           )}
                         </li>
                         <li>

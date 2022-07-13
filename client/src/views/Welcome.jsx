@@ -33,7 +33,7 @@ const Welcome = () => {
                   </Link>
               </div>
               <div >
-                  <Link to="/myturns" style={{textDecoration:"none"}}>
+                  <Link to="/myappointments" style={{textDecoration:"none"}}>
                       <h3>Ver mis turnos</h3>
                   </Link>
               </div>
