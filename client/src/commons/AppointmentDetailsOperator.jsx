@@ -1,26 +1,34 @@
 import axios from "axios";
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import style from "../styles/Users.module.css";
 import { getFullDate } from "../utils/getFullDate";
 import { getFixedTime } from "../utils/getFixedTime";
+import parseJwt from "../hooks/parseJwt";
+
 
 const AppointmentDetailsOperator = () => {
 
+  const user = parseJwt(JSON.parse(localStorage.getItem('user')).data.token)
   const pickedDate = useSelector(state => state.appointment)
   const pickedBranchOffice = useSelector(state => state.branchOffice.clickedOffice)
+  const [appointmentUsers, setAppointmentUsers] = useState([])
   
   // VER URL DE ACA ABAJO !!!!!!!!
   const getAppointmentUsers = () => {
-    axios.get(`http://localhost:3001/api/appointment/`, {
-      date: pickedDate.date,
-      month: pickedDate.month,
-      year: pickedDate.year,
-      day: pickedDate.day,
-      time: getFixedTime(pickedDate),
-      id: pickedBranchOffice.id
+    axios.get(`http://localhost:3001/api/appointment/${user.id}/dayAppointments`, {
+      headers: {
+        date: pickedDate.date,
+        month: pickedDate.month,
+        year: pickedDate.year,
+        time: getFixedTime(pickedDate),
+        id: pickedBranchOffice.id
+      }
     })
-    .then(users => console.log(users.data))
+    .then(arr => {
+      console.log(arr.data)
+      //setAppointmentUsers(datos)
+    })
     .catch(err => console.log(err))
   }
 
@@ -31,12 +39,12 @@ const AppointmentDetailsOperator = () => {
         <li>Fecha: {getFullDate(pickedDate)}</li>
         <li>Hora: {getFixedTime(pickedDate)} hs</li>
       </ul>
-      {getAppointmentUsers().length
+      {appointmentUsers.length
       ? (
         <>
         <h5>Usuarios agendados:</h5>
         <ul>
-          {getAppointmentUsers().map(e => (
+          {appointmentUsers.map(e => (
             <>  
             <li> {e.lname.toUpperCase()}, {e.fname.toUpperCase()}</li>
             <li> Teléfono: {e.phone}</li>

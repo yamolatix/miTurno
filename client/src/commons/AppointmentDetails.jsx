@@ -8,10 +8,17 @@ import { getFixedTime } from "../utils/getFixedTime";
 import parseJwt from "../hooks/parseJwt";
 import { emptyAppointment } from "../features/appointment";
 import countdown from "../utils/countdown";
+import { useNavigate } from "react-router-dom";
+import { Report } from "notiflix/build/notiflix-report-aio";
 
 const AppointmentDetails = () => {
-
   const dispatch = useDispatch()
+
+  //// AGREGADO PARA FUNCIONALIDAD DE CAMBIAR TURNO /////////
+  const editApp = useSelector((state) => state.editApp);  ///
+  console.log("TURNO A EDITAR: ", editApp);               ///
+  const navigate = useNavigate();                         ///
+  ///////////////////////////////////////////////////////////
 
   //const initialSelectedDate = new Date()
   const [hasClickedDetailsButton, setHasClickedDetailsButton] = useState(false)
@@ -19,7 +26,7 @@ const AppointmentDetails = () => {
   const pickedBranchOffice = useSelector(state => state.branchOffice.clickedOffice)
   const user = parseJwt(JSON.parse(localStorage.getItem('user')).data.token)
   //const [selectedDate, setSelectedDate] = useState(initialSelectedDate.getDate().toString());
-  
+  const appointmentId = ''
   // let auxDate = ''
   
   //console.log('SELECTED DATE EN APPOINTMENT DETAILS ES ', selectedDate)
@@ -34,30 +41,30 @@ const AppointmentDetails = () => {
       year: pickedDate.year,
       day: pickedDate.day,
       time: getFixedTime(pickedDate),
-      id: pickedBranchOffice.id
+      branchId: pickedBranchOffice._id,
+      appointId: editApp
     })
-    .then(() => {
-      alert('Tenés 10 minutos para confirmar el turno')
+    .then((appointment) => {
+      Report.info('miTurno', 'Tenés 10 minutos para confirmar el turno', 'Ok')
+      if (editApp) navigate("/myappointments");
+      // appointmentId.concat(res.etc)
       // DISPARAR DESDE ACÁ EL RELOJ ???
     })
     .catch(err => console.log(err))
   }
 
-  
-  /* if (pickedDate.date === auxDate) {
-    console.log('LA COMPARACION DE GLOBAL Y AUX DA ', pickedDate.date == auxDate)
-    console.log('FECHA LOCAL ANTES DE INTENTAR RESETEARLA ES ', selectedDate)
-    setSelectedDate(pickedDate.date)
-    console.log('FECHA LOCAL DESPUES DE INTENTAR RESETEARLA ES ', selectedDate)
-  } */
-
-  //if (pickedDate.date) auxDate = pickedDate.date
-
-  //console.log('FECHA GLOBAL ES ', pickedDate.date)
-  //console.log('FECHA LOCAL ES ', selectedDate)
-  //console.log('FECHA AUXILIAR ES ', auxDate)
-
-  //console.log('LOS DATES SON IGUALES ?', pickedDate.date == selectedDate)
+  const handleCancel = () => {
+    axios.put(`http://localhost:3001/api/appointment/${user.id}/myAppointment/remove`, {
+      id: '62cf3ecd172e6810786a4c64'
+    })
+      .then(() => {
+        localStorage.removeItem('endTime')
+        localStorage.removeItem('countdownEnd')
+        dispatch(emptyAppointment())
+        Report.success('miTurno', 'Turno cancelado exitosamente', 'Ok')
+      })
+      .catch(err => Report.failure(`${err}`))
+  }
 
   useEffect(() => {
     setHasClickedDetailsButton(false)
@@ -98,7 +105,30 @@ const AppointmentDetails = () => {
             </Button>
           </>)
         : (<>
-            { countdown() }
+            { countdown(handleCancel) }
+
+            <Button
+              variant="secondary"
+              className={style.sideButton}
+              onClick={() => {
+                handleSaveAppointment()
+                setHasClickedDetailsButton(true)
+                }
+              }
+            >
+              Confirmar reserva
+            </Button>
+            
+            <Button
+              variant="secondary"
+              className={style.sideButton} 
+              onClick={() => {
+                handleCancel()
+                }
+              } 
+            >
+              Cancelar reserva
+            </Button> 
             
           </>)
       }    
