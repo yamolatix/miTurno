@@ -118,11 +118,7 @@ const Calendar = () => {
       timeIntervals={15}
       selected={selectedDate}
       onChange={(date) => {
-        //setPickedDate(date)
-        //localStorage.setItem('pickedDate', JSON.stringify(date))
-        //console.log('DATE ELEGIDO en oncchange ES', date)
-        //console.log('EL .date de DATE ELEGIDO en oncchange ES', date.getDate())
-        //console.log('EL .date de pickedDate en oncchange ES', pickedDate.date)
+        date.setMinutes(Math.round(date.getMinutes() / 20) * 15)
         setSelectedDate(date)
         //if (date.getDate() == pickedDate.date)
         dispatch(appointmentPicker({date}))
