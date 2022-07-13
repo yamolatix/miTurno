@@ -1,46 +1,35 @@
-# Getting Started with Create React App and Redux
+# tuTurno - Reserva tu turno
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.
+## Acerca del Proyecto
 
-## Available Scripts
+tuTurno es una aplicación de reserva de turnos impulsada por React.JS, Express y MongoDB que proporciona las funciones principales que esperaría un usuario tanto para visualizar, solicitar y modificar turnos como para administrar sucursales y confirmar asistencia del usuario a dichos turnos como administrador.
 
-In the project directory, you can run:
+Este proyecto fue impulsado por [#Plataforma5](https://www.plataforma5.la/) y [#CRUCE](https://www.e-cruce.com/) a fin de impulsarnos en nuestro desarollo como Developers.
 
-### `npm start`
+## Construido con
+#### ReactJS
+#### Bootstrap
+#### NodeJS
+#### Express
+#### MongoDB - MongoDB Atlas
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Configuración
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Clona este repositorio y corré en la terminal:
+```sh 
+npm install
+``` 
+para instalar las dependencias desde la carpeta `api` y `client` por separado.
 
-### `npm test`
+## Uso
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Después de clonar el repositorio y haber instalado las dependencias. Podes correr desde la carpeta `client`:
+```sh 
+npm start --force
+``` 
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+Y desde la carpeta `api`:
+```sh 
+npm start --force
+``` 
+## Proyecto realizado por
