@@ -7,6 +7,12 @@ const parseId = require("../utils/functions");
 //const Buscar = require("../utils/Buscar");
 const NewAppointment = require("../utils/NewAppoinment");
 const Cancelar = require("../utils/Cancelar");
+require("dotenv").config();
+const transport = require("../config/emailer");
+const {
+  htmlTemplateReserved,
+  htmlTemplateCanceled,
+} = require("../config/html");
 
 // Collecion Appointment: no impacta a la sucursal a la que pertenece
 // Collecion BranchOffice: no impactan los appointments
@@ -16,7 +22,6 @@ const Cancelar = require("../utils/Cancelar");
 //A - Crear un nuevo turno
 router.post("/:id", async (req, res) => {
   const userId = req.params.id;
-  console.log(userId);
   const { date, month, year, day, time } = req.body;
   const branchOfficeId = req.body.branchId;
   const appointmentId = req.body.appointId;
@@ -32,7 +37,7 @@ router.post("/:id", async (req, res) => {
   });
   // Busco turno para ese mismo dia, horario, sucursal
   //ej Hoy 15:00 en RG1
-  
+
   try {
     const branchOffice = await BranchOffice.findOne({
       _id: parseId(branchOfficeId),
@@ -45,7 +50,7 @@ router.post("/:id", async (req, res) => {
       time,
       branchOffice: branchOfficeId,
     });
-   //turnoyaexiste = appont.find()
+    //turnoyaexiste = appont.find()
     //APPOINTMENTFALSE = Turno tomado
     const appointmentFALSE = await Appointment.find({
       date,
@@ -88,7 +93,6 @@ router.post("/:id", async (req, res) => {
           error:
             "Turno no disponible dado que no se permiten turnos simultaneos",
         });
-
       }
       // (A.2.2) Si permite
       else {
@@ -102,7 +106,7 @@ router.post("/:id", async (req, res) => {
           const saveAppointmentId = saveAppointment._id;
           NewAppointment(branchOfficeId, userId, saveAppointmentId);
           if (appointmentId) {
-            Cancelar(appointmentId)
+            Cancelar(appointmentId);
           }
           return res.status(200).json("Turno creado");
         } else {
@@ -140,13 +144,11 @@ router.put("/:userId/myAppointment/remove", async (req, res) => {
 //3) Mostrar todos los turnos de un usuario para el mismo
 router.get("/:id/showAppointments", async (req, res) => {
   const { id } = req.params;
-  console.log("**ID DE PARAMS**", id);
   try {
     await Appointment.find({ user: id }, (err, result) => {
       if (err) {
         return res.json({ err: "Error" });
       } else {
-        console.log(result);
         return res.json({ data: result });
       }
     })
@@ -221,7 +223,6 @@ router.get("/:operatorId/dayAppointments", async (req, res) => {
 // });
 
 module.exports = router;
-
 
 /*
 1) CREAR TURNO / MODIFICA UN TURNO EXISTENTE CANCELANDOLO (CAMBIA ESTADO DE AVAILABLE FALSE A TRUE Y STATE DE RESERVADO A CANCELADO)

@@ -65,6 +65,7 @@ const userSchema = new Schema(
       minlength: 8,
       maxlength: 255,
     },
+    resetLink: {type: String, default: ""},//guarda el token de contraseña aleatoria
     branchOffice: [{
       type: Schema.Types.ObjectId,
       ref: "BranchOffice",
