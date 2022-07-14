@@ -2,10 +2,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 import CustomNavbar from "../commons/CustomNavbar";
 import parseJwt from "../hooks/parseJwt";
-
 import style from "../styles/Welcome.module.css";
 
 const Welcome = () => {
+  
+
       const token = JSON.parse(localStorage.getItem("user")).data.token;
       const payload = parseJwt(token)
       //console.log(payload)

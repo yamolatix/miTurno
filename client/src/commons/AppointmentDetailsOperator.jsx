@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import style from "../styles/Users.module.css";
 import { getFullDate } from "../utils/getFullDate";
@@ -11,8 +11,13 @@ const AppointmentDetailsOperator = () => {
 
   const user = parseJwt(JSON.parse(localStorage.getItem('user')).data.token)
   const pickedDate = useSelector(state => state.appointment)
-  const pickedBranchOffice = useSelector(state => state.branchOffice.clickedOffice)
+  //const pickedBranchOffice = useSelector(state => state.branchOffice.clickedOffice)
   const [appointmentUsers, setAppointmentUsers] = useState([])
+  const branchOffices = JSON.parse(localStorage.getItem('branches')).branches
+
+  const asignedOffice = branchOffices.find(branch => 
+    user.branchOffice.includes(branch._id))
+  console.log('LA SUCURSAL A SETEAR ES ', asignedOffice)
   
   // VER URL DE ACA ABAJO !!!!!!!!
   const getAppointmentUsers = () => {
@@ -22,20 +27,25 @@ const AppointmentDetailsOperator = () => {
         month: pickedDate.month,
         year: pickedDate.year,
         time: getFixedTime(pickedDate),
-        id: pickedBranchOffice.id
+        id: asignedOffice.id
       }
     })
     .then(arr => {
-      console.log(arr.data)
+      console.log('USUARIOS CON ESTE TURNO SON ', arr.data)
       //setAppointmentUsers(datos)
     })
     .catch(err => console.log(err))
   }
 
+  useEffect(()=> {
+    getAppointmentUsers()
+  },[])
+
   return pickedDate.date ? (
     <div className={style.userDetails}>
       <h5>Detalles del turno:</h5>
       <ul>
+        <li>Sucursal: {asignedOffice.location.toUpperCase()}</li>
         <li>Fecha: {getFullDate(pickedDate)}</li>
         <li>Hora: {getFixedTime(pickedDate)} hs</li>
       </ul>

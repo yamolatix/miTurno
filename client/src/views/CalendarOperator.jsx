@@ -11,15 +11,11 @@ import "react-datepicker/dist/react-datepicker.css"
 import style from "../styles/Users.module.css";
 import axios from "axios";
 import { appointmentPicker } from "../features/appointment";
-//import parseJwt from "../hooks/parseJwt";
 
-const Calendar = () => {
+const CalendarOperator = ({ pickedBranchOffice }) => {
 
   const dispatch = useDispatch()
-  //const user = parseJwt(JSON.parse(localStorage.getItem('user')).data.token)
   const pickedDate = useSelector(state => state.appointment)
-  const pickedBranchOffice = useSelector(state => state.branchOffice.clickedOffice)
-                          //|| JSON.parse(localStorage.getItem('branches')).branches
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   //const [appointments, setAppointments] = useState([]);
@@ -151,4 +147,4 @@ const Calendar = () => {
     );
 };
 
-export default Calendar;
+export default CalendarOperator;

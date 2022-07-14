@@ -26,7 +26,7 @@ const AppointmentDetails = () => {
   const pickedBranchOffice = useSelector(state => state.branchOffice.clickedOffice)
   const user = parseJwt(JSON.parse(localStorage.getItem('user')).data.token)
   //const [selectedDate, setSelectedDate] = useState(initialSelectedDate.getDate().toString());
-  const appointmentId = ''
+  let appointmentId
   // let auxDate = ''
   
   //console.log('SELECTED DATE EN APPOINTMENT DETAILS ES ', selectedDate)
@@ -45,6 +45,12 @@ const AppointmentDetails = () => {
       appointId: editApp
     })
     .then((appointment) => {
+      if (appointment.data.error) {
+        Report.failure('miTurno', appointment.data.error, 'Ok');
+      } else {
+        console.log('APPOINTMENT DESDE EL BACK TRAE ESTO ', appointment.data._id)
+      }
+      appointmentId = appointment.data._id
       Report.info('miTurno', 'Tenés 10 minutos para confirmar el turno', 'Ok')
       if (editApp) navigate("/myappointments");
       // appointmentId.concat(res.etc)
@@ -53,9 +59,22 @@ const AppointmentDetails = () => {
     .catch(err => console.log(err))
   }
 
+  const handleConfirm = () => {
+    axios.put(`http://localhost:3001/api/appointment/${user.id}/myAppointment/confirmed`, {
+      id: appointmentId
+      })
+    .then(() => {
+      localStorage.removeItem('endTime')
+      localStorage.removeItem('countdownEnd')
+      dispatch(emptyAppointment())
+      Report.success('miTurno', 'Turno confirmado exitosamente', 'Ok')
+    })
+    .catch(err => Report.failure(`${err}`))
+  }
+
   const handleCancel = () => {
     axios.put(`http://localhost:3001/api/appointment/${user.id}/myAppointment/remove`, {
-      id: '62cf3ecd172e6810786a4c64'
+      id: appointmentId
     })
       .then(() => {
         localStorage.removeItem('endTime')
@@ -111,8 +130,7 @@ const AppointmentDetails = () => {
               variant="secondary"
               className={style.sideButton}
               onClick={() => {
-                handleSaveAppointment()
-                setHasClickedDetailsButton(true)
+                handleConfirm()
                 }
               }
             >

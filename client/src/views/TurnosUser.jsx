@@ -5,11 +5,14 @@ import { getInitialDate } from "../utils/getFullDate";
 
 import style from "../styles/Users.module.css";
 import BranchOfficeSelector from "../commons/BranchOfficeSelector";
-import { useSelector } from "react-redux";
+import { branchOfficesGetter } from '../features/branchOfficesList';
+import { useSelector, useDispatch } from "react-redux";
 
 const TurnosUsers = () => {
 
-  const pickedDate = useSelector(state => state.appointment.value)
+  //const pickedDate = useSelector(state => state.appointment.value)
+
+  
 
   /* const initialBranchOffice = {} //definir cómo nos llega la suc seleccionada en Welcome
   const initialDate = getInitialDate()

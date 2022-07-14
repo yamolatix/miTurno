@@ -3,6 +3,7 @@ import CustomNavbar from "../commons/CustomNavbar";
 import AppointmentDetailsOperator from "../commons/AppointmentDetailsOperator";
 import style from "../styles/Users.module.css";
 import BranchOfficeSelector from "../commons/BranchOfficeSelector";
+import OfficeOperator from "./OfficeOperator";
 
 const TurnosOperator = () => {
   return (
@@ -16,7 +17,7 @@ const TurnosOperator = () => {
 
         <div className={style.contentContainer}>
           <div className={style.tableContainer}>         
-            <BranchOfficeSelector />
+            <OfficeOperator />
           </div>
         </div>
 

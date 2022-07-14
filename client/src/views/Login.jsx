@@ -4,21 +4,32 @@ import Form from "react-bootstrap/Form";
 import { useNavigate, Link } from "react-router-dom";
 //import useInput from '../hooks/useInput';
 import { useDispatch } from "react-redux";
+import { branchOfficesGetter } from '../features/branchOfficesList';
 import { userLogin, userLogout } from "../features/user";
 import style from "../styles/General.module.css";
 import parseJwt from "../hooks/parseJwt";
 import { Report } from "notiflix/build/notiflix-report-aio";
+import axios from 'axios';
 
 function Login() {
+  const dispatch = useDispatch();
+  //dispatch(branchOfficesGetter());
+
   const navigate = useNavigate();
 
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [showPassword, setShowPassword] = useState(false);
 
-  const dispatch = useDispatch();
-
   if (localStorage.getItem("user")) localStorage.removeItem("user");
+  if (localStorage.getItem("branches")) localStorage.removeItem("branches");
+
+  axios.get('http://localhost:3001/api/branchOffice/showBranch')
+          .then((res) => {
+          console.log(res.data.data)  
+          localStorage.setItem('branches', JSON.stringify({branches: res.data.data}))
+          return res.data.data
+          });
 
   const handleSubmit = (e) => {
     e.preventDefault();
