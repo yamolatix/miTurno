@@ -29,6 +29,8 @@ const MyAppointments = () => {
   const editApp = useSelector((state) => state.editApp);
   const dispatch = useDispatch();
 
+  dispatch(emptyAppToEdit());
+
   const navigate = useNavigate();
 
   const token = JSON.parse(localStorage.getItem("user")).data.token;
@@ -70,20 +72,25 @@ const MyAppointments = () => {
               const office = findOffice(appointment.branchOffice[0], offices);
               console.log(appointment);
               console.log(office);
+              const year = parseInt(appointment.year);
+              const month = parseInt(appointment.month);
+              const day = parseInt(appointment.date);
+              const date = new Date(year, month, day);
+              console.log("Fecha: ", date.toDateString(date));
               return {
                 _id: appointment._id,
                 id: appointment._id.slice(-4),
                 date:
-                  appointment.day +
+                  date.getDate() +
                   "/" +
-                  appointment.month +
+                  date.getMonth() +
                   "/" +
-                  appointment.year,
+                  date.getFullYear(),
                 time: appointment.time + " hs",
                 status:
                   appointment.state !== undefined
                     ? capitalize(appointment.state)
-                    : "Reservado",
+                    : "",
                 office: office._id
                   ? capitalize(office.location) +
                     " - " +
@@ -99,7 +106,8 @@ const MyAppointments = () => {
                   : "-",
                 actions:
                   appointment.state === undefined ||
-                  appointment.state === "reservado" ? (
+                  appointment.state === "reservado" ||
+                  appointment.state === "confirmado" ? (
                     <>
                       <Badge
                         bg="secondary"

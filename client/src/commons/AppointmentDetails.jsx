@@ -9,10 +9,12 @@ import parseJwt from "../hooks/parseJwt";
 import { emptyAppointment } from "../features/appointment";
 import countdown from "../utils/countdown";
 import { useNavigate } from "react-router-dom";
+
 import { Report } from "notiflix/build/notiflix-report-aio";
 
 const AppointmentDetails = () => {
   const dispatch = useDispatch()
+
 
   //// AGREGADO PARA FUNCIONALIDAD DE CAMBIAR TURNO /////////
   const editApp = useSelector((state) => state.editApp);  ///
@@ -21,19 +23,33 @@ const AppointmentDetails = () => {
   ///////////////////////////////////////////////////////////
 
   //const initialSelectedDate = new Date()
+ 
+//////////////////////LO QUE TENIA YAMI ANTES DEL MERGE 
   const [hasClickedDetailsButton, setHasClickedDetailsButton] = useState(false)
   const pickedDate = useSelector(state => state.appointment)
   const pickedBranchOffice = useSelector(state => state.branchOffice.clickedOffice)
   const user = parseJwt(JSON.parse(localStorage.getItem('user')).data.token)
   //const [selectedDate, setSelectedDate] = useState(initialSelectedDate.getDate().toString());
   let appointmentId
-  // let auxDate = ''
   
+//////////////////////LO QUE VINO EN EL MAIN
+//  const [hasClickedDetailsButton, setHasClickedDetailsButton] = useState(false);
+//  const pickedDate = useSelector((state) => state.appointment);
+//  const pickedBranchOffice = useSelector(
+//    (state) => state.branchOffice.clickedOffice
+//  );
+//  const user = parseJwt(JSON.parse(localStorage.getItem("user")).data.token);
+
+//  const appointmentId = ''
+//////////////////////
+
+  // let auxDate = ''
+
   //console.log('SELECTED DATE EN APPOINTMENT DETAILS ES ', selectedDate)
   //console.log('PICKED DATE EN APPOINTMENT DETAILS ES ', pickedDate)
   //console.log('PICKED BRANCH EN APPOINTMENT DETAILS ES ', pickedBranchOffice)
   //console.log('USER EN APPOINTMENT DETAILS ES ', user)
-  
+
   const handleSaveAppointment = () => {
     axios.post(`http://localhost:3001/api/appointment/${user.id}`, {
       date: pickedDate.date,
@@ -67,7 +83,7 @@ const AppointmentDetails = () => {
         localStorage.removeItem('endTime')
         localStorage.removeItem('countdownEnd')
         dispatch(emptyAppointment())
-        Report.success('miTurno', 'Turno cancelado exitosamente', 'Ok')
+        Report.warning('miTurno', 'El turno fue cancelado', 'Ok')
       })
       .catch(err => Report.failure(`${err}`))
   }
@@ -87,10 +103,10 @@ const AppointmentDetails = () => {
   }
 
   useEffect(() => {
-    setHasClickedDetailsButton(false)
-  }, [pickedDate])
- 
-  return (pickedDate.date) ? (
+    setHasClickedDetailsButton(false);
+  }, [pickedDate]);
+
+  return pickedDate.date ? (
     <div className={style.userDetails}>
       <h5>Detalle del turno</h5>
       <ul>
@@ -152,11 +168,12 @@ const AppointmentDetails = () => {
             
           </>)
       }    
+
     </div>
-  ) : //selectedDate.setDate(Number(pickedDate.date)) 
-  (
+  ) : (
+    //selectedDate.setDate(Number(pickedDate.date))
     <></>
-  ) ;
+  );
 };
 
 export default AppointmentDetails;
