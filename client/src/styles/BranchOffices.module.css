@@ -6,6 +6,7 @@
 
 .contentContainer {
   background-color: white;
+  background-image: url("../../public/fondo.jpg");
   width: 100%;
   margin: 40px 60px;
   display: flex;
