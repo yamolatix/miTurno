@@ -1,4 +1,6 @@
-export default function countdown() {
+import "../styles/countdown.css"
+
+export default function countdown(handleCancel) {
   //funcion para pasar de ms a mins y secs
   function secondsToString(seconds) {
       var minute = Math.floor((seconds / 60) % 60);
@@ -7,11 +9,10 @@ export default function countdown() {
       second = (second < 10)? '0' + second : second;
       return minute + ':' + second;
   }
-  //seteamos cuantos milisegundos necesitamos para el countdown
-  let interval = 35000
+  //seteamos los milisegundos necesarios para el countdown
+  let interval = 900000
   function setTime(){
-  
-      localStorage.endTime = +new Date + interval
+    localStorage.endTime = +new Date + interval
   }
   //establecemos en el localstorage el endtime
   if(!localStorage.endTime){
@@ -21,13 +22,14 @@ export default function countdown() {
   // funcion para setear el intervalo y cuanto queda en el contador + mostrarlo
   const intervalID = setInterval(function(){
      let remaining = localStorage.endTime - new Date;
+      //si el contador es 0
       if( remaining <= 0 && localStorage.endTime){
         localStorage.removeItem("endTime");
-        alert("Tiempo agotado, vuelva a seleccionar un turno")
         document.querySelector('.timer').textContent = "";
         clearInterval(intervalID)
-      } else
-      {
+        handleCancel()
+        //si hay tiempo y el #timer es diferente a null
+      }else if(remaining > 0 && document.querySelector('#timer').textContent !== null){
         document.querySelector('#timer').textContent = secondsToString(Math.floor( remaining / 1000 )   )
       }
   }, 100);
@@ -36,6 +38,11 @@ export default function countdown() {
       <div className="timer">Tiempo restante: <span id="timer"></span></div>
   );
 }
+
+
+
+
+
 
 /*INTENTANDO COMO COMPONENTE:
 

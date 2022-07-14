@@ -1,11 +1,23 @@
 const { Router } = require("express");
 const router = Router();
-const BranchOffice = require("../models/BranchOffice");
 const User = require("../models/User");
+const BranchOffice = require("../models/BranchOffice");
 const parseId = require("../utils/functions");
 
-//Crear una nueva sucursal
+/* Rutas
+(1) Administrador - Crear una sucursal.
+(2) Muestra todas las sucursales.
+(3) Administrador - Elimina una sucursal.
+(4) Administrador - Modifica datos de una sucursal.
+(5) Administrador - Muestra todos los operadores disponibles para asignar a una sucursal.
+(6) Administrador - Reemplaza y vincula un operador a una sucursal.
+(7) Administrador - Quitar un operador de una sucursal. (Comentada porque no se utilizaría)
+*/
+
+// (1) Administrador - Crear una sucursal.
 router.post("/admin/:adminId/add", async (req, res) => {
+  const { adminId } = req.params;
+
   const {
     location,
     address,
@@ -17,6 +29,7 @@ router.post("/admin/:adminId/add", async (req, res) => {
     simultAppointment,
     price,
   } = req.body;
+
   const newBranchOffice = new BranchOffice({
     location,
     address,
@@ -28,7 +41,7 @@ router.post("/admin/:adminId/add", async (req, res) => {
     simultAppointment,
     price,
   });
-  const { adminId } = req.params;
+
   try {
     const userAdmin = await User.findOne({ _id: parseId(adminId) });
     if (userAdmin.admin === true) {
@@ -44,7 +57,7 @@ router.post("/admin/:adminId/add", async (req, res) => {
   }
 });
 
-// Muestra todas las sucursales.
+// (2) Muestra todas las sucursales.
 router.get("/showBranch", async (req, res) => {
   await BranchOffice.find({}, (err, result) => {
     if (err) {
@@ -57,11 +70,12 @@ router.get("/showBranch", async (req, res) => {
     .exec();
 });
 
-// Eliminar una sucursal
+// (3) Administrador - Elimina una sucursal.
 router.delete("/admin/:adminId/delete/:id", async (req, res) => {
   const { adminId } = req.params;
-  const userAdmin = await User.findOne({ _id: parseId(adminId) });
   const { id } = req.params;
+  const userAdmin = await User.findOne({ _id: parseId(adminId) });
+
   try {
     if (userAdmin.admin === true && adminId !== id) {
       await BranchOffice.deleteOne({ _id: parseId(id) });
@@ -74,10 +88,11 @@ router.delete("/admin/:adminId/delete/:id", async (req, res) => {
   }
 });
 
-//Modificar datos de una sucursal
+// (4) Administrador - Modifica datos de una sucursal.
 router.put("/admin/:adminId/:id", async (req, res) => {
   const { adminId } = req.params;
   const { id } = req.params;
+
   const {
     location,
     address,
@@ -125,12 +140,13 @@ router.put("/admin/:adminId/:id", async (req, res) => {
   }
 });
 
-//Mostrar todos los operadores disponibles para una sucursal
+// (5) Administrador - Muestra todos los operadores disponibles para asignar a una sucursal.
 router.get(
   "/admin/:adminId/showBranch/:branchId/operator",
   async (req, res) => {
     const { adminId } = req.params;
     const userAdmin = await User.findOne({ _id: parseId(adminId) });
+
     try {
       if (userAdmin.admin === true) {
         await User.find({ operator: true }, (err, result) => {
@@ -156,7 +172,7 @@ router.get(
   }
 );
 
-//Vincular y reemplaza un operador a una sucursal
+// (6) Administrador - Reemplaza y vincula un operador a una sucursal.
 router.put("/admin/:adminId/showBranch/:branchId", async (req, res) => {
   const { adminId, branchId } = req.params;
   const operatorId = req.body._id;
@@ -166,7 +182,7 @@ router.put("/admin/:adminId/showBranch/:branchId", async (req, res) => {
   try {
     if (userAdmin.admin === true) {
       if (branchOffice.operator.length) {
-        
+
         // reememplazar operador en sucursal
         await BranchOffice.findByIdAndUpdate(branchId, {
           $pull: { operator: branchOffice.operator[0] },
@@ -179,11 +195,11 @@ router.put("/admin/:adminId/showBranch/:branchId", async (req, res) => {
         await User.findByIdAndUpdate(branchOffice.operator[0], {
           $pull: { branchOffice: branchId },
         })
-        
+
         await User.findByIdAndUpdate(operatorId, {
           $push: { branchOffice: branchId },
         })
-        .populate("branchOffice")
+          .populate("branchOffice")
 
           .exec(() => {
             res.json("Operador reemplazado").status(204);
@@ -212,7 +228,7 @@ router.put("/admin/:adminId/showBranch/:branchId", async (req, res) => {
   }
 });
 
-// //Quitar un operador de una sucursal (ver con Mati la ruta)
+// // (7) Administrador - Quitar un operador de una sucursal. Comentada porque no se utilizaría)
 // router.put(
 //   "/admin/:adminId/showBranch/:branchId/operator",
 //   async (req, res) => {
