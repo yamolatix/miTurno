@@ -1,6 +1,7 @@
 .mainContainer {
   height: calc(100vh - 62px);
   display: flex;
+
 }
 
 .sideContainer {
@@ -12,6 +13,7 @@
 
 .contentContainer {
   background-color: white;
+  background-image: url("../../public/fondo.jpg");
   width: calc(100vw - 350px);
   display: flex;
   justify-content: center;
