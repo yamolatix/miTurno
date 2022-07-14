@@ -13,8 +13,13 @@ export const branchOfficePicker = createAsyncThunk("BRANCH_OFFICE_PICKER", (pick
     return {clickedOffice}
 });
 
+export const emptyBranchOffice = createAsyncThunk("EMPTY_BRANCH_OFFICE", () => {
+    return {}
+})
+
 const branchOfficeReducer = createReducer({}, {
-    [branchOfficePicker.fulfilled]: (state, action) => action.payload
+    [branchOfficePicker.fulfilled]: (state, action) => action.payload,
+    [emptyBranchOffice.fulfilled]: (state, action) => action.payload
 });
 
 export default branchOfficeReducer;

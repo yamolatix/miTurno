@@ -9,7 +9,7 @@ const Welcome = () => {
       const token = JSON.parse(localStorage.getItem("user")).data.token;
       const payload = parseJwt(token)
       //console.log(payload)
-      if(!payload.admin && !payload.operator) 
+      if(!payload.admin && !payload.operator)
       return (
     <>
       <CustomNavbar />
@@ -28,12 +28,12 @@ const Welcome = () => {
         </div>
           <div className={style.contentContainer}>
               <div>
-                  <Link to="/calendar">
+                  <Link to="/calendar" style={{textDecoration:"none"}}>
                       <h3>Sacar un turno</h3>
                   </Link>
               </div>
               <div >
-                  <Link to="/myturns">
+                  <Link to="/myappointments" style={{textDecoration:"none"}}>
                       <h3>Ver mis turnos</h3>
                   </Link>
               </div>

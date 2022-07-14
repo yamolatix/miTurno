@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import capitalize from "../hooks/capitalize";
+import { Confirm } from "notiflix/build/notiflix-confirm-aio";
 
 import style from "../styles/OfficeDetails.module.css";
 
@@ -45,34 +46,42 @@ const OfficeDetails = ({ office, selectOffice }) => {
   };
 
   const handleSubmit = (values) => {
-    axios
-      .put(
-        `http://localhost:3001/api/branchOffice/admin/${payload.id}/${office._id}`,
-        values
-      )
-      .then(() => {
+    Confirm.show(
+      "miTurno",
+      "¿Confirma que desea aplicar los cambios en esta sucursal?",
+      "Si",
+      "No",
+      () => {
         axios
           .put(
-            `http://localhost:3001/api/branchOffice/admin/${payload.id}/showBranch/${office._id}`,
-            selectedOperator
+            `http://localhost:3001/api/branchOffice/admin/${payload.id}/${office._id}`,
+            values
           )
-          .then((res) => console.log(res));
-      })
-      .then(() => {
-        axios
-          .get(`http://localhost:3001/api/branchOffice/showBranch`)
-          .then((res) => res.data.data)
-          .then(
-            (updatedOffices) =>
-              updatedOffices.filter(
-                (updatedOffice) => updatedOffice._id === office._id
-              )[0]
-          )
-          .then((updatedOffice) => selectOffice(updatedOffice));
-      })
-      .catch((err) => console.log(err));
-    stopEditing();
-    setOperator(selectedOperator);
+          .then(() => {
+            axios
+              .put(
+                `http://localhost:3001/api/branchOffice/admin/${payload.id}/showBranch/${office._id}`,
+                selectedOperator
+              )
+              .then((res) => console.log(res));
+          })
+          .then(() => {
+            axios
+              .get(`http://localhost:3001/api/branchOffice/showBranch`)
+              .then((res) => res.data.data)
+              .then(
+                (updatedOffices) =>
+                  updatedOffices.filter(
+                    (updatedOffice) => updatedOffice._id === office._id
+                  )[0]
+              )
+              .then((updatedOffice) => selectOffice(updatedOffice));
+          })
+          .catch((err) => console.log(err));
+        stopEditing();
+        setOperator(selectedOperator);
+      }
+    );
   };
 
   const loadAssignedOperator = () => {
@@ -301,7 +310,7 @@ const OfficeDetails = ({ office, selectOffice }) => {
                                     ? "form-control is-invalid"
                                     : "form-control"
                                 }
-                                type="number"
+                                type="text"
                               />
                               {formik.touched.name && formik.errors.name ? (
                                 <div className="invalid-feedback">
@@ -310,7 +319,7 @@ const OfficeDetails = ({ office, selectOffice }) => {
                               ) : null}
                             </div>
                           ) : (
-                            office.startTime + ":00 hs"
+                            office.startTime + " hs"
                           )}
                         </li>
                         <li>
@@ -324,7 +333,7 @@ const OfficeDetails = ({ office, selectOffice }) => {
                                     ? "form-control is-invalid"
                                     : "form-control"
                                 }
-                                type="number"
+                                type="text"
                               />
                               {formik.touched.name && formik.errors.name ? (
                                 <div className="invalid-feedback">
@@ -333,7 +342,7 @@ const OfficeDetails = ({ office, selectOffice }) => {
                               ) : null}
                             </div>
                           ) : (
-                            office.endTime + ":00 hs"
+                            office.endTime + " hs"
                           )}
                         </li>
                         <li>
@@ -455,10 +464,8 @@ const OfficeDetails = ({ office, selectOffice }) => {
                               {operator ? (
                                 <>
                                   {capitalize(
-                                      operator.lname +
-                                        ", " +
-                                        operator.fname
-                                    )}
+                                    operator.lname + ", " + operator.fname
+                                  )}
                                 </>
                               ) : (
                                 "- Sin operadores asignados"

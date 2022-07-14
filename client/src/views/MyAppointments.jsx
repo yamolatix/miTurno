@@ -13,15 +13,23 @@ import paginationFactory from "react-bootstrap-table2-paginator";
 import parseJwt from "../hooks/parseJwt";
 import capitalize from "../hooks/capitalize";
 import AppDetailsUser from "../commons/AppDetailsUser";
+import { Confirm } from "notiflix/build/notiflix-confirm-aio";
+import { useDispatch, useSelector } from "react-redux";
+import { selectAppToEdit, emptyAppToEdit } from "../features/editAppointment";
 
 import style from "../styles/Users.module.css";
-
+import { useNavigate } from "react-router-dom";
 
 const MyAppointments = () => {
   const [appsRaw, setAppsRaw] = useState([]);
   const [apps, setApps] = useState([]);
   const [load, setLoad] = useState(true);
   const [selectedApp, setSelectedApp] = useState({});
+
+  const editApp = useSelector((state) => state.editApp);
+  const dispatch = useDispatch();
+
+  const navigate = useNavigate();
 
   const token = JSON.parse(localStorage.getItem("user")).data.token;
   const payload = parseJwt(token);
@@ -90,7 +98,8 @@ const MyAppointments = () => {
                   ? "ARS " + office.price.$numberDecimal
                   : "-",
                 actions:
-                  appointment.state === undefined ? (
+                  appointment.state === undefined ||
+                  appointment.state === "reservado" ? (
                     <>
                       <Badge
                         bg="secondary"
@@ -132,22 +141,30 @@ const MyAppointments = () => {
   };
 
   const handleEdit = (appointmentId) => {
-    console.log("EDITAR TURNO ", appointmentId);
+    dispatch(selectAppToEdit(appointmentId));
+    navigate("/calendar");
   };
 
   const handleDelete = (appointmentId) => {
-    console.log("CANCELAR TURNO ", appointmentId);
-    axios
-      .put(
-        `http://localhost:3001/api/appointment/${payload.id}/myAppointment/remove`,
-        { id: appointmentId }
-      )
-      .then((res) => {
-        console.log(res);
-        setLoad(!load);
-      })
-
-      .catch((err) => console.log(err));
+    Confirm.show(
+      "miTurno",
+      "¿Confirma que desea cancelar este turno?",
+      "Si",
+      "No",
+      () => {
+        console.log("CANCELAR TURNO ", appointmentId);
+        axios
+          .put(
+            `http://localhost:3001/api/appointment/${payload.id}/myAppointment/remove`,
+            { id: appointmentId }
+          )
+          .then((res) => {
+            console.log(res);
+            setLoad(!load);
+          })
+          .catch((err) => console.log(err));
+      }
+    );
   };
 
   // Table setups

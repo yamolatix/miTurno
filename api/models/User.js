@@ -76,7 +76,7 @@ const userSchema = new Schema(
         ref: "Appointment",
       },
     ],
-  },
+},
   { timestamps: true }
 );
 
@@ -86,13 +86,3 @@ var today = new Date();
 var dd = String(today.getDate()).padStart(2, "0");
 var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
 var yyyy = today.getFullYear();
-
-/*
-User.find({ operator: true }, function (err, result) {
-  if (error) throw error;
-  console.log(result);
-})
-*/
-
-// https://www.youtube.com/watch?v=N3ny7bvS_IM&t=1s&ab_channel=codigofacilito
-// https://www.youtube.com/watch?v=ii2qM91Ing0&ab_channel=krpajay

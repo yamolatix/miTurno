@@ -7,6 +7,7 @@ import parseJwt from "../hooks/parseJwt";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
+import { Report } from "notiflix/build/notiflix-report-aio";
 
 import style from "../styles/OfficeDetails.module.css";
 
@@ -29,6 +30,7 @@ const NewOffice = () => {
       )
       .then((res) => {
         console.log(res);
+        Report.success("Se ha creado una nueva sucursal", "Ok");
         navigate("/offices");
       })
       .catch((err) => console.log(err));
@@ -279,7 +281,9 @@ const NewOffice = () => {
                       onClick={() => {
                         formik.resetForm();
                       }}
-                    >Borrar formulario</Button>
+                    >
+                      Borrar formulario
+                    </Button>
                     <Button
                       type="submit"
                       variant="secondary"

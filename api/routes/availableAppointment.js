@@ -1,87 +1,82 @@
 const { Router } = require("express");
 const router = Router();
 const Appointment = require("../models/Appointment");
-const User = require("../models/User");
 const BranchOffice = require("../models/BranchOffice");
 
+// (1) Muetra en formato arreglo de objetos todos los turnos disponibles para un día, horario y sucursal. Restando en la disponibilidad la cantidad de turnos dados que la simultaneidad le permita. Lógica a utilizar en el calendario.
+
 let start,
-  end,
+  limit,
   simultAppointment = "";
 
-// Paso 1 - Arreglo de todos los turnos en la franja horaria para una fecha y una sucursal determinada
+// Paso 1 - Arreglo de todos los turnos en la franja horaria para una fecha y una sucursal determinada.
 router.get("/", async (req, res) => {
-  const { date, month, year } = req.body;
-  const branchOfficeId = req.body.id;
-  //const { date, month, year } = req.headers;
-  //const branchOfficeId = req.headers.id;
+  const { date, month, year } = req.headers;
+  const branchOfficeId = req.headers.id;
   const findBranch = await BranchOffice.find({ _id: branchOfficeId }).exec();
+
   start = findBranch[0].startTime;
   limit = findBranch[0].endTime;
   simultAppointment = findBranch[0].simultAppointment;
 
   //   ----------------------- ----------------------------
-  // Paso 2 - capturar los datos de la consulta y armar la franja horaria
+  // Paso 2 - Capturar los datos de la consulta y armar la franja horaria.
 
   let hsArray = [];
 
-  // variables a setear
-  //   let start = "7:15";
-  //   let limit = "17:30";
-  let intervaloTurno = "00:15";
-  //   let simultAppointment = 2;
+  // Datos necesarios para su correcto funcionamiento. 
+  // let start = "7:15" - Horario de inicio.
+  // let limit = "17:30" - Horario de de cierre.
+  let intervaloTurno = "00:15"; // Tiempo del turno.
+  // let simultAppointment = 2; // Cantidad de personas que se pueden atender en un mismo horario.
 
-  // start pasado a string de 5 digitos (de 7:00 a 07:00)
+  // 'start' pasado a string de 5 digitos. (Ejemplo: 7:00 --> 07:00)
   startString = start.length == 4 ? `0${start}` : start;
-  // console.log(startString);
 
+  // 'limit' pasado a string de 5 digitos. (Ejemplo: 7:00 --> 07:00)
   limitString = limit.length == 4 ? `0${limit}` : limit;
-  // console.log(limitString);
 
-  // start fragmentation
+  // 'start' fragmentation. (digitos de hora)
   const startHs = parseInt(start.slice(0, 2));
-  // console.log(startHs);
 
+  // 'start' fragmentation. (digitos de minutos)
   const startMinutes = parseInt(start.slice(3, 5));
-  // console.log(startMinutes);
 
-  // limit fragmentation
+  // 'limit' fragmentation. (digitos de hora)
   const limitHs = parseInt(limit.slice(0, 2));
-  // console.log(limitHs);
 
+  // 'start' fragmentation. (digitos de minutos)
   const limitMinutes = parseInt(limit.slice(3, 5));
-  // console.log(limitMinutes);
 
-  // intervaloTurno fragmentation
+  // 'intervaloTurno' fragmentation. (digitos de hora)
   const turnosxHS = 60 / parseInt(intervaloTurno.slice(3, 5)) - 1;
-  // console.log(turnosxHS);
 
+  // 'intervaloTurno' fragmentation. (digitos de minutos)
   const intervaloMinutos = parseInt(intervaloTurno.slice(3, 5));
-  // console.log(intervaloMinutos);
 
-  // arreglo de franja horaria
+  // Arreglo de franja horaria.
   for (h = startHs; h <= limitHs; h++) {
     for (m = 0; m <= turnosxHS; m++)
       hsArray.push(
         (h <= 9 ? `0${h}` : `${h}`) +
-          ":" +
-          (m === 0 ? "00" : m * intervaloMinutos)
+        ":" +
+        (m === 0 ? "00" : m * intervaloMinutos)
       );
   }
 
-  hsArray;
-
-  // ajustar el inicio del arreglo
+  // Ajustar el inicio del arreglo.
   hsArray = hsArray.slice(hsArray.indexOf(startString));
 
-  // ajustar el fin del arreglo
+  // Ajustar el fin del arreglo
   hsArray = hsArray.slice(0, hsArray.indexOf(limitString));
 
+  // 'arrFranjaHoraria ' - Arreglo inicial de los turnos en determinada sucursal con su simultaneidad.
   let arrFranjaHoraria = [];
   hsArray.map((num) => {
     arrFranjaHoraria.push({ [num]: simultAppointment });
   });
 
-  // Paso 3 - Arreglo de todos los turnos tomados en la franja horaria para una fecha y una sucursal determinada
+  // Paso 3 - Arreglo de objetos de todos los turnos tomados en la franja horaria para una fecha y una sucursal determinada.
   const findAppointment = await Appointment.find({
     date,
     month,
@@ -96,6 +91,7 @@ router.get("/", async (req, res) => {
 
   const reservedAppointmentCounts = {};
 
+  // 'reservedAppointmentCounts' - Arreglo de objetos que devuelve, en el mismo formato que 'arrFranjaHoraria', solo los turnos dados y la cantidad.
   reservedAppointment.forEach(function (i) {
     reservedAppointmentCounts[i] = reservedAppointmentCounts[i]
       ? reservedAppointmentCounts[i] + 1
@@ -107,6 +103,7 @@ router.get("/", async (req, res) => {
     }
   );
 
+  // 'arrFranjaHoraria' - Arreglo de objetos que devuelve la cantidad de turnos disponibles final.
   arrFranjaHoraria.map((franja) => {
     for (let horario in franja) {
       reservedAppointmentObj.map((franja2) => {
@@ -121,7 +118,5 @@ router.get("/", async (req, res) => {
 
   res.json({ data: arrFranjaHoraria });
 });
-
-// 1) MOSTRAR EN FORMATO ARREGLO DE OBJETOS TODOS LOS TURNOS DISPONIBLES PARA UN DÍA, HORARIO Y SUCURSAL - A UTILIZAR EN EL CALENDARIO
 
 module.exports = router;

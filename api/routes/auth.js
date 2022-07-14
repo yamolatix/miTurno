@@ -12,6 +12,12 @@ const {
   htmlTemplateSuccessfully,
 } = require("../config/html");
 
+/*
+(1) Usuario - Login.
+(2) Usuario - Register.
+*/
+
+
 const schemaRegister = Joi.object({
   fname: Joi.string().min(3).max(255).required(),
   lname: Joi.string().min(2).max(255).required(),
@@ -25,6 +31,7 @@ const schemaLogin = Joi.object({
   password: Joi.string().min(4).max(1024).required(),
 });
 
+// (1) Usuario - Login.
 router.post("/login", async (req, res) => {
   //validaciones de usuario (ingreso)
   const { error } = schemaLogin.validate(req.body);
@@ -60,6 +67,7 @@ router.post("/login", async (req, res) => {
   });
 });
 
+//(2) Usuario - Register.
 router.post("/register", async (req, res) => {
   //validaciones de usuarios (registro)
   const { error } = schemaRegister.validate(req.body);
