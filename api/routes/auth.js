@@ -7,9 +7,9 @@ const { default: mongoose } = require("mongoose");
 require("dotenv").config();
 const transport = require("../config/emailer");
 const {
-  htmlTemplate,
+  htmlTemplateRegister,
   htmlTemplateReset,
-  htmlTemplateSuccessfully,
+  htmlTemplatePassSuccessfully,
 } = require("../config/html");
 
 /*
@@ -109,7 +109,7 @@ router.post("/register", async (req, res) => {
         1
       )}, bienvenid@ a miTurno`,
       text: "Muchas gracias por utilizar nuestro servicio",
-      html: htmlTemplate,
+      html: htmlTemplateRegister,
     };
     transport.sendMail(info); //con esta sentencia enviamos el mail
     res.json({
@@ -135,7 +135,7 @@ router.put("/forgotPassword", async (req, res) => {
     { id: user._id, email: user.email },
     process.env.RESET_PASSWORD_KEY,
     { expiresIn: "1h" }
-  );
+  ); // expiresIn indica el tiempo de vida del token
 
   //Guardar el token en la base de datos
   try {
@@ -225,7 +225,7 @@ router.put("/newPassword", async (req, res) => {
           1
         )}, bienvenid@ a miTurno`,
         text: "Muchas gracias por utilizar nuestro servicio",
-        html: htmlTemplateSuccessfully,
+        html: htmlTemplatePassSuccessfully,
       };
       transport.sendMail(info, function (err, body) {
         if (err) {
