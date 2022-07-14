@@ -4,7 +4,7 @@ export const getFixedTime = (pickedDate) => {
                       : pickedDate.hours
     
     const fixedMinutes = pickedDate.minutes.length === 1 
-                      ? `${pickedDate.minutes}0`
+                      ? `0${pickedDate.minutes}`
                       : pickedDate.minutes
 
     const time = `${fixedHours}:${fixedMinutes}`

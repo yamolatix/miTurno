@@ -36,7 +36,7 @@ function Login() {
         payload.admin
           ? navigate("/users")
           : payload.operator
-          ? navigate("/MyAccount")
+          ? navigate("/turnos_operator")
           : navigate("/welcome");
       })
       .catch((err) => {

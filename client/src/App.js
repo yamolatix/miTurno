@@ -13,6 +13,7 @@ import OfficeDetails from "./views/OfficeDetails";
 import NewOffice from "./views/NewOffice";
 import Welcome from "./views/Welcome";
 import MyAppointments from "./views/MyAppointments";
+import TurnosOperator from "./views/TurnosOperator"
 
 import style from "./styles/App.module.css";
 
@@ -34,6 +35,7 @@ function App() {
         <Route path="/restore_password" element={<RestorePassword />} />
         <Route path="/calendar" element={<TurnosUsers />} />
         <Route path="/" element={<Login />} />
+        <Route path="/turnos_operator" element={<TurnosOperator />} />
         <Route path="/myaccount" element={<MyAccount />} />
         <Route path="/assist_password" element={<AssistPassword />} />
         <Route path="/restore_password" element={<RestorePassword />} />

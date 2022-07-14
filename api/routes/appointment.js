@@ -204,8 +204,8 @@ router.put("/:operatorId/showAppointments", async (req, res) => {
 // (5) Operador - Muestra todos los turnos para un día, horario y sucursal seleccionada.
 router.get("/:operatorId/dayAppointments", async (req, res) => {
   const { operatorId } = req.params;
-  const { date, month, year, time } = req.body;
-  const branchOfficeId = req.body.id;
+  const { date, month, year, time } = req.headers;
+  const branchOfficeId = req.headers.id;
 
   try {
     const userOperator = await User.findOne({ _id: parseId(operatorId) });
