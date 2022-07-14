@@ -30,7 +30,14 @@ const AppointmentDetails = () => {
   const pickedBranchOffice = useSelector(state => state.branchOffice.clickedOffice)
   const user = parseJwt(JSON.parse(localStorage.getItem('user')).data.token)
   //const [selectedDate, setSelectedDate] = useState(initialSelectedDate.getDate().toString());
-  let appointmentId
+
+
+  const [appointmentId, setAppointmentId] = useState("")
+ //console.log("id del appointment", appointmentId)
+
+
+  // let auxDate = ''
+
   
 //////////////////////LO QUE VINO EN EL MAIN
 //  const [hasClickedDetailsButton, setHasClickedDetailsButton] = useState(false);
@@ -60,28 +67,36 @@ const AppointmentDetails = () => {
       branchId: pickedBranchOffice._id,
       appointId: editApp
     })
-    .then((appointment) => {
-      console.log("ENTRA A HANDLESAVEAPPOINT", appointment.data)
-      console.log("appointment.data.Id",appointment.data.id)
-      console.log("appointment.data._Id",appointment.data._id)
-      appointmentId = appointment.data._id
-      console.log("appointmentId",appointmentId)
-
+      .then((appointment) => {
+      console.log("todo el turno:", appointment.data)
+      setAppointmentId(appointment.data._id)
       Report.info('miTurno', 'Tenés 10 minutos para confirmar el turno', 'Ok')
       if (editApp) navigate("/myappointments");
-      // appointmentId.concat(res.etc)
-      // DISPARAR DESDE ACÁ EL RELOJ ???
     })
     .catch(err => console.log(err))
   }
-
-  const handleCancel = () => {
-    axios.put(`http://localhost:3001/api/appointment/${user.id}/myAppointment/remove`, {
+  const handleConfirm = () => {
+    axios.put(`http://localhost:3001/api/appointment/${user.id}/myAppointment/confirmed`, {
       id: appointmentId
     })
+      .then(() =>{
+        localStorage.removeItem('endTime')
+        dispatch(emptyAppointment())
+        Report.success('miTurno', 'El turno fue confirmado', 'Ok')
+        navigate("/myappointments")
+      })
+      .catch(err => Report.failure(`${err}`))
+  }
+
+  const handleCancel = () => {
+
+    axios.delete(`http://localhost:3001/api/appointment/${user.id}/myAppointment/deleteAppointment`,{data: {
+      appointId: appointmentId,
+      branchId: pickedBranchOffice
+    }})
+
       .then(() => {
         localStorage.removeItem('endTime')
-        localStorage.removeItem('countdownEnd')
         dispatch(emptyAppointment())
         Report.warning('miTurno', 'El turno fue cancelado', 'Ok')
       })
@@ -148,7 +163,7 @@ const AppointmentDetails = () => {
               className={style.sideButton}
               onClick={() => {
                 handleConfirm()
-                setHasClickedDetailsButton(true)
+
                 }
               }
             >
