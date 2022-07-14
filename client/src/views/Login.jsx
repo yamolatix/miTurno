@@ -9,7 +9,6 @@ import { userLogin, userLogout } from "../features/user";
 import style from "../styles/General.module.css";
 import parseJwt from "../hooks/parseJwt";
 import { Report } from "notiflix/build/notiflix-report-aio";
-import axios from 'axios';
 
 function Login() {
   const dispatch = useDispatch();
@@ -22,14 +21,6 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   if (localStorage.getItem("user")) localStorage.removeItem("user");
-  if (localStorage.getItem("branches")) localStorage.removeItem("branches");
-
-  axios.get('http://localhost:3001/api/branchOffice/showBranch')
-          .then((res) => {
-          console.log(res.data.data)  
-          localStorage.setItem('branches', JSON.stringify({branches: res.data.data}))
-          return res.data.data
-          });
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -47,8 +38,8 @@ function Login() {
         payload.admin
           ? navigate("/users")
           : payload.operator
-          ? navigate("/turnos_operator")
-          : navigate("/welcome");
+            ? navigate("/turnos_operator")
+            : navigate("/welcome");
       })
       .catch((err) => {
         Report.failure(
@@ -58,6 +49,16 @@ function Login() {
         );
       });
   };
+
+  // const ref = useRef(null);
+  // const myFunction = () => {
+  //   var x = ref.current
+  //   if (x.type === "password") {
+  //     x.type = "text";
+  //   } else {
+  //     x.type = "password";
+  //   }
+  // }
 
   return (
     <div className={style.mainContainer}>
@@ -89,7 +90,7 @@ function Login() {
               />
             </Form.Group>
 
-            <Form.Group className="mb-3" controlId="formPassword">
+            <Form.Group className="mb-3">
               <Form.Label>Contraseña</Form.Label>
               <Form.Control
                 placeholder="Ingrese su contraseña"
@@ -97,9 +98,10 @@ function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                //id="myInput" ref={ref}
               />
+              {/* <input type="checkbox" onClick={myFunction} /> Mostrar Contraseña */}
             </Form.Group>
-
             <div className={style.boton}>
               <Button variant="secondary" type="submit">
                 Ingresar

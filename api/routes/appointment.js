@@ -1,31 +1,38 @@
-/* RUTAS
-1) CREAR TURNO / MODIFICA UN TURNO EXISTENTE CANCELANDOLO (CAMBIA ESTADO DE AVAILABLE FALSE A TRUE Y STATE DE RESERVADO A CANCELADO)
-2) CANCELAR UN TURNO POR EL USUARIO
-3) MOSTRAR TODOS LOS TURNOS DE UN USUARIO CON TODOS SUS ESTADOS
-4) CONFIRMAR UN TURNO POR UN OPERADOR
-5) MOSTRAR TODOS LOS TURNOS PARA UN DÍA, HORARIO Y SUCURSAL SELECCIONADA POR EL OPERADOR
-6) MOSTRAR TODOS LOS TURNOS CON EL FORMATO DE ARREGLO DE OBJETOS SIN NINGÚN TIPO DE VALIDACIÓN - COMENTADA PORQUE NO SE UTILIZARÍA
-7) CAMBIA EL ESTADO DEL TURNO A CONFIRMADO
-8) Eliminar reserva de turno
-*/
-
-
 const { Router } = require("express");
 const router = Router();
-const Appointment = require("../models/Appointment");
 const User = require("../models/User");
+const Appointment = require("../models/Appointment");
 const BranchOffice = require("../models/BranchOffice");
 const parseId = require("../utils/functions");
 const NewAppointment = require("../utils/NewAppoinment");
 const Cancelar = require("../utils/Cancelar");
+require("dotenv").config();
+const transport = require("../config/emailer");
+const {
+  htmlTemplateReserved,
+  htmlTemplateCanceled,
+} = require("../config/html");
 
-//1)
+/* Rutas
+(1) Usuario - Crear turno / modifica un turno existente cancelandolo. (Cambia estado de available false a true y state de reservado a cancelado)
+(2) Usuario - Cancelar un turno.
+(3) Usuario - Mostrar todos sus turnos tomados con todos sus estados.
+(4) Operador - Confirmar un turno.
+(5) Operador - Muestra todos los turnos para un día, horario y sucursal seleccionada.
+(6) Mostrar todos los turnos con el formato de arreglo de objetos sin ningún tipo de validación. (Comentada porque no se utiliza)
+(7) Usuario - Cambia el estado del turno a confirmado desde la selección del turno para activar el contador.
+(8) Usuario - Destruye la existencia del turno ya que solo entra a un estado de elección de turno una vez que finaliza el tiempo del contador o el usuario cancela el turno en ese tiempo.
+*/
+
+// (1) Usuario - Crear turno / modifica un turno existente cancelandolo. (Cambia estado de available false a true y state de reservado a cancelado). Logica de negocio hecha en Lucidchart.
 //A - Crear un nuevo turno
 router.post("/:id", async (req, res) => {
   const userId = req.params.id;
   const { date, month, year, day, time } = req.body;
   const branchOfficeId = req.body.branchId;
   const appointmentId = req.body.appointId;
+
+  const userData = await User.find({ _id: parseId(userId) });
 
   const newAppointment = new Appointment({
     date,
@@ -79,7 +86,7 @@ router.post("/:id", async (req, res) => {
       month,
       year,
       available: false,
-      user: userId
+      user: userId,
     });
 
     // (A.1) Existe en Base Appoiment un turno para ese mismo dia, horario, sucursal
@@ -88,12 +95,23 @@ router.post("/:id", async (req, res) => {
       // (A.1) No Existe. Ahora Consulto si el Usuario ya tiene turno para ese dia
       // (A.1.1) Si tiene le rechazo la peticion
       if (appointmentSameUser.length > 0) {
-        return res.status(200).json({ error: "Usted ya tiene un turno activo para este dia" })
-        // (A.1.2) Si no tiene, le acepto el turno 
+        return res
+          .status(200)
+          .json({ error: "Usted ya tiene un turno activo para este dia" });
+        // (A.1.2) Si no tiene, le acepto el turno
       } else {
         const saveAppointment = await newAppointment.save();
         const saveAppointmentId = saveAppointment._id;
         NewAppointment(branchOfficeId, userId, saveAppointmentId);
+        const info = {
+          from: `info@miturno.com`, //correo desde el cual se envía el mensaje ej: info@miturno.com
+          to: `${userData[0].email}`, //correo del usuario al cual se le enviará el mensaje. Correo con link para restablecer contraseña
+          subject: `miTurno del ${saveAppointment.date}/${saveAppointment.month}/${saveAppointment.year} a las ${saveAppointment.time}hs en sucursal ${branchOffice.location}`, //Asunto del mensaje
+          text: "Muchas gracias por utilizar nuestro servicio",
+          html: htmlTemplateReserved,
+        };
+        //
+        transport.sendMail(info);
         // (B) Ademas, si esto sucede desde modificar, el turno anterior que figura en el req.body lo cancelo
         if (appointmentId) {
           Cancelar(appointmentId);
@@ -106,7 +124,9 @@ router.post("/:id", async (req, res) => {
     // Ahora Consulto si el Usuario ya tiene turno para ese dia
     // (A.2.1)Si tiene, le rechazo la peticion
     if (appointmentSameUser.length > 0) {
-      return res.status(200).json({ error: "Usted ya tiene un turno activo para este dia" })
+      return res
+        .status(200)
+        .json({ error: "Usted ya tiene un turno activo para este dia" });
     }
 
     // (A.2.2) No tiene, avanzo con el siguiente filtro
@@ -126,9 +146,17 @@ router.post("/:id", async (req, res) => {
           const saveAppointment = await newAppointment.save();
           const saveAppointmentId = saveAppointment._id;
           NewAppointment(branchOfficeId, userId, saveAppointmentId);
+          const info = {
+            from: `info@miturno.com`, //correo desde el cual se envía el mensaje ej: info@miturno.com
+            to: `${userData[0].email}`, //correo del usuario al cual se le enviará el mensaje. Correo con link para restablecer contraseña
+            subject: `miTurno del ${saveAppointment.date}/${saveAppointment.month}/${saveAppointment.year} a las ${saveAppointment.time}hs en sucursal ${branchOffice.location}`, //Asunto del mensaje
+            text: "Muchas gracias por utilizar nuestro servicio",
+            html: htmlTemplateReserved,
+          };
+          transport.sendMail(info);
           // (B) Ademas, si esto sucede desde modificar, el turno anterior que figura en el req.body lo cancelo
           if (appointmentId) {
-            Cancelar(appointmentId)
+            Cancelar(appointmentId);
           }
           return res.status(200).json(saveAppointment);
         } else {
@@ -145,10 +173,11 @@ router.post("/:id", async (req, res) => {
   }
 });
 
-//2) Cancelar un turno por un usuario - (modificar estado en la base de datos)
+// (2) Usuario - Cancelar un turno.
 router.put("/:userId/myAppointment/remove", async (req, res) => {
   const { userId } = req.params;
   const appointmentId = req.body.id;
+
   try {
     await Appointment.findOneAndUpdate({ _id: parseId(appointmentId) }, [
       { $set: { available: { $eq: [false, "$available"] } } },
@@ -157,13 +186,25 @@ router.put("/:userId/myAppointment/remove", async (req, res) => {
       { _id: parseId(appointmentId) },
       [{ $set: { state: "cancelado" } }]
     );
+    const branchOffice = await BranchOffice.findOne({
+      _id: appointmentCanceled.branchOffice,
+    });
+    const userData = await User.find({ _id: parseId(userId) });
+    const info = {
+      from: `info@miturno.com`, //correo desde el cual se envía el mensaje ej: info@miturno.com
+      to: `${userData[0].email}`, //correo del usuario al cual se le enviará el mensaje. Correo con link para restablecer contraseña
+      subject: `miTurno del ${appointmentCanceled.date}/${appointmentCanceled.month}/${appointmentCanceled.year} a las ${appointmentCanceled.time}hs en sucursal ${branchOffice.location}`, //Asunto del mensaje
+      text: "Muchas gracias por utilizar nuestro servicio",
+      html: htmlTemplateCanceled,
+    };
+    transport.sendMail(info);
     res.status(200).json("Turno cancelado");
   } catch (err) {
     res.status(404).json(err);
   }
 });
 
-//3) Mostrar todos los turnos de un usuario para el mismo
+// (3) Usuario - Mostrar todos sus turnos tomados con todos sus estados.
 router.get("/:id/showAppointments", async (req, res) => {
   const { id } = req.params;
   try {
@@ -181,7 +222,7 @@ router.get("/:id/showAppointments", async (req, res) => {
   }
 });
 
-//4) Confirmar un turno - operador
+// (4) Operador - Confirmar un turno.
 router.put("/:operatorId/showAppointments", async (req, res) => {
   const { operatorId } = req.params;
   const appointmentId = req.body.id;
@@ -202,7 +243,7 @@ router.put("/:operatorId/showAppointments", async (req, res) => {
   }
 });
 
-// 5) Muestra al operador los turnos de X sucursal del dia especificado.
+// (5) Operador - Muestra todos los turnos para un día, horario y sucursal seleccionada.
 router.get("/:operatorId/dayAppointments", async (req, res) => {
   const { operatorId } = req.params;
   const { date, month, year, time } = req.headers;
@@ -233,7 +274,7 @@ router.get("/:operatorId/dayAppointments", async (req, res) => {
   }
 });
 
-//6) Mostrar todos los turnos con el formato de arreglo de objetos
+// (6) Mostrar todos los turnos con el formato de arreglo de objetos sin ningún tipo de validación. (Comentada porque no se utilizaría)
 // router.get("/", (req, res) => {
 //   Appointment.find({}, (err, result) => {
 //     if (err) {
@@ -244,11 +285,10 @@ router.get("/:operatorId/dayAppointments", async (req, res) => {
 //   });
 // });
 
-//7)Turno Confirmado
+// (7) Usuario - Cambia el estado del turno a confirmado desde la selección del turno para activar el contador.
 router.put("/:userId/myAppointment/confirmed", async (req, res) => {
   const { userId } = req.params;
   const appointmentId = req.body.id;
-
   try {
     const appointmentConfirm = await Appointment.findOneAndUpdate(
       { _id: parseId(appointmentId) },
@@ -260,28 +300,31 @@ router.put("/:userId/myAppointment/confirmed", async (req, res) => {
   }
 });
 
-//8)Eliminar reserva de turno
-
+// (8) Usuario - Destruye la existencia del turno ya que solo entra a un estado de elección de turno una vez que finaliza el tiempo del contador o el usuario cancela el turno en ese tiempo.
 router.delete("/:userId/myAppointment/deleteAppointment", async (req, res) => {
   const { userId } = req.params;
   const appointmentId = req.body.appointId;
   const branchOfficeId = req.body.branchId;
 
   try {
-    const deleteAppointment = await Appointment.deleteOne({ _id: parseId(appointmentId) })
-    res.status(204).json("Su reserva a caducado")
+    const deleteAppointment = await Appointment.deleteOne({
+      _id: parseId(appointmentId),
+    });
+    res.status(204).json("Su reserva a caducado");
     // elimina de BranchOffice el turno
-    const deleteAppointmentBranch = await BranchOffice.findByIdAndUpdate(branchOfficeId, {
-      $pull: { appointment: parseId(appointmentId) }
-    })
+    const deleteAppointmentBranch = await BranchOffice.findByIdAndUpdate(
+      branchOfficeId,
+      {
+        $pull: { appointment: parseId(appointmentId) },
+      }
+    );
     // elimina de User el turno
     const deleteAppointmentUser = await User.findByIdAndUpdate(userId, {
-      $pull: { appointment: parseId(appointmentId) }
-    })
-
+      $pull: { appointment: parseId(appointmentId) },
+    });
   } catch (err) {
-    res.status(404).json(err)
+    res.status(404).json(err);
   }
-})
+});
 
 module.exports = router;
