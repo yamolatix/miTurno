@@ -6,6 +6,12 @@ const BranchOffice = require("../models/BranchOffice");
 const parseId = require("../utils/functions");
 const NewAppointment = require("../utils/NewAppoinment");
 const Cancelar = require("../utils/Cancelar");
+require("dotenv").config();
+const transport = require("../config/emailer");
+const {
+  htmlTemplateReserved,
+  htmlTemplateCanceled,
+} = require("../config/html");
 
 /* Rutas
 (1) Usuario - Crear turno / modifica un turno existente cancelandolo. (Cambia estado de available false a true y state de reservado a cancelado)
@@ -247,7 +253,6 @@ router.get("/:operatorId/dayAppointments", async (req, res) => {
 router.put("/:userId/myAppointment/confirmed", async (req, res) => {
   const { userId } = req.params;
   const appointmentId = req.body.id;
-
   try {
     const appointmentConfirm = await Appointment.findOneAndUpdate(
       { _id: parseId(appointmentId) },
