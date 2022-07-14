@@ -1,13 +1,24 @@
 const { Router } = require("express");
 const router = Router();
 const User = require("../models/User");
-const paginatedResults = require("../utils/pagination");
 const parseId = require("../utils/functions");
+//const paginatedResults = require("../utils/pagination");
 
+/* Rutas
+(1) Usuario - Modifica sus datos personales.
+(2) Usuario - Muestra sus datos personales.
+(3) Administrador - Muestra todos los usuarios con el middleware Pagination. (Comentada porque no se utilizaría)
+(4) Administrador - Muestra todos los usuarios.
+(5) Administrador - Elimina usuarios.
+(6) Administrador - Cambia el rol de usuario a operador.
+*/
+
+// (1) Usuario - Modifica sus datos personales.
 router.put("/me/:id", (req, res) => {
   const { id } = req.params;
   const { fname, lname, dni, email, operator, address, phone, birthdate } =
     req.body;
+
   User.updateOne(
     { _id: parseId(id) },
     { fname, lname, dni, email, operator, address, phone, birthdate },
@@ -16,21 +27,19 @@ router.put("/me/:id", (req, res) => {
         items: docs,
       });
     }
-    // ).then(
-    //   User.findOne({ _id: id }, (err, result) => {
-    //     res.send(result);
-    //   })
   );
 });
 
+// (2) Usuario - Muestra sus datos personales.
 router.get("/me/:id", (req, res) => {
   const { id } = req.params;
+
   User.findOne({ _id: id }, (err, result) => {
     res.send(result);
   });
 });
 
-//ADMINISTRADOR - PAGINATION
+// (3) Administrador - Muestra todos los usuarios con el middleware Pagination. (Comentada porque no se utilizaría)
 /*router.get("/admin/showUsers", paginatedResults(User,3), (req, res) => {
   User.find({}, (err) => {
     if (err) {
@@ -41,10 +50,11 @@ router.get("/me/:id", (req, res) => {
   });
 });*/
 
-//show all users - ADMIN - SIN PAGINACIÓN
+// (4) Administrador - Muestra todos los usuarios.
 router.get("/admin/:adminId/showUsers", async (req, res) => {
   const { adminId } = req.params;
   const userAdmin = await User.findOne({ _id: parseId(adminId) });
+
   if (userAdmin.admin === true) {
     User.find({}, (err, result) => {
       if (err) {
@@ -58,11 +68,12 @@ router.get("/admin/:adminId/showUsers", async (req, res) => {
   }
 });
 
-//delete users - ADMIN
+// (5) Administrador - Elimina usuarios.
 router.delete("/admin/:adminId/delete/:id", async (req, res) => {
   const { adminId } = req.params;
   const userAdmin = await User.findOne({ _id: parseId(adminId) });
   const { id } = req.params;
+
   try {
     if (userAdmin.admin === true && adminId !== id) {
       await User.deleteOne({ _id: parseId(id) });
@@ -75,11 +86,12 @@ router.delete("/admin/:adminId/delete/:id", async (req, res) => {
   }
 });
 
-//change role to operator - ADMIN
+// (6) Administrador - Cambia el rol de usuario a operador.
 router.put("/admin/:adminId/role/:id", async (req, res) => {
   const { adminId } = req.params;
   const userAdmin = await User.findOne({ _id: parseId(adminId) });
   const { id } = req.params;
+
   try {
     if (userAdmin.admin == true && adminId !== id) {
       await User.findOneAndUpdate({ _id: parseId(id) }, [

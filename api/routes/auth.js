@@ -7,6 +7,11 @@ const { default: mongoose } = require("mongoose");
 require("dotenv").config();
 const emailer = require("../config/emailer");
 
+/*
+(1) Usuario - Login.
+(2) Usuario - Register.
+*/
+
 /* const { getTemplate, sendEmail } = require('../config/mail.config');
 const { getToken, getTokenData } = require('../config/jwt.config'); */
 
@@ -23,6 +28,7 @@ const schemaLogin = Joi.object({
   password: Joi.string().min(4).max(1024).required(),
 });
 
+// (1) Usuario - Login.
 router.post("/login", async (req, res) => {
   //validaciones de usuario (ingreso)
   const { error } = schemaLogin.validate(req.body);
@@ -58,6 +64,7 @@ router.post("/login", async (req, res) => {
   });
 });
 
+//(2) Usuario - Register.
 router.post("/register", async (req, res) => {
   //validaciones de usuarios (registro)
   const { error } = schemaRegister.validate(req.body);

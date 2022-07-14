@@ -1,4 +1,4 @@
-const { Schema, model} = require("mongoose");
+const { Schema, model } = require("mongoose");
 
 const appointmentSchema = new Schema({
     date: { // 01 - 31
@@ -8,18 +8,18 @@ const appointmentSchema = new Schema({
     month: { // 00 - 11
         type: String,
         maxlength: 2
-    }, 
+    },
     year: {// 2022
-        type:String,
+        type: String,
         maxlength: 4
     },
     day: { // 0 a 6
         type: String,
-        maxlength:1
+        maxlength: 1
     },
     time: { // 09:15
         type: String,
-        maxlength:5 //a 5
+        maxlength: 5
     },
     available: {
         type: Boolean,
@@ -27,7 +27,7 @@ const appointmentSchema = new Schema({
     },
     state: {
         type: String,
-        enum: ['reservado','confirmado' ,'cancelado', ,'asistido'],
+        enum: ['reservado', 'confirmado', 'cancelado', , 'asistido'],
     },
     branchOffice: [{
         type: Schema.Types.ObjectId,
@@ -39,4 +39,4 @@ const appointmentSchema = new Schema({
     }],
 }, { timestamps: true });
 
-module.exports = model("Appointment", appointmentSchema)
+module.exports = model("Appointment", appointmentSchema);
