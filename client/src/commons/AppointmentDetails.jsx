@@ -26,7 +26,7 @@ const AppointmentDetails = () => {
   const pickedBranchOffice = useSelector(state => state.branchOffice.clickedOffice)
   const user = parseJwt(JSON.parse(localStorage.getItem('user')).data.token)
   //const [selectedDate, setSelectedDate] = useState(initialSelectedDate.getDate().toString());
-  const appointmentId = ''
+  let appointmentId
   // let auxDate = ''
   
   //console.log('SELECTED DATE EN APPOINTMENT DETAILS ES ', selectedDate)
@@ -45,6 +45,12 @@ const AppointmentDetails = () => {
       appointId: editApp
     })
     .then((appointment) => {
+      console.log("ENTRA A HANDLESAVEAPPOINT", appointment.data)
+      console.log("appointment.data.Id",appointment.data.id)
+      console.log("appointment.data._Id",appointment.data._id)
+      appointmentId = appointment.data._id
+      console.log("appointmentId",appointmentId)
+
       Report.info('miTurno', 'Tenés 10 minutos para confirmar el turno', 'Ok')
       if (editApp) navigate("/myappointments");
       // appointmentId.concat(res.etc)
@@ -55,7 +61,7 @@ const AppointmentDetails = () => {
 
   const handleCancel = () => {
     axios.put(`http://localhost:3001/api/appointment/${user.id}/myAppointment/remove`, {
-      id: '62cf3ecd172e6810786a4c64'
+      id: appointmentId
     })
       .then(() => {
         localStorage.removeItem('endTime')
@@ -64,6 +70,20 @@ const AppointmentDetails = () => {
         Report.success('miTurno', 'Turno cancelado exitosamente', 'Ok')
       })
       .catch(err => Report.failure(`${err}`))
+  }
+
+  const handleConfirm = () => {
+    axios.put(`http://localhost:3001/api/appointment/${user.id}/myAppointment/confirmed`, {
+      id: appointmentId
+      })
+    .then(() => {
+      console.log("llegué")
+      localStorage.removeItem('endTime')
+      localStorage.removeItem('countdownEnd')
+      dispatch(emptyAppointment())
+      Report.success('miTurno', 'Turno confirmado exitosamente', 'Ok')
+    })
+    .catch(err => Report.failure(`${err}`))
   }
 
   useEffect(() => {
@@ -111,7 +131,7 @@ const AppointmentDetails = () => {
               variant="secondary"
               className={style.sideButton}
               onClick={() => {
-                handleSaveAppointment()
+                handleConfirm()
                 setHasClickedDetailsButton(true)
                 }
               }
