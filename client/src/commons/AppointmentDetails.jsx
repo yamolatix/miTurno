@@ -61,7 +61,7 @@ const AppointmentDetails = () => {
         localStorage.removeItem('endTime')
         localStorage.removeItem('countdownEnd')
         dispatch(emptyAppointment())
-        Report.success('miTurno', 'Turno cancelado exitosamente', 'Ok')
+        Report.warning('miTurno', 'El turno fue cancelado', 'Ok')
       })
       .catch(err => Report.failure(`${err}`))
   }
