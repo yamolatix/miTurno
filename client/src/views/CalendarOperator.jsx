@@ -12,10 +12,11 @@ import style from "../styles/Users.module.css";
 import axios from "axios";
 import { appointmentPicker } from "../features/appointment";
 
-const CalendarOperator = ({ pickedBranchOffice }) => {
+const CalendarOperator = () => {
 
   const dispatch = useDispatch()
   const pickedDate = useSelector(state => state.appointment)
+  const pickedBranchOffice = useSelector(state => state.branchOffice.clickedOffice)
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   //const [appointments, setAppointments] = useState([]);
@@ -36,7 +37,7 @@ const CalendarOperator = ({ pickedBranchOffice }) => {
         date: selectedDate.getDate().toString(),
         month: selectedDate.getMonth().toString(),
         year: selectedDate.getFullYear().toString(),
-        id: pickedBranchOffice._id
+        id: pickedBranchOffice?._id
       }
     })
     .then(arrAppointments => {
@@ -60,15 +61,15 @@ const CalendarOperator = ({ pickedBranchOffice }) => {
   //console.log('NO STOCK ARR ES ', noStockTimes)
   //console.log('FEW STOCK ARR ES ', fewStockTimes)
   //console.log('MANY STOCK ARR ES ', manyStockTimes)
-  //console.log('SUCURSAL EN CALENDAR ', pickedBranchOffice)
+  console.log('SUCURSAL EN CALENDAR ', pickedBranchOffice)
   //const [timesExcluded, setTimesExcluded] = useState([])
   let timesExcluded
 
   const getExcludedTimes = () => {
     const dayTimes = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
     dayTimes.forEach(e => {
-      if(Number(e) < Number(pickedBranchOffice.startTime.slice(0,2)) ||
-         Number(e) >= Number(pickedBranchOffice.endTime.slice(0,2)))
+      if(Number(e) < Number(pickedBranchOffice?.startTime.slice(0,2)) ||
+         Number(e) >= Number(pickedBranchOffice?.endTime.slice(0,2)))
          noStockTimes.push(e.concat(':00'), e.concat(':15'), e.concat(':30'), e.concat(':45'))
     })
     timesExcluded = noStockTimes.map(
@@ -77,14 +78,11 @@ const CalendarOperator = ({ pickedBranchOffice }) => {
     console.log('HORARIOS EXCLUIDOS SON ', timesExcluded)
   }
 
-  getExcludedTimes()
+  //getExcludedTimes()
 
   const disabledDates = [new Date(2022, 6, 6)];
 
-  const isWeekday = (date) => {
-    const day = getDay(date);
-    return !pickedBranchOffice.daysOff.includes(day)
-  }
+  
     
   const handleColor = (time) => {
     const strTime = time.toTimeString().slice(0, 5)  
@@ -97,13 +95,19 @@ const CalendarOperator = ({ pickedBranchOffice }) => {
 
   registerLocale('es', es)
 
+  let isWeekday
+
   useEffect(() => {
     loadAppointments();
-    setHhStart(pickedBranchOffice.startTime.slice(0,2));
-    setMmStart(pickedBranchOffice.startTime.slice(3));
-    setHhEnd(pickedBranchOffice.endTime.slice(0,2));
-    setMmEnd(pickedBranchOffice.endTime.slice(3));
+    setHhStart(pickedBranchOffice?.startTime.slice(0,2));
+    setMmStart(pickedBranchOffice?.startTime.slice(3));
+    setHhEnd(pickedBranchOffice?.endTime.slice(0,2));
+    setMmEnd(pickedBranchOffice?.endTime.slice(3));
     getExcludedTimes();
+    isWeekday = (date) => {
+      const day = getDay(date);
+      return !pickedBranchOffice.daysOff.includes(day)
+    }
   }, [selectedDate, pickedBranchOffice]);
 
   return (

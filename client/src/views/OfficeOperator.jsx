@@ -10,74 +10,55 @@ import { branchOfficesGetter } from '../features/branchOfficesList';
 import parseJwt from "../hooks/parseJwt";
 import CalendarOperator from './CalendarOperator';
 
-function OfficeOperator() {
-
-  /* const getBranchOffices = async () => {   
-    const res = await axios.get('http://localhost:3001/api/branchOffice/showBranch');     
-    return res.data.data  
-    } */
-  
-  //const initValueBranchOffices = getBranchOffices()    
+function OfficeOperator() {  
   
   const dispatch = useDispatch()
 
   //dispatch(branchOfficesGetter())
   //const pickedDate = useSelector(state => state.appointment.value)
-  //const [branchOffices, setBranchOffices] = useState(getBranchOffices())
-  const branchOffices = JSON.parse(localStorage.getItem('branches')).branches
+  const [branchOffices, setBranchOffices] = useState([])
+  //const branchOffices = JSON.parse(localStorage.getItem('branches')).branches
+  const getBranchOffices = () => {   
+    axios.get('http://localhost:3001/api/branchOffice/showBranch')
+      .then(res => setBranchOffices(res.data.data))
+      .catch(err => console.log('SE PUDRE ', err))
+  }
   
+  //console.log('EL GET BRANCHOFFICE ME DA ', getBranchOffices())  
 
-  console.log('LISTA DE SUCURSALES ', branchOffices)
-  //const pickedBranchOffice = useSelector(state => state.branchOffice.clickedOffice)
+  const pickedBranchOffice = useSelector(state => state.branchOffice.clickedOffice)
   const user = parseJwt(JSON.parse(localStorage.getItem('user')).data.token)
 
   console.log('EL USER ES ', user)
   
-  console.log('ES ADMIN ? ', user.admin)
-  console.log('ES OPERADOR ? ', user.operator)
-
- /*  const handleSelection = (e) => {
-    e.preventDefault();
-    const locationClon = e.target.innerText.toLowerCase()
-    const clickedOffice = branchOffices.find(branch => 
-        branch.location === locationClon);
-    dispatch(branchOfficePicker({clickedOffice}));
-  } */
-
-  console.log('LA SUC DEL OPERADOR ES ', user.branchOffice[0])
-  console.log('OFICINAS ', branchOffices)
+  const asignedOffice = branchOffices.find(branch => {
+    return user.branchOffice[0].includes(branch._id)
+  })
   
-  const asignedOffice = branchOffices.find(branch => 
-      user.branchOffice.includes(branch._id))
-    console.log('LA SUCURSAL A SETEAR ES ', asignedOffice)
-      //dispatch(branchOfficePicker(asignedOffice))
-    //branchOffices.forEach(e=> console.log('SUC ID ', e.id))
-   // }
-
-  //console.log('LA SUCURSAL SETEADA GLOBALMENTE ES ', pickedBranchOffice)  
-
-  /* const getBranchOffices = async () => {   
-    const res = await axios.get('http://localhost:3001/api/branchOffice/showBranch');     
-    setBranchOffices(res.data.data)   
-    } */
+  dispatch(branchOfficePicker(asignedOffice))  
         
-  /* useEffect(() => {
+  useEffect(() => {
     console.log('ESTAMOS EN EL USEEFFECT')
-    operatorBranchOfficeSetter()
+    getBranchOffices()
+    //
     //dispatch(branchOfficesGetter())
-  }, []) */
+  }, [])
+
+  console.log('ESTADO GLOBAL OFICINA ', pickedBranchOffice)
 
   return (
-      <>
-      
-    <div className={style.calendarContainer}>
-      <h5 >
-        Turnos sucursal {asignedOffice.location.toUpperCase()}
-      </h5>
-      <CalendarOperator pickedBranchOffice={ asignedOffice }/>
-    </div>
+    <>{pickedBranchOffice
+        ? (
+          <div className={style.calendarContainer}>
+            <h5 >
+              Turnos sucursal: {pickedBranchOffice.location.toUpperCase()}
+            </h5>
+            <CalendarOperator />
+          </div>)
+        : (<></>)
+      }
     </>
-  )
+  ) 
 };
 
 export default OfficeOperator;

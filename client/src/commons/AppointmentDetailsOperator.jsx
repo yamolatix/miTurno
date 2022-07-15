@@ -10,14 +10,15 @@ import parseJwt from "../hooks/parseJwt";
 const AppointmentDetailsOperator = () => {
 
   const user = parseJwt(JSON.parse(localStorage.getItem('user')).data.token)
-  const pickedDate = useSelector(state => state.appointment)
-  //const pickedBranchOffice = useSelector(state => state.branchOffice.clickedOffice)
-  const [appointmentUsers, setAppointmentUsers] = useState([])
-  const branchOffices = JSON.parse(localStorage.getItem('branches')).branches
 
-  const asignedOffice = branchOffices.find(branch => 
+  const pickedDate = useSelector(state => state.appointment)
+  const pickedBranchOffice = useSelector(state => state.branchOffice.clickedOffice)
+  const [appointmentUsers, setAppointmentUsers] = useState([])
+  //const branchOffices = JSON.parse(localStorage.getItem('branches')).branches
+
+  /* const asignedOffice = branchOffices.find(branch => 
     user.branchOffice.includes(branch._id))
-  console.log('LA SUCURSAL A SETEAR ES ', asignedOffice)
+  console.log('LA SUCURSAL A SETEAR ES ', asignedOffice) */
   
   // VER URL DE ACA ABAJO !!!!!!!!
   const getAppointmentUsers = () => {
@@ -27,27 +28,34 @@ const AppointmentDetailsOperator = () => {
         month: pickedDate.month,
         year: pickedDate.year,
         time: getFixedTime(pickedDate),
-        id: asignedOffice.id
+        id: pickedBranchOffice.id
       }
     })
     .then(arr => {
-      console.log('USUARIOS CON ESTE TURNO SON ', arr.data)
-      //setAppointmentUsers(datos)
+      console.log('USUARIOS CON ESTE TURNO SON ', arr.data.data)
+      setAppointmentUsers(arr.data.data)
     })
     .catch(err => console.log(err))
   }
 
+  const handleAssitance = () => {
+    /* axios.put(`http://localhost:3001/api/appointment/${user.id}/showAppointments`, {
+      id: 
+  })
+    .then */
+}
+
   useEffect(()=> {
     getAppointmentUsers()
-  },[])
+  },[pickedDate])
 
   return pickedDate.date ? (
     <div className={style.userDetails}>
       <h5>Detalles del turno:</h5>
       <ul>
-        <li>Sucursal: {asignedOffice.location.toUpperCase()}</li>
-        <li>Fecha: {getFullDate(pickedDate)}</li>
-        <li>Hora: {getFixedTime(pickedDate)} hs</li>
+        {<li>Sucursal: {pickedBranchOffice.location.toUpperCase()}</li>}
+        {<li>Fecha: {getFullDate(pickedDate)}</li>}
+        {<li>Hora: {getFixedTime(pickedDate)} hs</li>}
       </ul>
       {appointmentUsers.length
       ? (
@@ -59,6 +67,13 @@ const AppointmentDetailsOperator = () => {
             <li> {e.lname.toUpperCase()}, {e.fname.toUpperCase()}</li>
             <li> Teléfono: {e.phone}</li>
             <li> Email: {e.email}</li>
+            <Button
+              variant="secondary"
+              className={style.sideButton}
+              onClick={() => handleAssitance()}
+            >
+              Asistió
+            </Button>
             {/* agregar para marcar si asistió o no */}
             </>
             )
@@ -79,3 +94,9 @@ const AppointmentDetailsOperator = () => {
 };
 
 export default AppointmentDetailsOperator;
+
+/*
+router.put("/:operatorId/showAppointments", async (req, res) => {
+  const { operatorId } = req.params;
+  const appointmentId = req.body.id;
+  /*

@@ -22,11 +22,11 @@ function BranchOfficeSelector() {
 
   //dispatch(branchOfficesGetter())
   //const pickedDate = useSelector(state => state.appointment.value)
-  //const [branchOffices, setBranchOffices] = useState(getBranchOffices())
-  const branchOffices = JSON.parse(localStorage.getItem('branches')).branches
+  const [branchOffices, setBranchOffices] = useState([])
+  //const branchOffices = JSON.parse(localStorage.getItem('branches')).branches
   
-
   console.log('LISTA DE SUCURSALES ', branchOffices)
+  
   const pickedBranchOffice = useSelector(state => state.branchOffice.clickedOffice)
   const user = parseJwt(JSON.parse(localStorage.getItem('user')).data.token)
 
@@ -51,16 +51,16 @@ function BranchOfficeSelector() {
 
   console.log('LA SUCURSAL SETEADA GLOBALMENTE ES ', pickedBranchOffice)  
 
-  /* const getBranchOffices = async () => {   
+  const getBranchOffices = async () => {   
     const res = await axios.get('http://localhost:3001/api/branchOffice/showBranch');     
     setBranchOffices(res.data.data)   
-    } */
+    }
         
-  /* useEffect(() => {
+  useEffect(() => {
     console.log('ESTAMOS EN EL USEEFFECT')
-    operatorBranchOfficeSetter()
+    getBranchOffices()
     //dispatch(branchOfficesGetter())
-  }, []) */
+  }, [])
 
   return (
     <>
