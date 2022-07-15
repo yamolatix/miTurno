@@ -27,7 +27,7 @@ const appointmentSchema = new Schema({
     },
     state: {
         type: String,
-        enum: ['reservado', 'confirmado', 'cancelado', , 'asistido'],
+        enum: ['reservado', 'confirmado', 'cancelado', 'asistido'],
     },
     branchOffice: [{
         type: Schema.Types.ObjectId,
