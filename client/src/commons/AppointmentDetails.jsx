@@ -20,7 +20,7 @@ const AppointmentDetails = () => {
   const editApp = useSelector((state) => state.editApp);  ///
   console.log("TURNO A EDITAR: ", editApp);               ///
   const navigate = useNavigate();                         ///
-  ///////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////                       
 
   //const initialSelectedDate = new Date()
  
@@ -100,7 +100,6 @@ const AppointmentDetails = () => {
       })
       .catch(err => Report.failure(`${err}`))
   }
-
 
   useEffect(() => {
     setHasClickedDetailsButton(false);
