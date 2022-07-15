@@ -291,6 +291,7 @@ router.put("/:userId/myAppointment/confirmed", async (req, res) => {
       text: "Muchas gracias por utilizar nuestro servicio",
       html: htmlTemplateReserved,
     };
+    
     transport.sendMail(info);
     const infoReminder = {
       from: `info@miturno.com`, //correo desde el cual se envía el mensaje ej: info@miturno.com
