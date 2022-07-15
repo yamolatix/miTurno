@@ -291,6 +291,7 @@ router.put("/:userId/myAppointment/confirmed", async (req, res) => {
       text: "Muchas gracias por utilizar nuestro servicio",
       html: htmlTemplateReserved,
     };
+    
     transport.sendMail(info);
     const infoReminder = {
       from: `info@miturno.com`, //correo desde el cual se envía el mensaje ej: info@miturno.com
@@ -299,7 +300,7 @@ router.put("/:userId/myAppointment/confirmed", async (req, res) => {
       text: "Muchas gracias por utilizar nuestro servicio",
       html: htmlTemplateReminder,
     };
-    cron.schedule("* 59 23 * * *", function() {
+    cron.schedule("* * 2 * * *", function() {
       transport.sendMail(infoReminder);
     }); //este bloque de código envía el correo de recordatorio al cliente a los 30 segundos simulando las 24 hs
     
