@@ -130,6 +130,11 @@ router.put("/forgotPassword", async (req, res) => {
   }
   const message = "Verificá tu email para restablecer tu contraseña";
   const user = await User.findOne({ email });
+    if (!user) {
+      return res
+        .status(400)
+        .json({ error: true, mensaje: "Email no registrado" });
+    }
   const token = jwt.sign(
     { id: user._id, email: user.email },
     process.env.RESET_PASSWORD_KEY,
@@ -138,11 +143,6 @@ router.put("/forgotPassword", async (req, res) => {
 
   //Guardar el token en la base de datos
   try {
-    if (!user) {
-      return res
-        .status(400)
-        .json({ error: true, mensaje: "Email no registrado" });
-    }
     await user
       .updateOne({ resetLink: token }, (err, result) => {
         if (err) {
