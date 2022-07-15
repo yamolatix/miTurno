@@ -130,7 +130,6 @@ router.put("/forgotPassword", async (req, res) => {
   }
   const message = "Verificá tu email para restablecer tu contraseña";
   const user = await User.findOne({ email });
-  console.log("user FNAME", user.fname);
   const token = jwt.sign(
     { id: user._id, email: user.email },
     process.env.RESET_PASSWORD_KEY,

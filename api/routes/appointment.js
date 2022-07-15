@@ -299,7 +299,7 @@ router.put("/:userId/myAppointment/confirmed", async (req, res) => {
       text: "Muchas gracias por utilizar nuestro servicio",
       html: htmlTemplateReminder,
     };
-    cron.schedule("30 * * * * *", function() {
+    cron.schedule("* 59 23 * * *", function() {
       transport.sendMail(infoReminder);
     }); //este bloque de código envía el correo de recordatorio al cliente a los 30 segundos simulando las 24 hs
     
