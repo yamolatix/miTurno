@@ -71,7 +71,7 @@ const AppointmentDetails = () => {
       console.log("todo el turno:", appointment.data)
       setAppointmentId(appointment.data._id)
       Report.info('miTurno', 'Tenés 10 minutos para confirmar el turno', 'Ok')
-      if (editApp) navigate("/myappointments");
+      // if (editApp) navigate("/myappointments");
     })
     .catch(err => console.log(err))
   }

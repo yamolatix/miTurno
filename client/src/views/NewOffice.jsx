@@ -176,7 +176,7 @@ const NewOffice = () => {
                                   ? "form-control is-invalid"
                                   : "form-control"
                               }
-                              type="number"
+                              type="text"
                             />
                             {formik.touched.name && formik.errors.name ? (
                               <div className="invalid-feedback">
@@ -195,7 +195,7 @@ const NewOffice = () => {
                                   ? "form-control is-invalid"
                                   : "form-control"
                               }
-                              type="number"
+                              type="text"
                             />
                             {formik.touched.name && formik.errors.name ? (
                               <div className="invalid-feedback">
@@ -253,11 +253,11 @@ const NewOffice = () => {
                       </div>
                       <ul>
                         <li>
-                          {operator ? (
+                          {/* {operator ? (
                             <>
                               - {operator.lname}, {operator.fname}
                             </>
-                          ) : null}
+                          ) : null} */}
                         </li>
                       </ul>
                     </div>

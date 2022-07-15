@@ -74,14 +74,14 @@ const CustomNavbar = () => {
                   <Nav.Link href="/users" className="mx-3 fs-5">
                     Usuarios
                   </Nav.Link>
-                  <Nav.Link href="#link" className="mx-3 fs-5">
+                  <Nav.Link href="/turnos_operator" className="mx-3 fs-5">
                     Turnos
                   
                   </Nav.Link>
                 </>
               ) : role === "OP" ? (
                 <>
-                  <Nav.Link href="#link" className="mx-3 fs-5">
+                  <Nav.Link href="/turnos_operator" className="mx-3 fs-5">
                     Turnos
                   </Nav.Link>
                 </>

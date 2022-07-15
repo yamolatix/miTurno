@@ -87,10 +87,7 @@ const MyAppointments = () => {
                   "/" +
                   date.getFullYear(),
                 time: appointment.time + " hs",
-                status:
-                  appointment.state !== undefined
-                    ? capitalize(appointment.state)
-                    : "",
+                status: appointment.state ? capitalize(appointment.state) : "",
                 office: office._id
                   ? capitalize(office.location) +
                     " - " +
@@ -181,6 +178,7 @@ const MyAppointments = () => {
     Reservado: "Reservado",
     Cancelado: "Cancelado",
     Asistido: "Asistido",
+    Confirmado: "Confirmado",
   };
   const columns = [
     {

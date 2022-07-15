@@ -84,8 +84,8 @@ const MyAccount = () => {
       <div className={style.mainContainer}>
         <Formik
           initialValues={{
-            lname: userData.lname,
-            fname: userData.fname,
+            lname: capitalize(userData.lname),
+            fname: capitalize(userData.fname),
             dni: userData.dni,
             email: userData.email,
             birthdate: userData.birthdate,
