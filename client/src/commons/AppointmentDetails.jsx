@@ -20,7 +20,7 @@ const AppointmentDetails = () => {
   const editApp = useSelector((state) => state.editApp);  ///
   console.log("TURNO A EDITAR: ", editApp);               ///
   const navigate = useNavigate();                         ///
-  ///////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////                       
 
   //const initialSelectedDate = new Date()
  
@@ -101,20 +101,6 @@ const AppointmentDetails = () => {
         Report.warning('miTurno', 'El turno fue cancelado', 'Ok')
       })
       .catch(err => Report.failure(`${err}`))
-  }
-
-  const handleConfirm = () => {
-    axios.put(`http://localhost:3001/api/appointment/${user.id}/myAppointment/confirmed`, {
-      id: appointmentId
-      })
-    .then(() => {
-      console.log("llegué")
-      localStorage.removeItem('endTime')
-      localStorage.removeItem('countdownEnd')
-      dispatch(emptyAppointment())
-      Report.success('miTurno', 'Turno confirmado exitosamente', 'Ok')
-    })
-    .catch(err => Report.failure(`${err}`))
   }
 
   useEffect(() => {
