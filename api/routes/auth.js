@@ -57,6 +57,7 @@ router.post("/login", async (req, res) => {
       dni: user.dni,
       admin: user.admin,
       operator: user.operator,
+      branchOffice: user.branchOffice,
     },
     process.env.TOKEN_SECRET
   );

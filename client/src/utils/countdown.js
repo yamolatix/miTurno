@@ -9,8 +9,8 @@ export default function countdown(handleCancel) {
       second = (second < 10)? '0' + second : second;
       return minute + ':' + second;
   }
-  //seteamos los milisegundos necesarios para el countdown
-  let interval = 900000
+  //seteamos cuantos milisegundos necesitamos para el countdown
+  let interval = 600000
   function setTime(){
     localStorage.endTime = +new Date + interval
   }

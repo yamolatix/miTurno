@@ -32,10 +32,9 @@ const AppointmentDetails = () => {
   //const [selectedDate, setSelectedDate] = useState(initialSelectedDate.getDate().toString());
 
 
+
   const [appointmentId, setAppointmentId] = useState("")
  //console.log("id del appointment", appointmentId)
-
-
   // let auxDate = ''
 
   
@@ -88,13 +87,12 @@ const AppointmentDetails = () => {
       .catch(err => Report.failure(`${err}`))
   }
 
-  const handleCancel = () => {
 
+  const handleCancel = () => {
     axios.delete(`http://localhost:3001/api/appointment/${user.id}/myAppointment/deleteAppointment`,{data: {
       appointId: appointmentId,
       branchId: pickedBranchOffice
     }})
-
       .then(() => {
         localStorage.removeItem('endTime')
         dispatch(emptyAppointment())
@@ -149,7 +147,6 @@ const AppointmentDetails = () => {
               className={style.sideButton}
               onClick={() => {
                 handleConfirm()
-
                 }
               }
             >
