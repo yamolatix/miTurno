@@ -228,28 +228,21 @@ router.put("/:operatorId/showAppointments", async (req, res) => {
 });
 
 // (5) Operador - Muestra todos los turnos para un día, horario y sucursal seleccionada.
+// A desarrollar: Datos del usuario y turnos que esten en available: false
 router.get("/:operatorId/dayAppointments", async (req, res) => {
   const { operatorId } = req.params;
-  const { date, month, year, time } = req.headers;
-  const branchOfficeId = req.headers.id;
+  const { date, month, year, time } = req.body;
+  const branchOfficeId = req.body.id;
 
-  console.log('TIME ', time)
-  console.log('MONTH ', month)
-  console.log('OFFICE ', branchOfficeId)
-
-  try {
-    console.log('TIME EN TRY', time)
-    console.log('MONTH EN TRY', month)
-  console.log('OFFICE EN TRY', branchOfficeId)
+try {
     const userOperator = await User.findOne({ _id: parseId(operatorId) });
     if (userOperator.operator === true) {
       await Appointment.find(
-        { date, month, year, time, branchOfficeId },
+        { date, month, year, time, branchOffice: branchOfficeId },
         (err, result) => {
           if (err) {
             res.json({ err: "Error" });
           } else {
-            console.log('RESULT EESSSSS ', result)
             res.json({ data: result });
           }
         }
