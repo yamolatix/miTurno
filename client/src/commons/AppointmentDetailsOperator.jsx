@@ -17,28 +17,6 @@ const AppointmentDetailsOperator = () => {
 
   const pickedBranchOffice = useSelector(state => state.branchOffice.clickedOffice)
 
-  
-  /* const fakeUsers = [
-    {
-      lname: 'Moura',
-      fname: 'Federico',
-      phone: '0303456',
-      email: 'virus@mail.com'
-    },
-    {
-      lname: 'Aznar',
-      fname: 'Pedro',
-      phone: '3415897456',
-      email: 'musiquita@mail.com'
-    },
-    {
-      lname: 'Abuelo',
-      fname: 'Miguel',
-      phone: '01145789143',
-      email: 'delanada@mail.com'
-    }
-  ] */
-
   const fakeAppointments = [
     {
       "id": "62d16e4963b504c72e76307c",
@@ -60,7 +38,7 @@ const AppointmentDetailsOperator = () => {
       "state": "confirmado",
       "userApp": {
         "id": "62d06cdcd7369af706902545",
-        "email": "ricardo@gmail.com",
+        "email": "matias@gmail.com",
         "phone": "1147849561",
         "fullname": "Matías Jaliff",
         "lname": "darin",
@@ -87,26 +65,20 @@ const AppointmentDetailsOperator = () => {
       "state": "confirmado",
       "userApp": {
         "id": "62d06cdcd7369af706902545",
-        "email": "ricardo@gmail.com",
-        "phone": "1147849561",
-        "fullname": "Matías Jaliff",
+        "email": "moria@gmail.com",
+        "phone": "114745269",
+        "fullname": "Moria Casan",
         "lname": "darin",
         "operator": false,
       }
     }
   ]
   
-  const [appointmentUsers, setAppointmentUsers] = useState(fakeAppointments)
+  const [appointments, setAppointments] = useState(fakeAppointments)
 
-  // VER URL DE ACA ABAJO !!!!!!!!
- /*  const getAppointmentUsers = () => {
-    if (pickedBranchOffice && pickedDate) {
-      console.log('ENVIO AL BACK DATE ', pickedDate.date)
-      console.log('ENVIO AL BACK MONTH ', pickedDate.month)
-      console.log('ENVIO AL BACK YEAR ', pickedDate.year)
-      console.log('ENVIO AL BACK TIME ', getFixedTime(pickedDate))
-      console.log('ENVIO AL BACK OFFICE ', pickedBranchOffice._id)
-      console.log('ENVIO AL BACK OPERATOR ', user.id)
+  // RUTA A CORREGIR - ES LA QUE PIDE AL BACK EL ARREGLO DE TURNOS PARA UN DIA Y HORARIO DETERMINADOS
+
+ /*  const getAppointments = () => {
       axios.get(`http://localhost:3001/api/appointment/62c7123cc261b4d23d5b93a9/dayAppointments`, {
         headers: {
           date: '27',
@@ -119,7 +91,7 @@ const AppointmentDetailsOperator = () => {
       .then(arr => {
         console.log('USUARIOS CON ESTE TURNO SON ', arr.data.data)
         // buscar en el turno el idUser
-        setAppointmentUsers(arr.data.data)
+        setAppointments(arr.data.data)
       })
       .catch(err => console.log(err))
     };
@@ -130,11 +102,13 @@ const AppointmentDetailsOperator = () => {
       id: (appointment)
   })
     .then(() => {
-      //appointmentUsers.splice(appointmentUsers.indexOf(appointment), 1)
+      //appointments.splice(appointments.indexOf(appointment), 1)
       Report.success('miTurno', 'Se confirmó la asistencia del usuario', 'Ok');
     })
     .catch(err => Report.failure('miTurno', {err}, 'Ok'))
 }
+
+  // ESTA FUNCION PIDE AL BACK DATOS COPLETOS DEL USUARIO QUE POSEE UN DETERMINADO TURNO
 
   /* const getUser = (userId) => {
     return axios.get(`http://localhost:3001/api/users/me/${userId}`)
@@ -146,7 +120,7 @@ const AppointmentDetailsOperator = () => {
   } */
 
   useEffect(()=> {
-    //getAppointmentUsers()
+    //getAppointments()
   },[pickedDate])
 
   return pickedDate.date ? (
@@ -163,7 +137,7 @@ const AppointmentDetailsOperator = () => {
         <h5 className={style.agendados}> Usuarios agendados: </h5>
         <ul>
           {fakeAppointments.map(e => {
-            //const userApp = getUser(e.user);
+            //const userApp = getUser(e.user[0]);
             //console.log('USERAPP ES ', userApp)
             return (
             <>
@@ -194,16 +168,10 @@ const AppointmentDetailsOperator = () => {
       }
     </div>
     )
-    : //selectedDate.setDate(Number(pickedDate.date)) 
+    :
     (
     <></>
     );
 };
 
 export default AppointmentDetailsOperator;
-
-/*
-router.put("/:operatorId/showAppointments", async (req, res) => {
-  const { operatorId } = req.params;
-  const appointmentId = req.body.id;
-  */
