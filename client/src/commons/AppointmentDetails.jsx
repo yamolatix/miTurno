@@ -20,7 +20,7 @@ const AppointmentDetails = () => {
   const editApp = useSelector((state) => state.editApp);  ///
   console.log("TURNO A EDITAR: ", editApp);               ///
   const navigate = useNavigate();                         ///
-  ///////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////                       
 
   //const initialSelectedDate = new Date()
  
@@ -70,7 +70,7 @@ const AppointmentDetails = () => {
       console.log("todo el turno:", appointment.data)
       setAppointmentId(appointment.data._id)
       Report.info('miTurno', 'Tenés 10 minutos para confirmar el turno', 'Ok')
-      if (editApp) navigate("/myappointments");
+      // if (editApp) navigate("/myappointments");
     })
     .catch(err => console.log(err))
   }
@@ -100,7 +100,6 @@ const AppointmentDetails = () => {
       })
       .catch(err => Report.failure(`${err}`))
   }
-
 
   useEffect(() => {
     setHasClickedDetailsButton(false);

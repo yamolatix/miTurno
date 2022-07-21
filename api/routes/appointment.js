@@ -1,5 +1,6 @@
 const { Router } = require("express");
 const router = Router();
+const cron = require("node-cron");
 const User = require("../models/User");
 const Appointment = require("../models/Appointment");
 const BranchOffice = require("../models/BranchOffice");
@@ -11,7 +12,9 @@ const transport = require("../config/emailer");
 const {
   htmlTemplateReserved,
   htmlTemplateCanceled,
+  htmlTemplateReminder,
 } = require("../config/html");
+
 
 /* Rutas
 (1) Usuario - Crear turno / modifica un turno existente cancelandolo. (Cambia estado de available false a true y state de reservado a cancelado)
@@ -31,8 +34,6 @@ router.post("/:id", async (req, res) => {
   const { date, month, year, day, time } = req.body;
   const branchOfficeId = req.body.branchId;
   const appointmentId = req.body.appointId;
-
-  const userData = await User.find({ _id: parseId(userId) });
 
   const newAppointment = new Appointment({
     date,
@@ -103,15 +104,6 @@ router.post("/:id", async (req, res) => {
         const saveAppointment = await newAppointment.save();
         const saveAppointmentId = saveAppointment._id;
         NewAppointment(branchOfficeId, userId, saveAppointmentId);
-        const info = {
-          from: `info@miturno.com`, //correo desde el cual se envía el mensaje ej: info@miturno.com
-          to: `${userData[0].email}`, //correo del usuario al cual se le enviará el mensaje. Correo con link para restablecer contraseña
-          subject: `miTurno del ${saveAppointment.date}/${saveAppointment.month}/${saveAppointment.year} a las ${saveAppointment.time}hs en sucursal ${branchOffice.location}`, //Asunto del mensaje
-          text: "Muchas gracias por utilizar nuestro servicio",
-          html: htmlTemplateReserved,
-        };
-        //
-        transport.sendMail(info);
         // (B) Ademas, si esto sucede desde modificar, el turno anterior que figura en el req.body lo cancelo
         if (appointmentId) {
           Cancelar(appointmentId);
@@ -146,14 +138,6 @@ router.post("/:id", async (req, res) => {
           const saveAppointment = await newAppointment.save();
           const saveAppointmentId = saveAppointment._id;
           NewAppointment(branchOfficeId, userId, saveAppointmentId);
-          const info = {
-            from: `info@miturno.com`, //correo desde el cual se envía el mensaje ej: info@miturno.com
-            to: `${userData[0].email}`, //correo del usuario al cual se le enviará el mensaje. Correo con link para restablecer contraseña
-            subject: `miTurno del ${saveAppointment.date}/${saveAppointment.month}/${saveAppointment.year} a las ${saveAppointment.time}hs en sucursal ${branchOffice.location}`, //Asunto del mensaje
-            text: "Muchas gracias por utilizar nuestro servicio",
-            html: htmlTemplateReserved,
-          };
-          transport.sendMail(info);
           // (B) Ademas, si esto sucede desde modificar, el turno anterior que figura en el req.body lo cancelo
           if (appointmentId) {
             Cancelar(appointmentId);
@@ -297,11 +281,37 @@ router.get("/:operatorId/dayAppointments", async (req, res) => {
 router.put("/:userId/myAppointment/confirmed", async (req, res) => {
   const { userId } = req.params;
   const appointmentId = req.body.id;
+  const userData = await User.find({ _id: parseId(userId) });
   try {
     const appointmentConfirm = await Appointment.findOneAndUpdate(
       { _id: parseId(appointmentId) },
       [{ $set: { state: "confirmado" } }]
-    );
+    )
+    console.log("TURNO CONFIRMADO", appointmentConfirm);
+    console.log("USUARIO", userData);
+    const branchOfficeId = appointmentConfirm.branchOffice[0];
+    const branchOffice = await BranchOffice.findOne({_id: parseId(branchOfficeId)});
+    console.log("BRANCH", branchOfficeId);
+    const info = {
+      from: `info@miturno.com`, //correo desde el cual se envía el mensaje ej: info@miturno.com
+      to: `${userData[0].email}`, //correo del usuario al cual se le enviará el mensaje. Correo con link para restablecer contraseña
+      subject: `miTurno del ${appointmentConfirm.date}/${appointmentConfirm.month}/${appointmentConfirm.year} a las ${appointmentConfirm.time}hs en sucursal ${branchOffice.location}`, //Asunto del mensaje
+      text: "Muchas gracias por utilizar nuestro servicio",
+      html: htmlTemplateReserved,
+    };
+    
+    transport.sendMail(info);
+    const infoReminder = {
+      from: `info@miturno.com`, //correo desde el cual se envía el mensaje ej: info@miturno.com
+      to: `${userData[0].email}`, //correo del usuario al cual se le enviará el mensaje. Correo con link para restablecer contraseña
+      subject: `miTurno del ${appointmentConfirm.date}/${appointmentConfirm.month}/${appointmentConfirm.year} a las ${appointmentConfirm.time}hs en sucursal ${branchOffice.location}`, //Asunto del mensaje
+      text: "Muchas gracias por utilizar nuestro servicio",
+      html: htmlTemplateReminder,
+    };
+    cron.schedule("* * 2 * * *", function() {
+      transport.sendMail(infoReminder);
+    }); //este bloque de código envía el correo de recordatorio al cliente a los 30 segundos simulando las 24 hs
+    
     res.status(200).json("miTurno ha sido confirmado!");
   } catch (err) {
     res.status(404).json(err);

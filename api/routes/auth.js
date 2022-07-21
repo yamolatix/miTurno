@@ -131,7 +131,11 @@ router.put("/forgotPassword", async (req, res) => {
   }
   const message = "Verificá tu email para restablecer tu contraseña";
   const user = await User.findOne({ email });
-  console.log("user FNAME", user.fname);
+  if (!user) {
+    return res
+      .status(400)
+      .json({ error: true, mensaje: "Email no registrado" });
+  }
   const token = jwt.sign(
     { id: user._id, email: user.email },
     process.env.RESET_PASSWORD_KEY,
@@ -140,11 +144,6 @@ router.put("/forgotPassword", async (req, res) => {
 
   //Guardar el token en la base de datos
   try {
-    if (!user) {
-      return res
-        .status(400)
-        .json({ error: true, mensaje: "Email no registrado" });
-    }
     await user
       .updateOne({ resetLink: token }, (err, result) => {
         if (err) {
@@ -176,7 +175,7 @@ router.put("/forgotPassword", async (req, res) => {
         }
       })
       .clone();
-    res.header("reset-token", token).json({ error: false, data: { token } });
+    res.header("rtoken", token).json({ error: false, data: { token } });
   } catch (error) {
     res.json(error);
   }
@@ -184,9 +183,13 @@ router.put("/forgotPassword", async (req, res) => {
 
 //Creación de una nueva contraseña
 router.put("/newPassword", async (req, res) => {
-  const token = req.header("reset-token");
+  const token = req.body.headers.rtoken;
+
+  console.log(token);
+  console.log(req.body.body.password);
+
   const saltos = await bcrypt.genSalt(10);
-  const password = await bcrypt.hash(req.body.password, saltos);
+  const password = await bcrypt.hash(req.body.body.password, saltos);
 
   if (!token) return res.status(401).json({ error: "Error de autenticación" });
   else {

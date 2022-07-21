@@ -73,7 +73,7 @@ const MyAppointments = () => {
               console.log(appointment);
               console.log(office);
               const year = parseInt(appointment.year);
-              const month = parseInt(appointment.month);
+              const month = parseInt(appointment.month) + 1;
               const day = parseInt(appointment.date);
               const date = new Date(year, month, day);
               console.log("Fecha: ", date.toDateString(date));
@@ -87,10 +87,7 @@ const MyAppointments = () => {
                   "/" +
                   date.getFullYear(),
                 time: appointment.time + " hs",
-                status:
-                  appointment.state !== undefined
-                    ? capitalize(appointment.state)
-                    : "",
+                status: appointment.state ? capitalize(appointment.state) : "",
                 office: office._id
                   ? capitalize(office.location) +
                     " - " +
@@ -181,6 +178,7 @@ const MyAppointments = () => {
     Reservado: "Reservado",
     Cancelado: "Cancelado",
     Asistido: "Asistido",
+    Confirmado: "Confirmado",
   };
   const columns = [
     {
