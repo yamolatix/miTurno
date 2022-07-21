@@ -73,7 +73,7 @@ const MyAppointments = () => {
               console.log(appointment);
               console.log(office);
               const year = parseInt(appointment.year);
-              const month = parseInt(appointment.month);
+              const month = parseInt(appointment.month) + 1;
               const day = parseInt(appointment.date);
               const date = new Date(year, month, day);
               console.log("Fecha: ", date.toDateString(date));
