@@ -233,7 +233,14 @@ router.get("/:operatorId/dayAppointments", async (req, res) => {
   const { date, month, year, time } = req.headers;
   const branchOfficeId = req.headers.id;
 
+  console.log('TIME ', time)
+  console.log('MONTH ', month)
+  console.log('OFFICE ', branchOfficeId)
+
   try {
+    console.log('TIME EN TRY', time)
+    console.log('MONTH EN TRY', month)
+  console.log('OFFICE EN TRY', branchOfficeId)
     const userOperator = await User.findOne({ _id: parseId(operatorId) });
     if (userOperator.operator === true) {
       await Appointment.find(
@@ -242,6 +249,7 @@ router.get("/:operatorId/dayAppointments", async (req, res) => {
           if (err) {
             res.json({ err: "Error" });
           } else {
+            console.log('RESULT EESSSSS ', result)
             res.json({ data: result });
           }
         }
