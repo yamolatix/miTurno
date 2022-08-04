@@ -228,7 +228,7 @@ function Register() {
                         : "form-control"
                     }
                   />
-                  <span className="password-toogle-icon">ICON {icon}</span>
+                  <span className="password-toogle-icon"></span>
                   {formik.touched.password && formik.errors.password ? (
                     <div className="invalid-feedback">
                       {formik.errors.password}
