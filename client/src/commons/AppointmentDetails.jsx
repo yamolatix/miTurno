@@ -9,6 +9,7 @@ import parseJwt from "../hooks/parseJwt";
 import { emptyAppointment } from "../features/appointment";
 import countdown from "../utils/countdown";
 import { useNavigate } from "react-router-dom";
+import PATH from "../path";
 
 import { Report } from "notiflix/build/notiflix-report-aio";
 
@@ -57,7 +58,7 @@ const AppointmentDetails = () => {
   //console.log('USER EN APPOINTMENT DETAILS ES ', user)
 
   const handleSaveAppointment = () => {
-    axios.post(`http://localhost:3001/api/appointment/${user.id}`, {
+    axios.post(`${PATH}/api/appointment/${user.id}`, {
       date: pickedDate.date,
       month: pickedDate.month,
       year: pickedDate.year,
@@ -75,7 +76,7 @@ const AppointmentDetails = () => {
     .catch(err => console.log(err))
   }
   const handleConfirm = () => {
-    axios.put(`http://localhost:3001/api/appointment/${user.id}/myAppointment/confirmed`, {
+    axios.put(`${PATH}/api/appointment/${user.id}/myAppointment/confirmed`, {
       id: appointmentId
     })
       .then(() =>{
@@ -89,7 +90,7 @@ const AppointmentDetails = () => {
 
 
   const handleCancel = () => {
-    axios.delete(`http://localhost:3001/api/appointment/${user.id}/myAppointment/deleteAppointment`,{data: {
+    axios.delete(`${PATH}/api/appointment/${user.id}/myAppointment/deleteAppointment`,{data: {
       appointId: appointmentId,
       branchId: pickedBranchOffice
     }})

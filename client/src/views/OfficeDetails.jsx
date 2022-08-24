@@ -10,6 +10,7 @@ import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import capitalize from "../hooks/capitalize";
 import { Confirm } from "notiflix/build/notiflix-confirm-aio";
+import PATH from "../path";
 
 import style from "../styles/OfficeDetails.module.css";
 
@@ -54,20 +55,20 @@ const OfficeDetails = ({ office, selectOffice }) => {
       () => {
         axios
           .put(
-            `http://localhost:3001/api/branchOffice/admin/${payload.id}/${office._id}`,
+            `${PATH}/api/branchOffice/admin/${payload.id}/${office._id}`,
             values
           )
           .then(() => {
             axios
               .put(
-                `http://localhost:3001/api/branchOffice/admin/${payload.id}/showBranch/${office._id}`,
+                `${PATH}/api/branchOffice/admin/${payload.id}/showBranch/${office._id}`,
                 selectedOperator
               )
               .then((res) => console.log(res));
           })
           .then(() => {
             axios
-              .get(`http://localhost:3001/api/branchOffice/showBranch`)
+              .get(`${PATH}/api/branchOffice/showBranch`)
               .then((res) => res.data.data)
               .then(
                 (updatedOffices) =>
@@ -86,7 +87,7 @@ const OfficeDetails = ({ office, selectOffice }) => {
 
   const loadAssignedOperator = () => {
     axios
-      .get(`http://localhost:3001/api/users/admin/${payload.id}/showUsers`)
+      .get(`${PATH}/api/users/admin/${payload.id}/showUsers`)
       .then((res) => {
         return res.data.data;
       })
@@ -104,7 +105,7 @@ const OfficeDetails = ({ office, selectOffice }) => {
   const loadOperatorsList = () => {
     axios
       .get(
-        `http://localhost:3001/api/branchOffice/admin/${payload.id}/showBranch/${office._id}/operator`
+        `${PATH}/api/branchOffice/admin/${payload.id}/showBranch/${office._id}/operator`
       )
       .then((res) => {
         console.log(res.data.data);

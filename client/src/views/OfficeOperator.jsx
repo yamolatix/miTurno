@@ -9,6 +9,7 @@ import { branchOfficePicker } from '../features/branchOffice';
 import { branchOfficesGetter } from '../features/branchOfficesList';
 import parseJwt from "../hooks/parseJwt";
 import CalendarOperator from './CalendarOperator';
+import PATH from '../path';
 
 function OfficeOperator() {  
   
@@ -19,7 +20,7 @@ function OfficeOperator() {
   const [branchOffices, setBranchOffices] = useState([])
   //const branchOffices = JSON.parse(localStorage.getItem('branches')).branches
   const getBranchOffices = () => {   
-    axios.get('http://localhost:3001/api/branchOffice/showBranch')
+    axios.get(`${PATH}/api/branchOffice/showBranch`)
       .then(res => setBranchOffices(res.data.data))
       .catch(err => console.log('SE PUDRE ', err))
   }

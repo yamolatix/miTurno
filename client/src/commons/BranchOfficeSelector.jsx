@@ -8,11 +8,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { branchOfficePicker } from '../features/branchOffice';
 import { branchOfficesGetter } from '../features/branchOfficesList';
 import parseJwt from "../hooks/parseJwt";
+import PATH from '../path';
 
 function BranchOfficeSelector() {
 
   /* const getBranchOffices = async () => {   
-    const res = await axios.get('http://localhost:3001/api/branchOffice/showBranch');     
+    const res = await axios.get(`${PATH}/api/branchOffice/showBranch`);     
     return res.data.data  
     } */
   
@@ -52,7 +53,7 @@ function BranchOfficeSelector() {
   console.log('LA SUCURSAL SETEADA GLOBALMENTE ES ', pickedBranchOffice)  
 
   const getBranchOffices = async () => {   
-    const res = await axios.get('http://localhost:3001/api/branchOffice/showBranch');     
+    const res = await axios.get(`${PATH}/api/branchOffice/showBranch`);     
     setBranchOffices(res.data.data)   
     }
         

@@ -13,6 +13,7 @@ import paginationFactory from "react-bootstrap-table2-paginator";
 import parseJwt from "../hooks/parseJwt";
 import capitalize from "../hooks/capitalize";
 import { Confirm } from "notiflix/build/notiflix-confirm-aio";
+import PATH from "../path";
 
 import style from "../styles/Users.module.css";
 
@@ -32,7 +33,7 @@ const Users = () => {
 
   const loadUsers = () => {
     axios
-      .get(`http://localhost:3001/api/users/admin/${payload.id}/showUsers`)
+      .get(`${PATH}/api/users/admin/${payload.id}/showUsers`)
       .then((res) => {
         console.log(res.data.data);
         setUsersRaw(res.data.data);
@@ -91,7 +92,7 @@ const Users = () => {
         else
           axios
             .put(
-              `http://localhost:3001/api/users/admin/${payload.id}/role/${id}`,
+              `${PATH}/api/users/admin/${payload.id}/role/${id}`,
               {
                 operator: !isOperator,
               }
@@ -115,7 +116,7 @@ const Users = () => {
       () => {
         axios
           .delete(
-            `http://localhost:3001/api/users/admin/${payload.id}/delete/${id}`
+            `${PATH}/api/users/admin/${payload.id}/delete/${id}`
           )
           .then((res) => {
             console.log(res);

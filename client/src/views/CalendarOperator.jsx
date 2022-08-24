@@ -11,6 +11,7 @@ import "react-datepicker/dist/react-datepicker.css"
 import style from "../styles/Users.module.css";
 import axios from "axios";
 import { appointmentPicker } from "../features/appointment";
+import PATH from "../path";
 
 const CalendarOperator = () => {
 
@@ -32,7 +33,7 @@ const CalendarOperator = () => {
 
     // pedido GET al backend con una fecha y una sucursal
   const loadAppointments = () => {
-    axios.get('http://localhost:3001/api/availableAppointment', {
+    axios.get(`${PATH}/api/availableAppointment`, {
       headers: {
         date: selectedDate.getDate().toString(),
         month: selectedDate.getMonth().toString(),

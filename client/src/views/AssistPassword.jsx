@@ -6,6 +6,7 @@ import axios from "axios";
 //import useInput from '../hooks/useInput';
 import style from "../styles/General.module.css";
 import { Report } from "notiflix/build/notiflix-report-aio";
+import PATH from "../path";
 
 function AssistPassword() {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ function AssistPassword() {
     e.preventDefault();
     console.log(email);
     axios
-      .put(`http://localhost:3001/api/user/forgotPassword`, {
+      .put(`${PATH}/api/user/forgotPassword`, {
         email: email,
       })
       .then((res) => {
