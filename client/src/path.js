@@ -1,4 +1,4 @@
-const local = false;
+const local = true;
 
 const PATH = () => {
   return local
