@@ -14,6 +14,7 @@ import Button from "react-bootstrap/esm/Button";
 import parseJwt from "../hooks/parseJwt";
 import capitalize from "../hooks/capitalize";
 import { Confirm } from "notiflix/build/notiflix-confirm-aio";
+import PATH from "../path";
 
 import style from "../styles/BranchOffices.module.css";
 import { Navigate } from "react-router-dom";
@@ -33,7 +34,7 @@ const BranchOffices = ({ selectOffice }) => {
 
   const loadOffices = () => {
     axios
-      .get(`http://localhost:3001/api/branchOffice/showBranch`)
+      .get(`${PATH}/api/branchOffice/showBranch`)
       .then((res) => {
         const officesConstructor = res.data.data.map((office, i) => {
           return {
@@ -92,7 +93,7 @@ const BranchOffices = ({ selectOffice }) => {
       () => {
         axios
           .delete(
-            `http://localhost:3001/api/branchOffice/admin/${payload.id}/delete/${id}`
+            `${PATH}/api/branchOffice/admin/${payload.id}/delete/${id}`
           )
           .then((res) => {
             setLoad(!load);

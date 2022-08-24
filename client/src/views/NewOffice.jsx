@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { Report } from "notiflix/build/notiflix-report-aio";
+import PATH from "../path";
 
 import style from "../styles/OfficeDetails.module.css";
 
@@ -25,7 +26,7 @@ const NewOffice = () => {
   const handleSubmit = (values) => {
     axios
       .post(
-        `http://localhost:3001/api/branchOffice/admin/${payload.id}/add`,
+        `${PATH}/api/branchOffice/admin/${payload.id}/add`,
         values
       )
       .then((res) => {

@@ -7,6 +7,7 @@ import { getFullDate } from "../utils/getFullDate";
 import { getFixedTime } from "../utils/getFixedTime";
 import parseJwt from "../hooks/parseJwt";
 import { Report } from "notiflix";
+import PATH from "../path";
 
 
 const AppointmentDetailsOperator = () => {
@@ -79,7 +80,7 @@ const AppointmentDetailsOperator = () => {
   // RUTA A CORREGIR - ES LA QUE PIDE AL BACK EL ARREGLO DE TURNOS PARA UN DIA Y HORARIO DETERMINADOS
 
  /*  const getAppointments = () => {
-      axios.get(`http://localhost:3001/api/appointment/62c7123cc261b4d23d5b93a9/dayAppointments`, {
+      axios.get(`${PATH}/api/appointment/62c7123cc261b4d23d5b93a9/dayAppointments`, {
         headers: {
           date: '27',
           month: '6',
@@ -98,7 +99,7 @@ const AppointmentDetailsOperator = () => {
   }; */
 
   const handleAssitance = (appointment) => {
-    axios.put(`http://localhost:3001/api/appointment/${user.id}/showAppointments`, {
+    axios.put(`${PATH}/api/appointment/${user.id}/showAppointments`, {
       id: (appointment)
   })
     .then(() => {
@@ -111,7 +112,7 @@ const AppointmentDetailsOperator = () => {
   // ESTA FUNCION PIDE AL BACK DATOS COPLETOS DEL USUARIO QUE POSEE UN DETERMINADO TURNO
 
   /* const getUser = (userId) => {
-    return axios.get(`http://localhost:3001/api/users/me/${userId}`)
+    return axios.get(`${PATH}/api/users/me/${userId}`)
       .then(user => {
         console.log('USER ES ', user.data)
         return user.data

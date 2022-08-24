@@ -6,6 +6,7 @@ import style from "../styles/General.module.css";
 import parseJwt from "../hooks/parseJwt";
 import axios from "axios";
 import { Report } from "notiflix/build/notiflix-report-aio";
+import PATH from "../path";
 
 function RestorePassword() {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ function RestorePassword() {
     console.log(resetToken);
 
     axios
-      .put(`http://localhost:3001/api/user/newPassword`, {
+      .put(`${PATH}/api/user/newPassword`, {
         headers: {
           "rtoken": resetToken,
         },

@@ -19,6 +19,7 @@ import { selectAppToEdit, emptyAppToEdit } from "../features/editAppointment";
 
 import style from "../styles/Users.module.css";
 import { useNavigate } from "react-router-dom";
+import PATH from "../path";
 
 const MyAppointments = () => {
   const [appsRaw, setAppsRaw] = useState([]);
@@ -53,7 +54,7 @@ const MyAppointments = () => {
 
     axios
       .get(
-        `http://localhost:3001/api/appointment/${payload.id}/showAppointments`
+        `${PATH}/api/appointment/${payload.id}/showAppointments`
       )
       .then((res) => {
         appointments = res.data.data;
@@ -62,7 +63,7 @@ const MyAppointments = () => {
       })
       .then(() => {
         axios
-          .get("http://localhost:3001/api/branchOffice/showBranch")
+          .get(`${PATH}/api/branchOffice/showBranch`)
           .then((res) => {
             offices = res.data.data;
             console.log(offices);
@@ -160,7 +161,7 @@ const MyAppointments = () => {
         console.log("CANCELAR TURNO ", appointmentId);
         axios
           .put(
-            `http://localhost:3001/api/appointment/${payload.id}/myAppointment/remove`,
+            `${PATH}/api/appointment/${payload.id}/myAppointment/remove`,
             { id: appointmentId }
           )
           .then((res) => {

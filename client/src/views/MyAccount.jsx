@@ -9,6 +9,7 @@ import * as Yup from "yup";
 import capitalize from "../hooks/capitalize";
 import { Confirm } from "notiflix/build/notiflix-confirm-aio";
 import { useNavigate } from "react-router-dom";
+import PATH from "../path";
 
 
 import style from "../styles/MyAccount.module.css";
@@ -30,7 +31,7 @@ const MyAccount = () => {
 
   const loadUserData = () => {
     axios
-      .get(`http://localhost:3001/api/users/me/${payload.id}`)
+      .get(`${PATH}/api/users/me/${payload.id}`)
       // .then((res) => setUserData(res.data))
       .then((res) => {
         console.log(res.data);
@@ -47,7 +48,7 @@ const MyAccount = () => {
       "No",
       () => {
         axios
-          .put(`http://localhost:3001/api/users/me/${payload.id}`, values)
+          .put(`${PATH}/api/users/me/${payload.id}`, values)
           .then((res) => {
             console.log(res);
             loadUserData();
@@ -67,7 +68,7 @@ const MyAccount = () => {
       () => {
         axios
           .delete(
-            `http://localhost:3001/api/users/admin/62c71168c261b4d23d5b93a5/delete/${payload.id}`
+            `${PATH}/api/users/admin/62c71168c261b4d23d5b93a5/delete/${payload.id}`
           )
           .then((res) => {
             localStorage.removeItem("user");
