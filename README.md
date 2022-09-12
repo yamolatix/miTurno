@@ -2,9 +2,12 @@
 
 ## Acerca del Proyecto
 
-miTurno es una aplicación de reserva de turnos impulsada por React.JS, Express y MongoDB que proporciona las funciones principales que esperaría un usuario tanto para visualizar, solicitar y modificar turnos como para administrar sucursales y confirmar asistencia del usuario a dichos turnos como administrador.
+Aplicación web desarrollada, mediante la metodología SCRUM y pair programming. La misma permite reservar turnos a clientes y facilitar la gestión de las empresas de diferentes rubros que poseen sucursales físicas.
+Posee roles de administrador, operador y cliente, respondiendo a la necesidad de cada uno.
 
-Este proyecto fue realizado gracias a [#Plataforma5](https://www.plataforma5.la/) y [#CRUCE](https://www.e-cruce.com/) a fin de impulsarnos en nuestro desarrollo como Developers.
+Este proyecto fue realizado gracias a [#Plataforma5](https://www.plataforma5.la/) y [#CRUCE](https://www.e-cruce.com/) a fin de impulsarnos en nuestro desarollo como Developers.
+
+![register](https://user-images.githubusercontent.com/99486767/182872139-f0bb354d-26a1-4fd3-96b9-3ee9e3c534ff.png)
 
 ## Construido con
 #### ReactJS
