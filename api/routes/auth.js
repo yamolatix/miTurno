@@ -195,7 +195,7 @@ router.put("/newPassword", async (req, res) => {
   else {
     jwt.verify(
       token,
-      process.env.RESET_PASSWORD_KEY,
+      process.env.RESET_PASSWORD_KEY || nuevapass, 
       function (error, decodedData) {
         if (error) {
           return res
@@ -247,3 +247,4 @@ router.put("/newPassword", async (req, res) => {
 });
 
 module.exports = router;
+
