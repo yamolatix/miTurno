@@ -59,7 +59,7 @@ router.post("/login", async (req, res) => {
       operator: user.operator,
       branchOffice: user.branchOffice,
     },
-    process.env.TOKEN_SECRET
+    process.env.TOKEN_SECRET || secreto
   );
 
   res.header("auth-token", token).json({
@@ -138,7 +138,7 @@ router.put("/forgotPassword", async (req, res) => {
   }
   const token = jwt.sign(
     { id: user._id, email: user.email },
-    process.env.RESET_PASSWORD_KEY,
+    process.env.RESET_PASSWORD_KEY || nuevapass,
     { expiresIn: "1h" }
   ); // expiresIn indica el tiempo de vida del token
 

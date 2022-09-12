@@ -10,8 +10,8 @@ const authRoutes = require('./routes/auth');
 require("dotenv").config();
 
 // Constantes traidas del .env
-const PORT = process.env.PORT;
-const uri = process.env.MONGODB_CONNECTION_STRING;
+const PORT = process.env.PORT || 3001;
+const uri = process.env.MONGODB_CONNECTION_STRING || "mongodb+srv://turnon_admin:1234@cluster0.0ywn3.mongodb.net/turnon?retryWrites=true&w=majority;"
 
 const app = express();
 
