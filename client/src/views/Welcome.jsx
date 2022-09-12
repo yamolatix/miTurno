@@ -5,11 +5,9 @@ import parseJwt from "../hooks/parseJwt";
 import style from "../styles/Welcome.module.css";
 
 const Welcome = () => {
-  
 
       const token = JSON.parse(localStorage.getItem("user")).data.token;
       const payload = parseJwt(token)
-      //console.log(payload)
       if(!payload.admin && !payload.operator)
       return (
     <>

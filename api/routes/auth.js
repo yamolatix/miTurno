@@ -185,9 +185,6 @@ router.put("/forgotPassword", async (req, res) => {
 router.put("/newPassword", async (req, res) => {
   const token = req.body.headers.rtoken;
 
-  console.log(token);
-  console.log(req.body.body.password);
-
   const saltos = await bcrypt.genSalt(10);
   const password = await bcrypt.hash(req.body.body.password, saltos);
 

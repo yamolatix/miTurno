@@ -13,7 +13,6 @@ import PATH from "../path";
 import style from "../styles/OfficeDetails.module.css";
 
 const NewOffice = () => {
-  // console.log(office);
 
   const token = JSON.parse(localStorage.getItem("user")).data.token;
   const payload = parseJwt(token);
@@ -30,7 +29,6 @@ const NewOffice = () => {
         values
       )
       .then((res) => {
-        console.log(res);
         Report.success("Se ha creado una nueva sucursal", "Ok");
         navigate("/offices");
       })

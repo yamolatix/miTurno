@@ -2,23 +2,18 @@ import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useNavigate, Link } from "react-router-dom";
-//import useInput from '../hooks/useInput';
 import { useDispatch } from "react-redux";
-import { branchOfficesGetter } from '../features/branchOfficesList';
-import { userLogin, userLogout } from "../features/user";
+import { userLogin } from "../features/user";
 import style from "../styles/General.module.css";
 import parseJwt from "../hooks/parseJwt";
 import { Report } from "notiflix/build/notiflix-report-aio";
 
 function Login() {
   const dispatch = useDispatch();
-  //dispatch(branchOfficesGetter());
-
   const navigate = useNavigate();
 
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-  const [showPassword, setShowPassword] = useState(false);
 
   if (localStorage.getItem("user")) localStorage.removeItem("user");
 
@@ -49,16 +44,6 @@ function Login() {
         );
       });
   };
-
-  // const ref = useRef(null);
-  // const myFunction = () => {
-  //   var x = ref.current
-  //   if (x.type === "password") {
-  //     x.type = "text";
-  //   } else {
-  //     x.type = "password";
-  //   }
-  // }
 
   return (
     <div className={style.mainContainer}>
@@ -98,9 +83,7 @@ function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                //id="myInput" ref={ref}
               />
-              {/* <input type="checkbox" onClick={myFunction} /> Mostrar Contraseña */}
             </Form.Group>
             <div className={style.boton}>
               <Button variant="secondary" type="submit">

@@ -16,46 +16,17 @@ import { Report } from "notiflix/build/notiflix-report-aio";
 const AppointmentDetails = () => {
   const dispatch = useDispatch()
 
-
   //// AGREGADO PARA FUNCIONALIDAD DE CAMBIAR TURNO /////////
   const editApp = useSelector((state) => state.editApp);  ///
-  console.log("TURNO A EDITAR: ", editApp);               ///
   const navigate = useNavigate();                         ///
   ///////////////////////////////////////////////////////////                       
 
-  //const initialSelectedDate = new Date()
- 
-//////////////////////LO QUE TENIA YAMI ANTES DEL MERGE 
   const [hasClickedDetailsButton, setHasClickedDetailsButton] = useState(false)
   const pickedDate = useSelector(state => state.appointment)
   const pickedBranchOffice = useSelector(state => state.branchOffice.clickedOffice)
   const user = parseJwt(JSON.parse(localStorage.getItem('user')).data.token)
-  //const [selectedDate, setSelectedDate] = useState(initialSelectedDate.getDate().toString());
-
-
 
   const [appointmentId, setAppointmentId] = useState("")
- //console.log("id del appointment", appointmentId)
-  // let auxDate = ''
-
-  
-//////////////////////LO QUE VINO EN EL MAIN
-//  const [hasClickedDetailsButton, setHasClickedDetailsButton] = useState(false);
-//  const pickedDate = useSelector((state) => state.appointment);
-//  const pickedBranchOffice = useSelector(
-//    (state) => state.branchOffice.clickedOffice
-//  );
-//  const user = parseJwt(JSON.parse(localStorage.getItem("user")).data.token);
-
-//  const appointmentId = ''
-//////////////////////
-
-  // let auxDate = ''
-
-  //console.log('SELECTED DATE EN APPOINTMENT DETAILS ES ', selectedDate)
-  //console.log('PICKED DATE EN APPOINTMENT DETAILS ES ', pickedDate)
-  //console.log('PICKED BRANCH EN APPOINTMENT DETAILS ES ', pickedBranchOffice)
-  //console.log('USER EN APPOINTMENT DETAILS ES ', user)
 
   const handleSaveAppointment = () => {
     axios.post(`${PATH}/api/appointment/${user.id}`, {
@@ -68,10 +39,8 @@ const AppointmentDetails = () => {
       appointId: editApp
     })
       .then((appointment) => {
-      console.log("todo el turno:", appointment.data)
       setAppointmentId(appointment.data._id)
       Report.info('miTurno', 'Tenés 10 minutos para confirmar el turno', 'Ok')
-      // if (editApp) navigate("/myappointments");
     })
     .catch(err => console.log(err))
   }

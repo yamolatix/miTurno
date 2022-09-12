@@ -4,14 +4,12 @@ import style from "../styles/Users.module.css";
 import capitalize from "../hooks/capitalize";
 
 const UserDetails = ({ user, handleDelete, handleRoleChange }) => {
-  console.log(user.lname);
 
   return user._id ? (
     <div className={style.userDetails}>
       <h5>Detalle de usuario</h5>
       <ul>
         <li>ID: {user._id}</li>
-        {/* <li>Rol: {user.admin ? "AD" : user.operator ? "OP" : "CL"}</li> */}
         <li>Apellido: {capitalize(user.lname)}</li>
         <li>Nombre: {capitalize(user.fname)}</li>
         <li>DNI: {user.dni}</li>

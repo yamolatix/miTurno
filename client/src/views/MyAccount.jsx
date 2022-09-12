@@ -21,7 +21,6 @@ const MyAccount = () => {
 
   const token = JSON.parse(localStorage.getItem("user")).data.token;
   const payload = parseJwt(token);
-  console.log(payload);
 
   useEffect(() => {
     loadUserData();
@@ -32,9 +31,7 @@ const MyAccount = () => {
   const loadUserData = () => {
     axios
       .get(`${PATH}/api/users/me/${payload.id}`)
-      // .then((res) => setUserData(res.data))
       .then((res) => {
-        console.log(res.data);
         setUserData(res.data);
       })
       .catch((err) => console.log(err));
@@ -50,7 +47,6 @@ const MyAccount = () => {
         axios
           .put(`${PATH}/api/users/me/${payload.id}`, values)
           .then((res) => {
-            console.log(res);
             loadUserData();
           })
           .catch((err) => console.log(err));

@@ -44,7 +44,6 @@ const MyAppointments = () => {
 
   const findOffice = (officeId, offices) => {
     const office = offices.filter((office) => office._id === officeId);
-    console.log(office[0]);
     return office[0] ? office[0] : {};
   };
 
@@ -58,7 +57,6 @@ const MyAppointments = () => {
       )
       .then((res) => {
         appointments = res.data.data;
-        console.log(appointments);
         setAppsRaw(appointments);
       })
       .then(() => {
@@ -66,18 +64,15 @@ const MyAppointments = () => {
           .get(`${PATH}/api/branchOffice/showBranch`)
           .then((res) => {
             offices = res.data.data;
-            console.log(offices);
           })
           .then(() => {
             const appsConstructor = appointments.map((appointment, i) => {
               const office = findOffice(appointment.branchOffice[0], offices);
-              console.log(appointment);
-              console.log(office);
+
               const year = parseInt(appointment.year);
               const month = parseInt(appointment.month) + 1;
               const day = parseInt(appointment.date);
               const date = new Date(year, month, day);
-              console.log("Fecha: ", date.toDateString(date));
               return {
                 _id: appointment._id,
                 id: appointment._id.slice(-4),
@@ -132,7 +127,6 @@ const MyAppointments = () => {
                   ),
               };
             });
-            console.log(appsConstructor);
             setApps(appsConstructor);
           });
       })
@@ -141,8 +135,6 @@ const MyAppointments = () => {
 
   const handleAppSelection = (id) => {
     const appointment = apps.filter((appointment) => appointment._id === id)[0];
-    console.log("Clicked on appointment with ID: ", id);
-    console.log(appointment);
     setSelectedApp(appointment);
   };
 
@@ -158,14 +150,12 @@ const MyAppointments = () => {
       "Si",
       "No",
       () => {
-        console.log("CANCELAR TURNO ", appointmentId);
         axios
           .put(
             `${PATH}/api/appointment/${payload.id}/myAppointment/remove`,
             { id: appointmentId }
           )
           .then((res) => {
-            console.log(res);
             setLoad(!load);
           })
           .catch((err) => console.log(err));

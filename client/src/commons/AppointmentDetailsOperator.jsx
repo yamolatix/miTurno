@@ -9,7 +9,6 @@ import parseJwt from "../hooks/parseJwt";
 import { Report } from "notiflix";
 import PATH from "../path";
 
-
 const AppointmentDetailsOperator = () => {
 
   const user = parseJwt(JSON.parse(localStorage.getItem('user')).data.token)
@@ -74,42 +73,41 @@ const AppointmentDetailsOperator = () => {
       }
     }
   ]
-  
+
   const [appointments, setAppointments] = useState(fakeAppointments)
 
   // RUTA A CORREGIR - ES LA QUE PIDE AL BACK EL ARREGLO DE TURNOS PARA UN DIA Y HORARIO DETERMINADOS
 
- /*  const getAppointments = () => {
-      axios.get(`${PATH}/api/appointment/62c7123cc261b4d23d5b93a9/dayAppointments`, {
-        headers: {
-          date: '27',
-          month: '6',
-          year: '2022',
-          time: '14:00',
-          id: '62c621154bf17c41fbe9cc97'
-        }
-      })
-      .then(arr => {
-        console.log('USUARIOS CON ESTE TURNO SON ', arr.data.data)
-        // buscar en el turno el idUser
-        setAppointments(arr.data.data)
-      })
-      .catch(err => console.log(err))
-    };
-  }; */
+  /*  const getAppointments = () => {
+       axios.get(`${PATH}/api/appointment/62c7123cc261b4d23d5b93a9/dayAppointments`, {
+         headers: {
+           date: '27',
+           month: '6',
+           year: '2022',
+           time: '14:00',
+           id: '62c621154bf17c41fbe9cc97'
+         }
+       })
+       .then(arr => {
+         console.log('USUARIOS CON ESTE TURNO SON ', arr.data.data)
+         // buscar en el turno el idUser
+         setAppointments(arr.data.data)
+       })
+       .catch(err => console.log(err))
+     };
+   }; */
 
   const handleAssitance = (appointment) => {
     axios.put(`${PATH}/api/appointment/${user.id}/showAppointments`, {
       id: (appointment)
-  })
-    .then(() => {
-      //appointments.splice(appointments.indexOf(appointment), 1)
-      Report.success('miTurno', 'Se confirmó la asistencia del usuario', 'Ok');
     })
-    .catch(err => Report.failure('miTurno', {err}, 'Ok'))
-}
+      .then(() => {
+        Report.success('miTurno', 'Se confirmó la asistencia del usuario', 'Ok');
+      })
+      .catch(err => Report.failure('miTurno', { err }, 'Ok'))
+  }
 
-  // ESTA FUNCION PIDE AL BACK DATOS COPLETOS DEL USUARIO QUE POSEE UN DETERMINADO TURNO
+  // ESTA FUNCION PIDE AL BACK DATOS COMPLETOS DEL USUARIO QUE POSEE UN DETERMINADO TURNO
 
   /* const getUser = (userId) => {
     return axios.get(`${PATH}/api/users/me/${userId}`)
@@ -120,10 +118,6 @@ const AppointmentDetailsOperator = () => {
       .catch(err => console.log(err))
   } */
 
-  useEffect(()=> {
-    //getAppointments()
-  },[pickedDate])
-
   return pickedDate.date ? (
     <div className={style.userDetails}>
       <h5>Detalles del turno:</h5>
@@ -133,45 +127,44 @@ const AppointmentDetailsOperator = () => {
         {<li>Hora: {getFixedTime(pickedDate)} hs</li>}
       </ul>
       {fakeAppointments.length
-      ? (
-        <>
-        <h5 className={style.agendados}> Usuarios agendados: </h5>
-        <ul>
-          {fakeAppointments.map(e => {
-            //const userApp = getUser(e.user[0]);
-            //console.log('USERAPP ES ', userApp)
-            return (
-            <>
-              <div className={style.asistentes}>
-                <li> {e.userApp.fullname} </li>
-                <li> Teléfono: {e.userApp.phone}</li>
-                <li> Email: {e.userApp.email}</li>
-                <Button
-                  variant="secondary"
-                  className={style.sideButton}
-                  onClick={() => {
-                    handleAssitance(e.id)
-                    }
-                  }
-                >
-                  Asistió
-                </Button>
-              </div>
-            </>
-            )}
-          )}  
-        </ul>
-        </>
+        ? (
+          <>
+            <h5 className={style.agendados}> Usuarios agendados: </h5>
+            <ul>
+              {fakeAppointments.map(e => {
+                return (
+                  <>
+                    <div className={style.asistentes}>
+                      <li> {e.userApp.fullname} </li>
+                      <li> Teléfono: {e.userApp.phone}</li>
+                      <li> Email: {e.userApp.email}</li>
+                      <Button
+                        variant="secondary"
+                        className={style.sideButton}
+                        onClick={() => {
+                          handleAssitance(e.id)
+                        }
+                        }
+                      >
+                        Asistió
+                      </Button>
+                    </div>
+                  </>
+                )
+              }
+              )}
+            </ul>
+          </>
         )
-      : (
-        <h5>NO HAY USUARIOS PARA ESTE TURNO</h5>
+        : (
+          <h5>NO HAY USUARIOS PARA ESTE TURNO</h5>
         )
       }
     </div>
-    )
+  )
     :
     (
-    <></>
+      <></>
     );
 };
 

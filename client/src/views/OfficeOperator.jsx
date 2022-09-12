@@ -22,16 +22,12 @@ function OfficeOperator() {
   const getBranchOffices = () => {   
     axios.get(`${PATH}/api/branchOffice/showBranch`)
       .then(res => setBranchOffices(res.data.data))
-      .catch(err => console.log('SE PUDRE ', err))
+      .catch(err => console.log(err))
   }
   
-  //console.log('EL GET BRANCHOFFICE ME DA ', getBranchOffices())  
-
   const pickedBranchOffice = useSelector(state => state.branchOffice.clickedOffice)
   const user = parseJwt(JSON.parse(localStorage.getItem('user')).data.token)
 
-  console.log('EL USER ES ', user)
-  
   const asignedOffice = branchOffices.find(branch => {
     return user.branchOffice[0].includes(branch._id)
   })
@@ -39,13 +35,8 @@ function OfficeOperator() {
   dispatch(branchOfficePicker(asignedOffice))  
         
   useEffect(() => {
-    console.log('ESTAMOS EN EL USEEFFECT')
     getBranchOffices()
-    //
-    //dispatch(branchOfficesGetter())
   }, [])
-
-  console.log('ESTADO GLOBAL OFICINA ', pickedBranchOffice)
 
   return (
     <>{pickedBranchOffice

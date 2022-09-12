@@ -55,10 +55,6 @@ function App() {
         <Route path="/newOffice" element={<NewOffice />} />
         <Route path="/welcome" element={<Welcome />} />
         <Route path="/myappointments" element={<MyAppointments />} />
-        {/* 
-        
-        <Route path="/branch_offices" element={<BranchOffices />}/>
- */}
       </Routes>
     </div>
   );

@@ -15,26 +15,9 @@ function Register() {
   const navigate = useNavigate();
   const [inputType, icon] = usePasswordToggle();
 
-  /* const [fname, setFname] = useState();
-  const [lname, setLname] = useState();
-  const [dni, setDni] = useState();
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  const [rePassword, setRePassword] = useState(); */
-
   const dispatch = useDispatch();
 
   if (localStorage.getItem("registered")) localStorage.removeItem("registered");
-  /* 
-  const user = localStorage.getItem('user')
-    ? JSON.parse(localStorage.getItem('user'))
-    : {} */
-
-  // const [showPassword, setShowPassword] = useState(false);
-
-  // const user = localStorage.getItem("user")
-  //   ? JSON.parse(localStorage.getItem("user"))
-  //   : {};
 
   const handleRegister = (values) => {
     dispatch(
@@ -48,7 +31,6 @@ function Register() {
     ).then(() => {
       const registered =
         JSON.parse(localStorage.getItem("registered")).data.fname || null;
-      console.log("ESTO ES el FNAME de REGISTERED", registered);
       if (registered) {
         Report.success(
           "¡Registro exitoso!",
@@ -64,11 +46,7 @@ function Register() {
         );
         navigate("/register");
       }
-      // alert(registered
-      // ? 'Hola ' + registered + ', te has registrado exitosamente!'
-      // : 'Problema en el registro')
     });
-    // .then(() => navigate("/login"));
   };
 
   const validate = Yup.object({

@@ -4,7 +4,6 @@ import { createAction, createAsyncThunk, createReducer } from '@reduxjs/toolkit'
 // setear aca en redux una propiedad adicional con el date anterior
 
 export const appointmentPicker = createAsyncThunk("APPOINTMENT_PICKER", (picked) => {
-    console.log('date picked en reduce es ', picked)
     const day = picked.date.getDay().toString();
     const date = picked.date.getDate().toString();
     const month = picked.date.getMonth().toString();

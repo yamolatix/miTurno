@@ -3,7 +3,6 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import style from "../styles/General.module.css";
-import parseJwt from "../hooks/parseJwt";
 import axios from "axios";
 import { Report } from "notiflix/build/notiflix-report-aio";
 import PATH from "../path";
@@ -13,8 +12,6 @@ function RestorePassword() {
 
   const [password, setPassword] = useState();
   const [rePassword, setRePassword] = useState();
-
-  // const [showPassword, setShowPassword] = useState(false);
 
   const location = useLocation();
 
@@ -28,8 +25,6 @@ function RestorePassword() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    console.log(resetToken);
 
     axios
       .put(`${PATH}/api/user/newPassword`, {

@@ -25,7 +25,6 @@ const Users = () => {
 
   const token = JSON.parse(localStorage.getItem("user")).data.token;
   const payload = parseJwt(token);
-  console.log(payload);
 
   useEffect(() => {
     loadUsers();
@@ -35,7 +34,6 @@ const Users = () => {
     axios
       .get(`${PATH}/api/users/admin/${payload.id}/showUsers`)
       .then((res) => {
-        console.log(res.data.data);
         setUsersRaw(res.data.data);
         const usersConstructor = res.data.data.map((user, i) => {
           return {
@@ -74,7 +72,6 @@ const Users = () => {
             ),
           };
         });
-        console.log(usersConstructor);
         setUsers(usersConstructor);
       })
       .catch((err) => console.log(err));
@@ -87,7 +84,6 @@ const Users = () => {
       "Si",
       "No",
       () => {
-        console.log(id, isAdmin, isOperator);
         if (isAdmin) console.log("No se puede cambiar rol de un administrador");
         else
           axios
@@ -98,9 +94,7 @@ const Users = () => {
               }
             )
             .then((res) => {
-              console.log(res);
               setLoad(!load);
-              console.log(selectedUser._id, selectedUser.operator);
             })
             .catch((err) => console.log(err));
       }
@@ -119,7 +113,6 @@ const Users = () => {
             `${PATH}/api/users/admin/${payload.id}/delete/${id}`
           )
           .then((res) => {
-            console.log(res);
             setSelectedUser({});
             setLoad(!load);
           })
@@ -130,7 +123,6 @@ const Users = () => {
 
   const handleUserSelection = (id) => {
     const user = usersRaw.filter((user) => user._id === id)[0];
-    console.log("Clicked on user with ID: ", user);
     setSelectedUser(user);
   };
 
