@@ -20,7 +20,6 @@ function AssistPassword() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(email);
     axios
       .put(`${PATH}/api/user/forgotPassword`, {
         email: email,
@@ -34,7 +33,6 @@ function AssistPassword() {
         navigate("/");
       })
       .catch((err) => {
-        // console.log(err.response.data.mensaje);
         Report.warning("miTurno", err.response.data.mensaje, "Ok");
       });
   };

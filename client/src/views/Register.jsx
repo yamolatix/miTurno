@@ -1,10 +1,7 @@
-//import { useState } from 'react';
 import Button from "react-bootstrap/Button";
-//import Alert from 'react-bootstrap/Alert';
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { useNavigate, Link } from "react-router-dom";
-//import useInput from '../hooks/useInput';
 import { useDispatch } from "react-redux";
 import { userRegister } from "../features/user";
 import style from "../styles/General.module.css";
