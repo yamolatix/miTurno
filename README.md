@@ -43,3 +43,14 @@ Después de clonar el repositorio y haber instalado las dependencias. Podes corr
 ```sh 
 npm start
 ```
+
+### Video Demo
+<a href="https://www.youtube.com/watch?v=0ZmGGYafT7U&ab_channel=YamilaOrtizToscano" target="_blank" rel="noreferrer">miTurno - Youtube</a>
+
+### Otros proyectos
+<a href="https://www.youtube.com/watch?v=D9LP2XVRj7U&ab_channel=YamilaOrtizToscano" target="_blank" rel="noreferrer">The Movie Code - Youtube</a>
+<br>
+<a href="https://github.com/yamolatix/TheMovieCode" target="_blank" rel="noreferrer">The Movie Code - GitHub</a>
+
+## Portfolio
+<a href="https://yamilaortiztoscano.com.ar" target="_blank" rel="noreferrer">yamilaortiztoscano.com.ar</a>
